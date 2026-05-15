@@ -1,15 +1,22 @@
 # PetProject — Claude Code Handoff Document
 
-> Updated: 2026-05-15 (end of Phase 0)
-> Continue from: Phase 1 — MVP
+> Updated: 2026-05-15 (Phase 1 Auth — In Progress)
+> Continue from: Phase 1 Auth debugging
 
 ---
 
 ## Project Status
 
 **Phase 0: Foundation** ✅ COMPLETE
+- Supabase project + R2 bucket + Resend account set up
+- Database schema with 11 tables created
+- Vercel deployment live at **petproject-vercel.vercel.app**
 
-All core infrastructure is set up and deployed. The site is live at **petproject-vercel.vercel.app** (default Next.js page showing, which confirms deployment works).
+**Phase 1: MVP Auth** 🚧 IN PROGRESS (90% complete, debugging signup flow)
+- Email/password auth with invite-only access ✅
+- All auth routes and pages built ✅
+- Full invite token system working ✅
+- **ISSUE:** Signup confirmation not creating user in Supabase (may be Windows fetch/SSL issue or Supabase config)
 
 ---
 
@@ -249,6 +256,56 @@ The app should feel **warm, confident, and slightly knowing**:
 
 ---
 
+---
+
+## Phase 1 Auth Status & Known Issues
+
+### What's Built
+- ✅ Middleware for session refresh + route protection
+- ✅ Invite system: generate tokens in Supabase, share links, validate on client
+- ✅ Signup page with email/password form + invite validation
+- ✅ Email confirmation flow (client-side code exchange via `/auth/confirm`)
+- ✅ Login page (simplified to redirect to setup-username)
+- ✅ Username setup page with validation
+- ✅ RLS policies for `users` table (public read, user write)
+- ✅ API route to mark invites as used (uses service role key)
+- ✅ Placeholder Stack and Dex pages
+
+### Known Issues (Windows-Specific)
+**SSL Certificate Verification Errors:**
+- Server-side Supabase client calls fail with "fetch failed" + `UNABLE_TO_VERIFY_LEAF_SIGNATURE`
+- Workaround used: Moved server operations to client-side where possible (code exchange, invite validation)
+- One API route (`/api/invites/mark-used`) still uses server client but fails silently
+  
+**Signup Flow Issue:**
+- User completes signup form → gets "Check your email" message ✅
+- Email sent by Resend ✅
+- But NO user created in Supabase Users table ❌
+- Likely cause: `supabase.auth.signUp()` on client failing silently or not syncing with database
+
+### Next Steps for Next Session
+1. **Debug signup user creation:**
+   - Add console logging to signup page to see if signUp() is actually returning a user
+   - Check Supabase Auth logs to see if signUp request is reaching Supabase
+   - Verify `.env.local` has correct Supabase credentials
+
+2. **Test with manual user creation:**
+   - Create a test user directly in Supabase Auth dashboard
+   - See if the rest of the flow works (email confirm, setup-username, etc.)
+   - This isolates whether the issue is signup-specific or broader
+
+3. **Fix the Windows SSL issue (optional but better long-term):**
+   - Either: set `NODE_TLS_REJECT_UNAUTHORIZED=0` for dev (insecure, test-only)
+   - Or: Update Windows Node.js SSL certificates
+   - Or: Use a different approach for server-side Supabase calls
+
+4. **Once auth works end-to-end:**
+   - Deploy to Vercel and test there (Windows SSL issues won't affect Vercel)
+   - Implement pet profile creation (Phase 1 continues)
+
+---
+
 *Last updated: 2026-05-15*
 *Phase 0 completion time: ~2.5 hours*
-*Next session: Start Phase 1 — MVP (estimate: 6-8 hours for core features)*
+*Phase 1 Auth time: ~3 hours (auth infrastructure complete, debugging signup)*
+*Next session: Debug signup user creation issue + continue to pet profiles*
