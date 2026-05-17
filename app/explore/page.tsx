@@ -10,6 +10,8 @@ interface Pet {
   name: string
   species: string
   breed: string | null
+  age_years: number | null
+  age_months: number | null
   avatar_url: string | null
   owner_id: string
 }
@@ -29,6 +31,9 @@ export default function ExplorePage() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [filterSpecies, setFilterSpecies] = useState<string | null>(null)
+  const [minAge, setMinAge] = useState<number | null>(null)
+  const [maxAge, setMaxAge] = useState<number | null>(null)
+  const [showFilters, setShowFilters] = useState(false)
   const [user, setUser] = useState<User | null>(null)
 
   const SPECIES_LIST = [
@@ -61,7 +66,7 @@ export default function ExplorePage() {
         // Fetch all pets
         const { data: allPets, error: petsError } = await supabase
           .from('pets')
-          .select('id, name, species, breed, avatar_url, owner_id')
+          .select('id, name, species, breed, age_years, age_months, avatar_url, owner_id')
           .order('created_at', { ascending: false })
 
         if (petsError) {
@@ -107,12 +112,21 @@ export default function ExplorePage() {
     }
   }
 
-  // Filter pets based on search and species
+  // Filter pets based on search, species, and age
   const filteredPets = pets.filter((pet) => {
     const matchesSearch = pet.name.toLowerCase().includes(search.toLowerCase())
     const matchesSpecies = !filterSpecies || pet.species === filterSpecies
 
-    return matchesSearch && matchesSpecies
+    // Calculate pet age in years
+    let petAgeYears = pet.age_years || 0
+    if (pet.age_months) {
+      petAgeYears += pet.age_months / 12
+    }
+
+    const matchesMinAge = minAge === null || petAgeYears >= minAge
+    const matchesMaxAge = maxAge === null || petAgeYears <= maxAge
+
+    return matchesSearch && matchesSpecies && matchesMinAge && matchesMaxAge
   })
 
   if (loading) {
@@ -193,6 +207,63 @@ export default function ExplorePage() {
           })}
         </div>
 
+        {/* Advanced Filters */}
+        <div className="mb-8">
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="text-amber-600 hover:text-amber-700 font-medium text-sm mb-3"
+          >
+            {showFilters ? '▼ Hide Filters' : '▶ Advanced Filters'}
+          </button>
+
+          {showFilters && (
+            <div className="bg-white rounded-lg p-4 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="min-age" className="block text-sm font-medium text-gray-700 mb-1">
+                    Min Age (years)
+                  </label>
+                  <input
+                    id="min-age"
+                    type="number"
+                    min="0"
+                    max="50"
+                    value={minAge ?? ''}
+                    onChange={(e) => setMinAge(e.target.value ? parseInt(e.target.value) : null)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    placeholder="0"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="max-age" className="block text-sm font-medium text-gray-700 mb-1">
+                    Max Age (years)
+                  </label>
+                  <input
+                    id="max-age"
+                    type="number"
+                    min="0"
+                    max="50"
+                    value={maxAge ?? ''}
+                    onChange={(e) => setMaxAge(e.target.value ? parseInt(e.target.value) : null)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    placeholder="50"
+                  />
+                </div>
+              </div>
+
+              <button
+                onClick={() => {
+                  setMinAge(null)
+                  setMaxAge(null)
+                }}
+                className="text-sm text-gray-600 hover:text-gray-700 font-medium"
+              >
+                Clear age filters
+              </button>
+            </div>
+          )}
+        </div>
+
         {/* Pet Grid */}
         {filteredPets.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
@@ -215,7 +286,14 @@ export default function ExplorePage() {
                   {/* Info */}
                   <div className="p-4">
                     <h3 className="text-lg font-bold text-gray-900 mb-1">{pet.name}</h3>
-                    <p className="text-sm text-gray-600 mb-3">{pet.species}</p>
+                    <p className="text-sm text-gray-600 mb-1">{pet.species}</p>
+
+                    {(pet.age_years !== null || pet.age_months !== null) && (
+                      <p className="text-xs text-gray-500 mb-2">
+                        {pet.age_years && `${pet.age_years}y `}
+                        {pet.age_months && `${pet.age_months}m`}
+                      </p>
+                    )}
 
                     {pet.breed && (
                       <p className="text-xs text-gray-500 mb-3">{pet.breed}</p>
