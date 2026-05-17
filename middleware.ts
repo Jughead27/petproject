@@ -46,12 +46,12 @@ export async function middleware(request: NextRequest) {
 
   // Redirect logged-in users away from auth pages
   if (user && isAuthRoute) {
-    return Response.redirect(new URL('/stack', request.url))
+    return NextResponse.redirect(new URL('/stack', request.url))
   }
 
   // Redirect unauthenticated users to login for protected routes
   if (!user && isProtectedRoute) {
-    return Response.redirect(new URL('/login', request.url))
+    return NextResponse.redirect(new URL('/login', request.url))
   }
 
   // /signup is protected by requiring invite in localStorage (checked on client)
