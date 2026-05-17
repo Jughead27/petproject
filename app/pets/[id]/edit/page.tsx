@@ -238,18 +238,44 @@ export default function EditPetPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50 flex items-center justify-center">
-        <p className="text-gray-600">Loading...</p>
+      <div style={{
+        minHeight: '100vh',
+        background: 'var(--app-bg)',
+        backgroundImage: `
+          radial-gradient(circle at 20% 20%, rgba(217, 119, 87, 0.08), transparent 50%),
+          radial-gradient(circle at 80% 80%, rgba(90, 122, 154, 0.06), transparent 50%)
+        `,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <p style={{ color: 'var(--ink-2)' }}>Loading...</p>
       </div>
     )
   }
 
   if (error && !isOwner) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50 flex items-center justify-center px-4">
-        <div className="text-center">
-          <p className="text-red-600 mb-4">{error}</p>
-          <Link href="/stack" className="text-amber-600 hover:text-amber-700 font-medium">
+      <div style={{
+        minHeight: '100vh',
+        background: 'var(--app-bg)',
+        backgroundImage: `
+          radial-gradient(circle at 20% 20%, rgba(217, 119, 87, 0.08), transparent 50%),
+          radial-gradient(circle at 80% 80%, rgba(90, 122, 154, 0.06), transparent 50%)
+        `,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px',
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ color: '#dc2626', marginBottom: '16px' }}>{error}</p>
+          <Link href="/stack" style={{
+            color: 'var(--acc)',
+            fontSize: '11.5px',
+            fontWeight: 500,
+            textDecoration: 'none',
+          }}>
             Back to Stack
           </Link>
         </div>
@@ -259,10 +285,26 @@ export default function EditPetPage() {
 
   if (!pet) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50 flex items-center justify-center px-4">
-        <div className="text-center">
-          <p className="text-red-600 mb-4">Pet not found</p>
-          <Link href="/profile" className="text-amber-600 hover:text-amber-700 font-medium">
+      <div style={{
+        minHeight: '100vh',
+        background: 'var(--app-bg)',
+        backgroundImage: `
+          radial-gradient(circle at 20% 20%, rgba(217, 119, 87, 0.08), transparent 50%),
+          radial-gradient(circle at 80% 80%, rgba(90, 122, 154, 0.06), transparent 50%)
+        `,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px',
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ color: '#dc2626', marginBottom: '16px' }}>Pet not found</p>
+          <Link href="/profile" style={{
+            color: 'var(--acc)',
+            fontSize: '11.5px',
+            fontWeight: 500,
+            textDecoration: 'none',
+          }}>
             Back to Profile
           </Link>
         </div>
@@ -271,27 +313,82 @@ export default function EditPetPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50 py-8 px-4">
-      <div className="max-w-2xl mx-auto">
-        <Link href={`/pets/${pet.id}`} className="text-amber-600 hover:text-amber-700 font-medium mb-6 inline-block">
+    <div style={{
+      minHeight: '100vh',
+      background: 'var(--app-bg)',
+      backgroundImage: `
+        radial-gradient(circle at 20% 20%, rgba(217, 119, 87, 0.08), transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(90, 122, 154, 0.06), transparent 50%)
+      `,
+      paddingTop: '32px',
+      paddingBottom: '32px',
+      paddingLeft: '24px',
+      paddingRight: '24px',
+    }}>
+      <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+        <Link href={`/pets/${pet.id}`} style={{
+          color: 'var(--acc)',
+          fontSize: '11.5px',
+          fontWeight: 500,
+          textDecoration: 'none',
+          marginBottom: '24px',
+          display: 'inline-block',
+        }}>
           ← Back
         </Link>
 
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Complete {pet.name}'s Profile</h1>
-          <p className="text-gray-600 mb-8">Add more details to make their card shine.</p>
+        <div style={{
+          background: 'var(--paper)',
+          borderRadius: 'var(--radius-lg)',
+          border: '1px solid var(--line)',
+          boxShadow: 'var(--shadow-sm)',
+          padding: '32px',
+        }}>
+          <h1 style={{
+            fontFamily: '"Instrument Serif", Georgia, serif',
+            fontSize: '28px',
+            fontWeight: 400,
+            fontStyle: 'italic',
+            color: 'var(--ink)',
+            marginBottom: '8px',
+            lineHeight: 1,
+          }}>
+            Complete {pet.name}'s Profile
+          </h1>
+          <p style={{
+            fontSize: '11.5px',
+            color: 'var(--ink-2)',
+            marginBottom: '24px',
+            lineHeight: 1.3,
+          }}>
+            Add more details to make their card shine.
+          </p>
 
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+            <div style={{
+              marginBottom: '24px',
+              padding: '12px 14px',
+              backgroundColor: 'rgba(220, 38, 38, 0.1)',
+              border: '1px solid rgba(220, 38, 38, 0.3)',
+              borderRadius: 'var(--radius-sm)',
+              fontSize: '11.5px',
+              color: '#7f1d1d',
+            }}>
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSave} className="space-y-6">
+          <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             {/* Breed */}
             <div>
-              <label htmlFor="breed" className="block text-sm font-medium text-gray-700 mb-2">
-                Breed *
+              <label htmlFor="breed" style={{
+                display: 'block',
+                fontSize: '10.5px',
+                fontWeight: 600,
+                color: 'var(--ink)',
+                marginBottom: '8px',
+              }}>
+                Breed
               </label>
               <input
                 id="breed"
@@ -299,15 +396,30 @@ export default function EditPetPage() {
                 value={breed}
                 onChange={(e) => setBreed(e.target.value)}
                 disabled={saving}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:opacity-50"
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  border: '1px solid var(--line)',
+                  borderRadius: 'var(--radius-sm)',
+                  color: 'var(--ink)',
+                  backgroundColor: 'var(--paper)',
+                  fontSize: '14px',
+                  opacity: saving ? 0.5 : 1,
+                }}
                 placeholder="e.g. Golden Retriever"
               />
             </div>
 
             {/* Age */}
-            <div className="grid grid-cols-2 gap-4">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
               <div>
-                <label htmlFor="age-years" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="age-years" style={{
+                  display: 'block',
+                  fontSize: '10.5px',
+                  fontWeight: 600,
+                  color: 'var(--ink)',
+                  marginBottom: '8px',
+                }}>
                   Age (Years)
                 </label>
                 <input
@@ -318,12 +430,27 @@ export default function EditPetPage() {
                   value={ageYears ?? ''}
                   onChange={(e) => setAgeYears(e.target.value ? parseInt(e.target.value) : null)}
                   disabled={saving}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:opacity-50"
+                  style={{
+                    width: '100%',
+                    padding: '10px 12px',
+                    border: '1px solid var(--line)',
+                    borderRadius: 'var(--radius-sm)',
+                    color: 'var(--ink)',
+                    backgroundColor: 'var(--paper)',
+                    fontSize: '14px',
+                    opacity: saving ? 0.5 : 1,
+                  }}
                   placeholder="0"
                 />
               </div>
               <div>
-                <label htmlFor="age-months" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="age-months" style={{
+                  display: 'block',
+                  fontSize: '10.5px',
+                  fontWeight: 600,
+                  color: 'var(--ink)',
+                  marginBottom: '8px',
+                }}>
                   Age (Months)
                 </label>
                 <input
@@ -334,7 +461,16 @@ export default function EditPetPage() {
                   value={ageMonths ?? ''}
                   onChange={(e) => setAgeMonths(e.target.value ? parseInt(e.target.value) : null)}
                   disabled={saving}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:opacity-50"
+                  style={{
+                    width: '100%',
+                    padding: '10px 12px',
+                    border: '1px solid var(--line)',
+                    borderRadius: 'var(--radius-sm)',
+                    color: 'var(--ink)',
+                    backgroundColor: 'var(--paper)',
+                    fontSize: '14px',
+                    opacity: saving ? 0.5 : 1,
+                  }}
                   placeholder="0"
                 />
               </div>
@@ -342,8 +478,14 @@ export default function EditPetPage() {
 
             {/* Bio */}
             <div>
-              <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-2">
-                Bio *
+              <label htmlFor="bio" style={{
+                display: 'block',
+                fontSize: '10.5px',
+                fontWeight: 600,
+                color: 'var(--ink)',
+                marginBottom: '8px',
+              }}>
+                Bio
               </label>
               <textarea
                 id="bio"
@@ -351,40 +493,82 @@ export default function EditPetPage() {
                 onChange={(e) => setBio(e.target.value)}
                 disabled={saving}
                 rows={4}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:opacity-50"
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  border: '1px solid var(--line)',
+                  borderRadius: 'var(--radius-sm)',
+                  color: 'var(--ink)',
+                  backgroundColor: 'var(--paper)',
+                  fontSize: '14px',
+                  fontFamily: 'Inter, system-ui, sans-serif',
+                  opacity: saving ? 0.5 : 1,
+                }}
                 placeholder="Tell us about your pet in their voice..."
               />
-              <p className="text-xs text-gray-500 mt-1">Write as if your pet is speaking</p>
+              <p style={{
+                fontSize: '10.5px',
+                color: 'var(--ink-2)',
+                marginTop: '6px',
+              }}>
+                Write as if your pet is speaking
+              </p>
             </div>
 
             {/* Cover Photo */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label style={{
+                display: 'block',
+                fontSize: '10.5px',
+                fontWeight: 600,
+                color: 'var(--ink)',
+                marginBottom: '8px',
+              }}>
                 Cover Photo
               </label>
-              <div className="relative">
+              <div style={{ position: 'relative' }}>
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleCoverChange}
                   disabled={saving}
-                  className="hidden"
+                  style={{ display: 'none' }}
                   id="cover-upload"
                 />
                 <label
                   htmlFor="cover-upload"
-                  className="block w-full px-4 py-8 border-2 border-dashed border-gray-300 rounded-lg text-center cursor-pointer hover:border-amber-500 hover:bg-amber-50 transition-colors disabled:opacity-50"
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    padding: '32px 16px',
+                    border: '2px dashed var(--line)',
+                    borderRadius: 'var(--radius-md)',
+                    textAlign: 'center',
+                    cursor: saving ? 'not-allowed' : 'pointer',
+                    backgroundColor: 'transparent',
+                    transition: 'all 200ms',
+                    opacity: saving ? 0.5 : 1,
+                  }}
+                  onMouseEnter={(e) => !saving && (e.currentTarget.style.borderColor = 'var(--acc)', e.currentTarget.style.backgroundColor = 'rgba(217, 119, 87, 0.05)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--line)', e.currentTarget.style.backgroundColor = 'transparent')}
                 >
                   {coverPreview ? (
                     <img
                       src={coverPreview}
                       alt="Cover Preview"
-                      className="h-40 w-full object-cover rounded-lg"
+                      style={{
+                        height: '128px',
+                        width: '100%',
+                        objectFit: 'cover',
+                        borderRadius: 'var(--radius-sm)',
+                        display: 'block',
+                      }}
                     />
                   ) : (
-                    <div className="text-gray-600">
-                      <p className="font-medium">📸 Click to upload cover photo</p>
-                      <p className="text-xs text-gray-500">or drag and drop</p>
+                    <div>
+                      <p style={{ color: 'var(--ink)', margin: '0 0 6px 0' }}>📸</p>
+                      <p style={{ color: 'var(--ink)', margin: '0 0 4px 0', fontSize: '12.5px', fontWeight: 600 }}>Click to upload</p>
+                      <p style={{ color: 'var(--ink-2)', margin: 0, fontSize: '10.5px' }}>or drag and drop</p>
                     </div>
                   )}
                 </label>
@@ -393,32 +577,59 @@ export default function EditPetPage() {
 
             {/* Avatar Photo */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label style={{
+                display: 'block',
+                fontSize: '10.5px',
+                fontWeight: 600,
+                color: 'var(--ink)',
+                marginBottom: '8px',
+              }}>
                 Avatar Photo
               </label>
-              <div className="relative">
+              <div style={{ position: 'relative' }}>
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleAvatarChange}
                   disabled={saving}
-                  className="hidden"
+                  style={{ display: 'none' }}
                   id="avatar-upload"
                 />
                 <label
                   htmlFor="avatar-upload"
-                  className="block w-full px-4 py-8 border-2 border-dashed border-gray-300 rounded-lg text-center cursor-pointer hover:border-amber-500 hover:bg-amber-50 transition-colors disabled:opacity-50"
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    padding: '32px 16px',
+                    border: '2px dashed var(--line)',
+                    borderRadius: 'var(--radius-md)',
+                    textAlign: 'center',
+                    cursor: saving ? 'not-allowed' : 'pointer',
+                    backgroundColor: 'transparent',
+                    transition: 'all 200ms',
+                    opacity: saving ? 0.5 : 1,
+                  }}
+                  onMouseEnter={(e) => !saving && (e.currentTarget.style.borderColor = 'var(--acc)', e.currentTarget.style.backgroundColor = 'rgba(217, 119, 87, 0.05)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--line)', e.currentTarget.style.backgroundColor = 'transparent')}
                 >
                   {avatarPreview ? (
                     <img
                       src={avatarPreview}
                       alt="Avatar Preview"
-                      className="h-40 w-40 object-cover rounded-full mx-auto"
+                      style={{
+                        height: '128px',
+                        width: '128px',
+                        objectFit: 'cover',
+                        borderRadius: 'var(--radius-sm)',
+                        margin: '0 auto',
+                        display: 'block',
+                      }}
                     />
                   ) : (
-                    <div className="text-gray-600">
-                      <p className="font-medium">📸 Click to upload avatar photo</p>
-                      <p className="text-xs text-gray-500">or drag and drop</p>
+                    <div>
+                      <p style={{ color: 'var(--ink)', margin: '0 0 6px 0' }}>📸</p>
+                      <p style={{ color: 'var(--ink)', margin: '0 0 4px 0', fontSize: '12.5px', fontWeight: 600 }}>Click to upload</p>
+                      <p style={{ color: 'var(--ink-2)', margin: 0, fontSize: '10.5px' }}>or drag and drop</p>
                     </div>
                   )}
                 </label>
@@ -426,11 +637,22 @@ export default function EditPetPage() {
             </div>
 
             {/* Submit */}
-            <div className="flex gap-3">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
               <button
                 type="submit"
                 disabled={saving || deleting}
-                className="flex-1 bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:opacity-50 transition-colors"
+                style={{
+                  padding: '12px',
+                  background: 'var(--acc)',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: 'var(--radius-md)',
+                  cursor: saving || deleting ? 'not-allowed' : 'pointer',
+                  opacity: saving || deleting ? 0.7 : 1,
+                  transition: 'opacity 200ms',
+                  fontSize: '12.5px',
+                  fontWeight: 600,
+                }}
               >
                 {saving ? 'Saving...' : 'Save Profile'}
               </button>
@@ -438,7 +660,18 @@ export default function EditPetPage() {
                 type="button"
                 onClick={handleDelete}
                 disabled={saving || deleting}
-                className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 transition-colors"
+                style={{
+                  padding: '12px',
+                  background: '#dc2626',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: 'var(--radius-md)',
+                  cursor: saving || deleting ? 'not-allowed' : 'pointer',
+                  opacity: saving || deleting ? 0.7 : 1,
+                  transition: 'opacity 200ms',
+                  fontSize: '12.5px',
+                  fontWeight: 600,
+                }}
               >
                 {deleting ? 'Deleting...' : '🗑️ Delete'}
               </button>
