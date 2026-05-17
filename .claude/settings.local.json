@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Test-Path \"c:\\\\Users\\\\james\\\\OneDrive\\\\Desktop\\\\petproject\\\\app\\\\pets\\\\[id]\")"
+    ]
+  }
+}

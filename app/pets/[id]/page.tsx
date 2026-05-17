@@ -2,132 +2,90 @@
 
 import { createClient } from '@/lib/supabase'
 import Link from 'next/link'
-import { useParams, useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { PostCreator } from '@/app/components/PostCreator'
-import { PostDisplay } from '@/app/components/PostDisplay'
 
 interface Pet {
   id: string
   name: string
   species: string
   breed: string | null
+  avatar_url: string | null
+  cover_photo_url: string | null
   age_years: number | null
   age_months: number | null
   bio: string | null
-  avatar_url: string | null
-  cover_url: string | null
   card_number: number | null
-  is_nursery: boolean
   owner_id: string
 }
 
-interface User {
+interface UserProfile {
   username: string | null
 }
 
-export default function PetCardPage() {
-  const params = useParams()
+export default function ShelfPage() {
   const router = useRouter()
+  const params = useParams()
   const petId = params.id as string
-
   const [pet, setPet] = useState<Pet | null>(null)
-  const [owner, setOwner] = useState<User | null>(null)
-  const [isOwner, setIsOwner] = useState(false)
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
-  const [boopCount, setBoopCount] = useState(0)
-  const [stashCount, setStashCount] = useState(0)
-  const [postRefresh, setPostRefresh] = useState(0)
+  const [owner, setOwner] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const [user, setUser] = useState<{ id: string } | null>(null)
+  const [isOwner, setIsOwner] = useState(false)
 
   useEffect(() => {
-    const fetchPet = async () => {
+    const loadPet = async () => {
       try {
         const supabase = createClient()
-
-        // Get current user
         const { data: userData } = await supabase.auth.getUser()
-        if (userData.user) {
-          setCurrentUserId(userData.user.id)
+        if (!userData.user) {
+          router.push('/login')
+          return
         }
+        setUser(userData.user as { id: string })
 
-        // Fetch pet
-        const { data: petData, error: petError } = await supabase
+        const { data: petData } = await supabase
           .from('pets')
           .select('*')
           .eq('id', petId)
           .single()
 
-        if (petError || !petData) {
-          setError('Pet not found')
-          setLoading(false)
-          return
+        if (petData) {
+          setPet(petData)
+          setIsOwner(petData.owner_id === userData.user.id)
+
+          const { data: ownerData } = await supabase
+            .from('users')
+            .select('username')
+            .eq('id', petData.owner_id)
+            .single()
+          setOwner(ownerData)
         }
-
-        setPet(petData)
-
-        // Check if current user is owner
-        if (userData.user && userData.user.id === petData.owner_id) {
-          setIsOwner(true)
-        }
-
-        // Fetch owner info
-        const { data: ownerData } = await supabase
-          .from('users')
-          .select('username')
-          .eq('id', petData.owner_id)
-          .single()
-
-        setOwner(ownerData)
-
-        // Fetch boop count
-        const { data: boopsData, error: boopsError } = await supabase
-          .from('boops')
-          .select('id', { count: 'exact' })
-          .eq('pet_id', petId)
-
-        if (!boopsError && boopsData) {
-          setBoopCount(boopsData.length)
-        }
-
-        // Fetch stash count
-        const { data: stashesData, error: stashesError } = await supabase
-          .from('stashes')
-          .select('id', { count: 'exact' })
-          .eq('pet_id', petId)
-
-        if (!stashesError && stashesData) {
-          setStashCount(stashesData.length)
-        }
-
         setLoading(false)
       } catch (err) {
-        console.error('Fetch error:', err)
-        setError('Failed to load pet')
+        console.error('Pet load error:', err)
         setLoading(false)
       }
     }
 
-    if (petId) {
-      fetchPet()
-    }
-  }, [petId])
+    loadPet()
+  }, [petId, router])
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50 flex items-center justify-center">
-        <p className="text-gray-600">Loading...</p>
+      <div className="min-h-screen bg-app flex items-center justify-center">
+        <p style={{ color: 'var(--ink-2)' }}>Loading pet card...</p>
       </div>
     )
   }
 
-  if (error || !pet) {
+  if (!pet) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50 flex items-center justify-center">
+      <div className="min-h-screen bg-app flex items-center justify-center p-6">
         <div className="text-center">
-          <p className="text-red-600 mb-4">{error}</p>
-          <Link href="/stack" className="text-amber-600 hover:text-amber-700 font-medium">
+          <p className="text-4xl mb-4">🐾</p>
+          <h1 className="display-lg" style={{ color: 'var(--ink)', marginBottom: '16px' }}>Pet not found</h1>
+          <Link href="/stack" className="text-sm" style={{ color: 'var(--acc)' }}>
             Back to Stack
           </Link>
         </div>
@@ -135,137 +93,266 @@ export default function PetCardPage() {
     )
   }
 
-  const profileIncomplete = !pet.breed || pet.age_years === null || !pet.bio
+  const ageDisplay = pet.age_years !== null
+    ? `${pet.age_years}y ${pet.age_months || 0}m`
+    : '—'
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50 py-8 px-4">
-      <div className="max-w-2xl mx-auto">
-        {/* Back button */}
-        <Link href="/stack" className="text-amber-600 hover:text-amber-700 font-medium mb-6 inline-block">
-          ← Back
-        </Link>
+    <div className="min-h-screen bg-app pb-20">
+      {/* Hero Section */}
+      <div style={{
+        height: '260px',
+        backgroundColor: '#ddd',
+        backgroundImage: pet.cover_photo_url ? `url(${pet.cover_photo_url})` : undefined,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        position: 'relative',
+        overflow: 'hidden',
+      }}>
+        {/* Gradient Overlay */}
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(to bottom, transparent 40%, rgba(250, 250, 247, 0.8) 85%, rgba(250, 250, 247, 1))',
+          pointerEvents: 'none',
+        }} />
 
-        {/* Card */}
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-          {/* Cover photo */}
-          <div className="h-48 bg-gradient-to-br from-amber-200 to-orange-300 relative overflow-hidden">
-            {pet.cover_url ? (
-              <img src={pet.cover_url} alt="Cover" className="w-full h-full object-cover" />
-            ) : null}
-          </div>
+        {/* Header Controls */}
+        <div style={{
+          position: 'absolute',
+          top: '18px',
+          left: '18px',
+          right: '18px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          zIndex: 10,
+        }}>
+          <button
+            onClick={() => router.back()}
+            className="w-10 h-10 rounded-full hover:opacity-70"
+            style={{
+              background: 'rgba(255, 255, 255, 0.18)',
+              color: '#fff',
+              border: '0.5px solid rgba(255, 255, 255, 0.3)',
+              backdropFilter: 'blur(12px)',
+              fontSize: '18px',
+            }}
+          >
+            ←
+          </button>
 
-          {/* Content */}
-          <div className="relative px-6 pb-6">
-            {/* Avatar */}
-            <div className="flex justify-between items-start -mt-16 mb-4 relative z-10">
-              <div className="relative">
-                {pet.avatar_url ? (
-                  <img
-                    src={pet.avatar_url}
-                    alt={pet.name}
-                    className="w-32 h-32 rounded-full border-4 border-white object-cover shadow-lg"
-                  />
-                ) : (
-                  <div className="w-32 h-32 rounded-full border-4 border-white bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center shadow-lg">
-                    <span className="text-4xl">🐾</span>
-                  </div>
-                )}
-                {pet.is_nursery && (
-                  <span className="absolute bottom-2 right-2 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                    🍼 Baby
-                  </span>
-                )}
-              </div>
-
-              {isOwner && (
-                <Link
-                  href={`/pets/${pet.id}/edit`}
-                  className="text-amber-600 hover:text-amber-700 font-medium text-sm"
-                >
-                  ✏️ Edit
-                </Link>
-              )}
-            </div>
-
-            {/* Pet info */}
-            <div className="mb-6">
-              <div className="flex items-baseline gap-2 mb-2">
-                <h1 className="text-3xl font-bold text-gray-900">{pet.name}</h1>
-                {pet.card_number && (
-                  <span className="text-sm font-medium text-amber-600 bg-amber-50 px-3 py-1 rounded-full">
-                    {pet.species} #{pet.card_number}
-                  </span>
-                )}
-              </div>
-
-              {pet.breed && <p className="text-gray-600 text-lg mb-2">{pet.breed}</p>}
-
-              {(pet.age_years !== null || pet.age_months !== null) && (
-                <p className="text-sm text-gray-500 mb-2">
-                  {pet.age_years && `${pet.age_years}y `}
-                  {pet.age_months && `${pet.age_months}m`}
-                </p>
-              )}
-            </div>
-
-            {/* Bio */}
-            {pet.bio && <p className="text-gray-700 mb-6 italic">{pet.bio}</p>}
-
-            {/* Owner */}
-            {owner?.username && (
-              <p className="text-sm text-gray-600 mb-6">
-                Pet owner:{' '}
-                <Link href={`/user/${owner.username}`} className="font-medium text-amber-600 hover:text-amber-700">
-                  @{owner.username}
-                </Link>
+          {pet.card_number && (
+            <div style={{
+              padding: '4px 12px',
+              borderRadius: 'var(--radius-pill)',
+              background: 'rgba(0, 0, 0, 0.4)',
+              backdropFilter: 'blur(10px)',
+            }}>
+              <p className="button-text-small" style={{ color: '#fff', letterSpacing: '1px' }}>
+                CARD #{String(pet.card_number).padStart(3, '0')}
               </p>
-            )}
-
-            {/* Complete profile banner */}
-            {isOwner && profileIncomplete && (
-              <Link
-                href={`/pets/${pet.id}/edit`}
-                className="block w-full bg-blue-50 border border-blue-200 text-blue-900 px-4 py-3 rounded-lg text-center font-medium hover:bg-blue-100 transition-colors mb-6"
-              >
-                📝 Complete {pet.name}'s profile
-              </Link>
-            )}
-
-            {/* Interaction stats */}
-            <div className="border-t pt-6">
-              <div className="grid grid-cols-2 gap-3 mb-6">
-                <div className="bg-pink-50 rounded-lg p-3 text-center">
-                  <p className="text-2xl font-bold text-pink-600">{boopCount}</p>
-                  <p className="text-sm text-pink-700 font-medium">Boops</p>
-                </div>
-                <div className="bg-blue-50 rounded-lg p-3 text-center">
-                  <p className="text-2xl font-bold text-blue-600">{stashCount}</p>
-                  <p className="text-sm text-blue-700 font-medium">Stashes</p>
-                </div>
-              </div>
-              <button disabled className="w-full bg-gray-100 text-gray-500 font-medium py-2 rounded-lg text-sm cursor-not-allowed">
-                👁️ Follow (coming soon)
-              </button>
             </div>
+          )}
 
-            {/* Posts Section */}
-            <div className="border-t pt-6 mt-6">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">Updates</h2>
+          {isOwner && (
+            <Link
+              href={`/pets/${petId}/edit`}
+              className="w-10 h-10 rounded-full hover:opacity-70 flex items-center justify-center"
+              style={{
+                background: 'rgba(255, 255, 255, 0.18)',
+                color: '#fff',
+                border: '0.5px solid rgba(255, 255, 255, 0.3)',
+                backdropFilter: 'blur(12px)',
+                fontSize: '16px',
+              }}
+            >
+              ✎
+            </Link>
+          )}
+        </div>
 
-              {/* Post Creator (owner only) */}
-              {isOwner && (
-                <PostCreator
-                  petId={pet.id}
-                  isOwner={isOwner}
-                  onPostCreated={() => setPostRefresh((p) => p + 1)}
-                />
-              )}
+        {/* Avatar Overlay */}
+        <div style={{
+          position: 'absolute',
+          bottom: '-40px',
+          left: '18px',
+          width: '100px',
+          height: '100px',
+          borderRadius: '50%',
+          border: '4px solid var(--paper)',
+          backgroundColor: '#ddd',
+          backgroundImage: pet.avatar_url ? `url(${pet.avatar_url})` : undefined,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          overflow: 'hidden',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 5,
+          boxShadow: 'var(--shadow-card)',
+        }}>
+          {!pet.avatar_url && <span style={{ fontSize: '44px' }}>🐾</span>}
+        </div>
+      </div>
 
-              {/* Posts Display */}
-              <PostDisplay key={postRefresh} petId={pet.id} currentUserId={currentUserId} />
-            </div>
+      {/* Content Panel */}
+      <div style={{
+        marginTop: '-40px',
+        paddingTop: '60px',
+        paddingLeft: '18px',
+        paddingRight: '18px',
+        paddingBottom: '18px',
+        borderTopLeftRadius: 'var(--radius-lg)',
+        borderTopRightRadius: 'var(--radius-lg)',
+        backgroundColor: 'var(--paper)',
+        position: 'relative',
+        zIndex: 4,
+      }}>
+        {/* Identity Block */}
+        <div style={{ marginBottom: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', marginBottom: '6px' }}>
+            <h1 className="display-xl" style={{ color: 'var(--ink)' }}>{pet.name}</h1>
+            <p className="label" style={{ color: 'var(--ink-2)' }}>
+              {pet.species}{pet.breed ? ` · ${pet.breed}` : ''}
+            </p>
+          </div>
+          <p className="text-sm" style={{ color: 'var(--ink-2)' }}>
+            {ageDisplay}{pet.age_years !== null && ' old'}
+          </p>
+        </div>
+
+        {/* Action Buttons */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '20px' }}>
+          <button className="py-3 rounded-lg button-text hover:opacity-90 transition-opacity" style={{
+            background: 'var(--ink)',
+            color: 'var(--paper)',
+          }}>
+            Follow
+          </button>
+          <button className="py-3 rounded-lg button-text hover:opacity-90 transition-opacity" style={{
+            background: 'var(--acc)',
+            color: '#fff',
+          }}>
+            Send treat
+          </button>
+        </div>
+
+        {/* Bio Quote Block */}
+        {pet.bio && (
+          <div style={{
+            padding: '12px 14px',
+            borderLeft: '3px solid var(--acc)',
+            backgroundColor: 'rgba(217, 119, 87, 0.08)',
+            borderRadius: '4px',
+            marginBottom: '20px',
+          }}>
+            <p className="text-sm" style={{ color: 'var(--ink)', fontStyle: 'italic', lineHeight: 1.5 }}>
+              "{pet.bio}"
+            </p>
+          </div>
+        )}
+
+        {/* Trophy Case */}
+        <div style={{ marginBottom: '24px' }}>
+          <p className="label" style={{ color: 'var(--ink-2)', marginBottom: '12px' }}>TROPHY CASE</p>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(5, 1fr)',
+            gap: '8px',
+          }}>
+            {[...Array(10)].map((_, i) => {
+              const unlocked = i < 3
+              return (
+                <div
+                  key={i}
+                  style={{
+                    aspectRatio: '1',
+                    borderRadius: 'var(--radius-md)',
+                    border: '1px solid var(--line)',
+                    backgroundColor: unlocked ? 'var(--paper)' : 'transparent',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '20px',
+                  }}
+                >
+                  {unlocked ? ['🏅', '🎖️', '⭐'][i] : '?'}
+                </div>
+              )
+            })}
           </div>
         </div>
+
+        {/* Snapshot Wall */}
+        <div style={{ marginBottom: '24px' }}>
+          <p className="label" style={{ color: 'var(--ink-2)', marginBottom: '12px' }}>SNAPSHOT WALL</p>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: '8px',
+          }}>
+            {[...Array(6)].map((_, i) => (
+              <div
+                key={i}
+                style={{
+                  aspectRatio: '1',
+                  borderRadius: 'var(--radius-sm)',
+                  backgroundColor: '#ddd',
+                  border: '1px solid var(--line)',
+                  overflow: 'hidden',
+                }}
+              >
+                <img
+                  src={`https://picsum.photos/120/120?random=${i}`}
+                  alt={`photo ${i}`}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Owner Info */}
+        <div style={{
+          padding: '12px 14px',
+          borderRadius: 'var(--radius-sm)',
+          backgroundColor: 'var(--app-bg)',
+          textAlign: 'center',
+        }}>
+          <p className="text-xs" style={{ color: 'var(--ink-2)', marginBottom: '4px' }}>OWNER</p>
+          <p className="display-sm" style={{ color: 'var(--ink)' }}>@{owner?.username || 'unknown'}</p>
+        </div>
+      </div>
+
+      {/* Tab Bar */}
+      <div style={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: '82px',
+        paddingTop: 'var(--space-3)',
+        paddingBottom: 'var(--space-6)',
+        background: 'rgba(250, 250, 247, 0.92)',
+        backdropFilter: 'blur(20px) saturate(180%)',
+        borderTop: '0.5px solid rgba(0, 0, 0, 0.08)',
+        display: 'flex',
+        justifyContent: 'space-around',
+        alignItems: 'flex-start',
+      }}>
+        {[
+          { emoji: '📚', label: 'Stack', href: '/stack', active: false },
+          { emoji: '📖', label: 'Dex', href: '/dex', active: false },
+          { emoji: '📸', label: 'Burst', href: '/burst', active: false },
+          { emoji: '🐾', label: 'Packs', href: '/packs', active: false },
+          { emoji: '🏆', label: 'Shelf', href: '/profile', active: true },
+        ].map(tab => (
+          <Link key={tab.label} href={tab.href} className="flex flex-col items-center gap-0.5" style={{ opacity: tab.active ? 1 : 0.45 }}>
+            <span style={{ fontSize: '22px' }}>{tab.emoji}</span>
+            <span className="text-xs font-medium" style={{ color: tab.active ? 'var(--acc)' : 'var(--ink)' }}>{tab.label}</span>
+          </Link>
+        ))}
       </div>
     </div>
   )

@@ -913,6 +913,34 @@ Protected routes added:
 
 ---
 
+---
+
+## Phase 6+ Enhancements & Polish
+
+### UI/UX Design Polish (High Priority)
+- **Login & Signup Pages** — Current design is plain/functional. Need visual polish to match warm, confident brand
+  - Add illustration or visual interest
+  - Better spacing and typography
+  - Match onboarding aesthetic
+  - Consider login flow alternatives (magic link, passwordless)
+
+- **Onboarding Page** — Functional but needs more personality
+  - Better illustrations or hero image
+  - More welcoming copy
+  - Visual hierarchy improvement
+  - Maybe add a step indicator if flow expands
+
+### Phase 6 Features (Next priorities)
+- Pack notifications when new pets added to followed packs
+- Collaborative packs (multiple owners)
+- Pack activity feed
+- "Add pet to pack" UI button on pet cards
+- Advanced pack filtering/search
+- Pack pinned/featured pets
+- Fix Windows SSL issue for local development (blocking local auth testing)
+
+---
+
 *Last updated: 2026-05-17*
 *Phase 0 completion time: ~2.5 hours*
 *Phase 1 Auth time: ~3 hours (infrastructure built, skipped debugging)*

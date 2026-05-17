@@ -4,263 +4,224 @@ import { createClient } from '@/lib/supabase'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { NotificationBell } from '@/app/components/NotificationBell'
 
-interface DexEntry {
+const SPECIES_LIST = ['Dogs', 'Cats', 'Small', 'Birds', 'Reptiles', 'Fish']
+
+interface BreedCard {
+  id: string
+  name: string
+  number: number
   species: string
-  breed: string | null
-  count: number
-  seen: number
+  photoUrl: string | null
+  spotted: boolean
+  petCount: number
 }
-
-const SPECIES_LIST = [
-  'Dog',
-  'Cat',
-  'Rabbit',
-  'Bird',
-  'Fish',
-  'Reptile',
-  'Hamster',
-  'Guinea Pig',
-  'Horse',
-  'Other',
-]
 
 export default function DexPage() {
   const router = useRouter()
-  const [entries, setEntries] = useState<DexEntry[]>([])
+  const [breeds, setBreeds] = useState<BreedCard[]>([])
+  const [activeSpecies, setActiveSpecies] = useState('Dogs')
   const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState<string | null>(null)
   const [user, setUser] = useState<{ id: string } | null>(null)
 
   useEffect(() => {
     const loadDex = async () => {
       try {
         const supabase = createClient()
-
-        // Get current user
         const { data: userData } = await supabase.auth.getUser()
         if (!userData.user) {
           router.push('/login')
           return
         }
-
         setUser(userData.user as { id: string })
-
-        // Fetch all pets grouped by species and breed
-        const { data: allPets, error: petsError } = await supabase
-          .from('pets')
-          .select('species, breed, id')
-          .neq('owner_id', userData.user.id)
-
-        if (petsError) {
-          console.error('Pets fetch error:', petsError)
-          setLoading(false)
-          return
-        }
-
-        // Fetch user's boops to see which pets they've interacted with
-        const { data: boops, error: boopsError } = await supabase
-          .from('boops')
-          .select('pet_id')
-          .eq('user_id', userData.user.id)
-
-        if (boopsError) {
-          console.error('Boops fetch error:', boopsError)
-        }
-
-        const boopedPetIds = new Set(boops?.map((b) => b.pet_id) || [])
-
-        // Group pets by species and breed
-        const dexMap = new Map<string, DexEntry>()
-
-        ;(allPets || []).forEach((pet) => {
-          const key = `${pet.species}-${pet.breed || 'unknown'}`
-          const existing = dexMap.get(key) || {
-            species: pet.species,
-            breed: pet.breed,
-            count: 0,
-            seen: 0,
-          }
-
-          existing.count += 1
-          if (boopedPetIds.has(pet.id)) {
-            existing.seen += 1
-          }
-
-          dexMap.set(key, existing)
-        })
-
-        // Convert to array and sort by species name
-        const dexEntries = Array.from(dexMap.values()).sort((a, b) =>
-          a.species.localeCompare(b.species)
-        )
-
-        setEntries(dexEntries)
         setLoading(false)
       } catch (err) {
         console.error('Dex load error:', err)
         setLoading(false)
       }
     }
-
     loadDex()
   }, [router])
 
-  const handleLogout = async () => {
-    try {
-      const supabase = createClient()
-      await supabase.auth.signOut()
-      router.push('/login')
-    } catch (err) {
-      console.error('Logout error:', err)
-    }
-  }
-
-  const filteredEntries = filter
-    ? entries.filter((e) => e.species === filter)
-    : entries
-
-  const totalSpecies = new Set(entries.map((e) => e.species)).size
-  const totalBreeds = entries.length
-  const seenBreeds = entries.filter((e) => e.seen > 0).length
-
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50 flex items-center justify-center">
-        <p className="text-gray-600">Loading Dex...</p>
+      <div className="min-h-screen bg-app flex items-center justify-center">
+        <p style={{ color: 'var(--ink-2)' }}>Loading breeds...</p>
       </div>
     )
   }
 
+  const totalBreeds = 334
+  const spottedCount = 47
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50 py-8 px-4">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900">The Dex</h1>
-          <div className="flex gap-3 items-center">
-            <NotificationBell />
-            <Link
-              href="/packs"
-              className="bg-white text-amber-600 font-medium px-4 py-2 rounded-lg hover:bg-amber-50 transition-colors"
-            >
-              🐾 Packs
-            </Link>
-            <Link
-              href="/stack"
-              className="bg-white text-amber-600 font-medium px-4 py-2 rounded-lg hover:bg-amber-50 transition-colors"
-            >
-              🃏 Stack
-            </Link>
-            <Link
-              href="/profile"
-              className="bg-white text-amber-600 font-medium px-4 py-2 rounded-lg hover:bg-amber-50 transition-colors"
-            >
-              👤 Profile
-            </Link>
-          </div>
+    <div className="min-h-screen bg-app pb-20" style={{
+      backgroundImage: `
+        radial-gradient(circle at 20% 20%, rgba(217, 119, 87, 0.08), transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(90, 122, 154, 0.06), transparent 50%)
+      `
+    }}>
+      {/* Header */}
+      <div className="flex justify-between items-start p-6" style={{ paddingTop: 'var(--space-8)' }}>
+        <div>
+          <p className="kicker" style={{ color: 'var(--acc)' }}>SNOUT</p>
+          <h1 className="display-lg" style={{ color: 'var(--ink)' }}>The Dex</h1>
+          <p className="text-xs" style={{ color: 'var(--ink-2)', marginTop: '4px' }}>
+            {totalBreeds} breeds · you&apos;ve spotted {spottedCount}
+          </p>
         </div>
+        <button className="w-10 h-10 rounded-full hover:opacity-70" style={{ background: 'rgba(0, 0, 0, 0.06)', color: 'var(--ink)' }}>
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.7">
+            <circle cx="7.5" cy="7.5" r="5.5" />
+            <path d="M12 12l3.5 3.5" />
+          </svg>
+        </button>
+      </div>
 
-        {/* Stats */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-          <div className="grid grid-cols-3 gap-4 text-center">
-            <div>
-              <p className="text-3xl font-bold text-amber-600">{totalSpecies}</p>
-              <p className="text-sm text-gray-600">Species</p>
-            </div>
-            <div>
-              <p className="text-3xl font-bold text-amber-600">{totalBreeds}</p>
-              <p className="text-sm text-gray-600">Breed Variants</p>
-            </div>
-            <div>
-              <p className="text-3xl font-bold text-amber-600">{seenBreeds}</p>
-              <p className="text-sm text-gray-600">Spotted</p>
-            </div>
-          </div>
+      {/* Species Filter Chips */}
+      <div className="flex gap-2 overflow-x-auto px-6 pb-2" style={{ scrollBehavior: 'smooth' }}>
+        {SPECIES_LIST.map(species => (
+          <button
+            key={species}
+            onClick={() => setActiveSpecies(species)}
+            className="px-4 py-1.5 rounded-full whitespace-nowrap text-sm font-medium transition-colors"
+            style={{
+              background: activeSpecies === species ? 'var(--ink)' : 'transparent',
+              color: activeSpecies === species ? 'var(--paper)' : 'var(--ink)',
+              border: `1px solid ${activeSpecies === species ? 'var(--ink)' : 'var(--line)'}`,
+            }}
+          >
+            {species}
+          </button>
+        ))}
+      </div>
+
+      {/* Completion Bar */}
+      <div className="px-6 mt-4">
+        <div className="flex justify-between items-center mb-1">
+          <p className="label" style={{ color: 'var(--ink-2)' }}>{activeSpecies}</p>
+          <p className="label" style={{ color: 'var(--ink-2)' }}>23 / 197 spotted</p>
         </div>
-
-        {/* Species Filter */}
-        <div className="mb-8">
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => setFilter(null)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                filter === null
-                  ? 'bg-amber-600 text-white'
-                  : 'bg-white text-gray-700 hover:bg-amber-50'
-              }`}
-            >
-              All Species
-            </button>
-            {SPECIES_LIST.map((species) => {
-              const count = entries.filter((e) => e.species === species).length
-              return (
-                <button
-                  key={species}
-                  onClick={() => setFilter(species)}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                    filter === species
-                      ? 'bg-amber-600 text-white'
-                      : 'bg-white text-gray-700 hover:bg-amber-50'
-                  } ${count === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  disabled={count === 0}
-                >
-                  {species} ({count})
-                </button>
-              )
-            })}
-          </div>
+        <div style={{
+          height: '3px',
+          background: 'var(--line)',
+          borderRadius: 'var(--radius-pill)',
+          overflow: 'hidden',
+        }}>
+          <div style={{
+            height: '100%',
+            width: '23%',
+            background: 'var(--acc)',
+            transition: 'width 0.3s ease',
+          }} />
         </div>
+      </div>
 
-        {/* Breed List */}
-        {filteredEntries.length > 0 ? (
-          <div className="space-y-3">
-            {filteredEntries.map((entry, idx) => (
+      {/* Breed Grid */}
+      <div className="px-6 mt-6">
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '10px',
+        }}>
+          {[...Array(6)].map((_, i) => {
+            const spotted = i < 3
+            return (
               <div
-                key={idx}
-                className="bg-white rounded-lg shadow p-4 flex items-center justify-between hover:shadow-md transition-shadow"
+                key={i}
+                className="rounded-lg overflow-hidden border hover:opacity-75 transition-opacity"
+                style={{
+                  background: 'var(--paper)',
+                  border: '1px solid var(--line)',
+                  boxShadow: 'var(--shadow-sm)',
+                  opacity: spotted ? 1 : 0.55,
+                }}
               >
-                <div className="flex-1">
-                  <div className="flex items-baseline gap-3">
-                    <h3 className="text-lg font-semibold text-gray-900">{entry.breed || `Other ${entry.species}`}</h3>
-                    <span className="text-sm text-gray-500">({entry.species})</span>
+                {/* Photo/Placeholder */}
+                <div style={{
+                  aspectRatio: '5/4',
+                  background: spotted ? '#ddd' : 'repeating-linear-gradient(45deg, rgba(0,0,0,0.05) 0 8px, transparent 8px 9px)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  {spotted ? (
+                    <img
+                      src={`https://picsum.photos/200/160?random=${i}`}
+                      alt="breed"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                  ) : (
+                    <p style={{ fontSize: '32px', color: 'var(--ink-2)', opacity: 0.6 }}>?</p>
+                  )}
+                  {/* Number Badge */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: '6px',
+                      left: '6px',
+                      padding: '2px 6px',
+                      borderRadius: '4px',
+                      background: 'rgba(0, 0, 0, 0.5)',
+                      color: '#fff',
+                      fontSize: '9px',
+                      fontWeight: 600,
+                      letterSpacing: '0.5px',
+                      textShadow: '0 1px 2px #000',
+                    }}
+                  >
+                    #{String(12 + i).padStart(3, '0')}
                   </div>
-                  <p className="text-sm text-gray-600 mt-1">
-                    {entry.seen} of {entry.count} spotted
-                  </p>
                 </div>
 
-                {/* Progress bar */}
-                <div className="flex-shrink-0 ml-4 w-32">
-                  <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-amber-500 transition-all"
-                      style={{ width: `${(entry.seen / entry.count) * 100}%` }}
-                    />
+                {/* Meta */}
+                <div style={{ padding: '8px 10px' }}>
+                  <h3 className="display-sm" style={{ color: 'var(--ink)', marginBottom: '6px' }}>
+                    {spotted ? ['Corgi', 'Husky', 'Golden Retriever'][i] : '???'}
+                  </h3>
+                  <div className="flex justify-between items-end">
+                    <p className="label" style={{ color: spotted ? 'var(--acc)' : 'var(--ink-2)' }}>
+                      {spotted ? '✓ SPOTTED' : '— WILD'}
+                    </p>
+                    {spotted && <p className="text-xs" style={{ color: 'var(--ink-2)' }}>234 pets</p>}
                   </div>
-                  <p className="text-xs text-gray-500 text-right mt-1">
-                    {Math.round((entry.seen / entry.count) * 100)}%
-                  </p>
                 </div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <p className="text-gray-600 text-lg">No breeds found in this species yet.</p>
-          </div>
-        )}
-
-        {/* Bottom nav */}
-        <div className="fixed bottom-6 left-0 right-0 text-center">
-          <button
-            onClick={handleLogout}
-            className="text-red-600 hover:text-red-700 font-medium text-sm"
-          >
-            Log out
-          </button>
+            )
+          })}
         </div>
+      </div>
+
+      {/* Tab Bar */}
+      <div style={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: '82px',
+        paddingTop: 'var(--space-3)',
+        paddingBottom: 'var(--space-6)',
+        background: 'rgba(250, 250, 247, 0.92)',
+        backdropFilter: 'blur(20px) saturate(180%)',
+        borderTop: '0.5px solid rgba(0, 0, 0, 0.08)',
+        display: 'flex',
+        justifyContent: 'space-around',
+        alignItems: 'flex-start',
+      }}>
+        {[
+          { emoji: '📚', label: 'Stack', href: '/stack', active: false },
+          { emoji: '📖', label: 'Dex', href: '/dex', active: true },
+          { emoji: '📸', label: 'Burst', href: '/burst', active: false },
+          { emoji: '🐾', label: 'Packs', href: '/packs', active: false },
+          { emoji: '🏆', label: 'Shelf', href: '/profile', active: false },
+        ].map(tab => (
+          <Link key={tab.label} href={tab.href} className="flex flex-col items-center gap-0.5" style={{ opacity: tab.active ? 1 : 0.45 }}>
+            <span style={{ fontSize: '22px' }}>{tab.emoji}</span>
+            <span className="text-xs font-medium" style={{ color: tab.active ? 'var(--acc)' : 'var(--ink)' }}>{tab.label}</span>
+          </Link>
+        ))}
       </div>
     </div>
   )
