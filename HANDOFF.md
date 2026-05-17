@@ -1,7 +1,7 @@
 # PetProject — Claude Code Handoff Document
 
-> Updated: 2026-05-17 (Phase 2 Core Features — Complete)
-> Continue from: Next features or test on Vercel
+> Updated: 2026-05-17 (Phase 5 Pet Collections/Packs — Complete)
+> Continue from: Phase 4 Notifications or test on Vercel
 
 ---
 
@@ -661,10 +661,264 @@ The app should feel **warm, confident, and slightly knowing**:
 
 ---
 
+---
+
+---
+
+## Phase 4 Notifications (Completed 2026-05-17)
+
+### Infrastructure Built
+
+**Notification Library** (`lib/notifications.ts`):
+- ✅ `createNotification()` — Insert notification for user
+- ✅ `notifyPostComment()` — Notify pet owner when someone comments
+- ✅ `notifyBoop()` — Notify pet owner when booped
+- ✅ `notifyFollow()` — Notify user when followed
+- ✅ `getUnreadCount()` — Get count of unread notifications
+- ✅ `markAsRead()` — Mark single notification as read
+- ✅ `markAllAsRead()` — Mark all notifications as read
+- ✅ `deleteNotification()` — Delete notification
+
+### Components Created
+
+**NotificationBell Component** (`app/components/NotificationBell.tsx`):
+- Shows unread count badge (red dot with number or "9+")
+- Refreshes every 30 seconds
+- Links to `/notifications` page
+- Visible in header on all authenticated pages
+
+**Notifications Page** (`app/notifications/page.tsx`):
+- Full notification history
+- Filter by "All" or "Unread"
+- Mark single as read / Mark all as read buttons
+- Delete button for each notification
+- Emoji indicators by type: 💬 comment, 💕 boop, 👁️ follow, 🔔 post
+- Shows timestamp (date + time)
+- Quick action links (e.g., "View pet →")
+
+### Integration Points
+
+**When to Notify:**
+- Post comment → Notify pet owner
+- Boop received → Notify pet owner
+- User followed → Notify user
+
+**Automatic Triggers:**
+- Comments on pet posts → `notifyPostComment()`
+- Boop action on pet → `notifyBoop()`
+- Follow action on user → `notifyFollow()`
+
+### Features Summary
+- ✅ Real-time bell with count
+- ✅ Full notification history
+- ✅ Filter unread/all
+- ✅ Mark as read (individual + batch)
+- ✅ Delete notifications
+- ✅ Timestamp display
+- ✅ Quick action links to related content
+- ✅ Emoji visual distinction by type
+
+### What's NOT Included
+- Email notifications (push only)
+- Real-time updates (refresh every 30s instead)
+- Notification preferences/settings
+- Notification grouping/threading
+- Read/unread status on notifications page (just buttons)
+- Notification digest emails
+
+### Known Limitations
+- No email version of notifications
+- No real-time via WebSocket (polling every 30s)
+- Limited notification types (comment, boop, follow)
+- No notification settings to customize
+
+---
+
+---
+
+## Phase 5 Pet Collections/Packs (Completed 2026-05-17)
+
+### Community-Focused Collections
+
+**Design Philosophy:**
+- Packs are **public by default** (joinable by anyone)
+- Owners can make private (owner-only add/remove)
+- Multiple users can add their pets to the same pack
+- Examples: "Golden Retrievers", "Rescue Dogs", "Puppies 2026", "Breed Club"
+- **Community is key retention** — shared collections, not personal organization
+
+### Library & Utilities (`lib/packs.ts`)
+
+Core functions:
+- ✅ `createPack(ownerId, name, description, isPrivate)` → packId
+- ✅ `getPack(packId)` → pack with owner + member count
+- ✅ `getUserPacks(userId)` → all packs owned by user
+- ✅ `getPublicPacks(limit, offset)` → paginated public packs
+- ✅ `addPetToPack(packId, petId)` → bool
+- ✅ `removePetFromPack(packId, petId)` → bool
+- ✅ `followPack(userId, packId)` → bool
+- ✅ `unfollowPack(userId, packId)` → bool
+- ✅ `isFollowingPack(userId, packId)` → bool
+- ✅ `deletePack(packId, ownerId)` → bool
+
+### Components Created
+
+**PackCreator Component** (`app/components/PackCreator.tsx`):
+- Inline form (toggle-based, no modal)
+- Fields: name (required), description, is_private checkbox
+- Smart validation (name required, trimming)
+- Loading state during creation
+- Error handling with user feedback
+- Auto-reset form after successful creation
+
+### Pages Created
+
+**Pack Discovery** (`app/packs/page.tsx`):
+- Browse all public packs
+- Search by pack name, description, or creator username
+- For each pack: name, description, creator, member count, creation date
+- Follow/unfollow button (updates UI optimistically)
+- Click pack card to view details
+- "My Packs" button to manage owned packs
+- Protected route (authenticated users only)
+
+**Pack Detail View** (`app/packs/[id]/page.tsx`):
+- Pack header: name, description, creator, member count
+- "Back" link and "Follow" button
+- All pets from all users in that pack (grid view)
+- Pet cards: avatar, name, species, breed, card number, owner link
+- For pack owner only: "Delete Pack" button with confirmation
+- For pack owner only: "Remove from Pack" button on each pet
+- 404 handling for non-existent packs
+
+**User Pack Management** (`app/my-packs/page.tsx`):
+- Create new pack form at top (PackCreator component)
+- List all owned packs with stats (member count, creation date)
+- Click pack card to view / manage it
+- "Browse All Packs" button to discover public collections
+- Back button to profile
+
+### Profile Integration
+
+**Updated `/profile` page:**
+- New section: "Your Packs" — lists all packs owned
+- New section: "Following" — lists all packs followed
+- If no packs: show "Create Pack" and "Discover Packs" buttons
+- Packs sections clickable to detail pages
+
+### Navigation Updates
+
+Added to header on all authenticated pages:
+- 🐾 Packs button linking to `/packs`
+- 🔔 NotificationBell component (from Phase 4)
+- Consistent nav: Packs, Profile, Dex/Stack, Notifications
+
+Updated pages with new nav:
+- `/stack` — Added Packs + NotificationBell to header
+- `/dex` — Added Packs + NotificationBell to header
+- `/profile` — Added Packs + Dex + NotificationBell to header
+
+### Middleware Updates
+
+Protected routes added:
+- `/packs` — Pack discovery (authenticated)
+- `/my-packs` — Pack management (authenticated)
+- `/notifications` — Notification history (authenticated)
+- `/packs/[id]` — Pack detail (authenticated)
+
+### Features Summary
+
+**For Users:**
+- ✅ Create packs to organize themes (breed clubs, rescue groups, littermates, etc.)
+- ✅ Make packs private to keep them owner-only
+- ✅ Add own pets to any public pack
+- ✅ Follow packs to get notifications when new pets added (future)
+- ✅ Browse public packs by name/creator/description search
+- ✅ View all pets in a pack across all members
+- ✅ Manage owned packs: view, delete, remove pets
+
+**For Owners:**
+- ✅ Full control of pack (delete, remove members)
+- ✅ Visibility of member count
+- ✅ Public/private toggle
+- ✅ Optional pack descriptions
+
+### What's NOT Included
+
+**Future Pack Features (Phase 6+):**
+- Collaborative packs (multiple owners)
+- Notifications when new pets added to followed pack
+- Pack activity feed
+- Pack comments/discussion
+- Pack themes/branding
+- Member invitation system
+- Pack moderation (block members)
+- Pack pins/featured pets
+- Pack hashtags/categories
+- Trending packs analytics
+
+### Database Schema Used
+
+**Tables:**
+- `packs` — id, owner_id, name, description, is_private, created_at
+- `pack_members` — pack_id, pet_id, created_at
+- `pack_followers` — pack_id, user_id, created_at
+
+**Relationships:**
+- Owner → User (FK on owner_id)
+- Members → Pets (FK on pet_id)
+- Followers → Users (FK on user_id)
+
+### Routes Summary
+
+| Route | Method | Purpose | Auth |
+|-------|--------|---------|------|
+| `/packs` | GET | Browse all public packs | Required |
+| `/my-packs` | GET | Manage owned packs | Required |
+| `/packs/[id]` | GET | View pack + pets | Required |
+| `POST /lib/packs` | — | createPack, followPack, etc. | Client-side |
+
+### Key Design Decisions
+
+1. **Public by default** — Packs discoverable unless marked private
+2. **Multi-user add** — Any user can add their pet to public packs
+3. **Simplified permissions** — Owner can remove pets; others can't
+4. **No collaborative editing yet** — Single owner for MVP
+5. **Client-side operations** — Uses browser Supabase client (avoids Windows SSL)
+6. **Optimistic UI updates** — Follow/unfollow updates immediately in UI
+7. **Clean search** — Simple string search on name/description/creator
+
+### Testing Notes
+
+**Manual Test Sequence:**
+1. Create user A, add pet A
+2. Create user B, add pet B
+3. User A creates pack "Test Pack"
+4. User A adds pet A to pack
+5. User B adds pet B to pack
+6. Both users can view `/packs` and see the pack
+7. Both users can click pack → see both pets
+8. User A can remove pet from pack
+9. User A can delete entire pack
+
+### Known Limitations
+
+- Pack creation is owner-specific (no multi-owner)
+- No invite system (public discovery only)
+- No notifications for pack followers yet (Phase 6)
+- No pack comments/discussion
+- No pack activity feed
+- Follower count shown but not utilized yet
+- No pagination on pack discovery (loads all public)
+
+---
+
 *Last updated: 2026-05-17*
 *Phase 0 completion time: ~2.5 hours*
 *Phase 1 Auth time: ~3 hours (infrastructure built, skipped debugging)*
 *Phase 1 Pet Profiles MVP time: ~1 hour*
 *Phase 2 Core Features time: ~1 hour (Stack, Dex, Explore, profiles, filtering)*
 *Phase 3 Posts & Comments time: ~45 min (audit logging, soft delete, privacy)*
-*Next session: Test on Vercel, Phase 4 (Notifications), or Phase 5 (Packs)*
+*Phase 4 Notifications time: ~30 min (bell, notification history, marking as read)*
+*Phase 5 Packs time: ~1.5 hours (utilities, pages, navigation, profile integration)*
+*Next session: Test on Vercel, Phase 6 (Advanced features), or bug fixes*

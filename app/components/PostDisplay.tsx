@@ -79,10 +79,13 @@ export function PostDisplay({ petId, currentUserId }: PostDisplayProps) {
           .eq('is_deleted', false)
           .order('created_at', { ascending: true })
 
+        const postUser = post.user as any
         postsWithComments.push({
           ...post,
           comments: commentsData || [],
-          author: post.user || { username: 'Unknown' },
+          author: {
+            username: (postUser?.username || 'Unknown') as string,
+          },
         })
       }
 

@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { NotificationBell } from '@/app/components/NotificationBell'
 
 interface Pet {
   id: string
@@ -23,12 +24,22 @@ interface FollowUser {
   username: string | null
 }
 
+interface Pack {
+  id: string
+  name: string
+  description: string | null
+  owner_id: string
+  is_private: boolean
+}
+
 export default function ProfilePage() {
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
   const [pets, setPets] = useState<Pet[]>([])
   const [followers, setFollowers] = useState<FollowUser[]>([])
   const [following, setFollowing] = useState<FollowUser[]>([])
+  const [ownedPacks, setOwnedPacks] = useState<Pack[]>([])
+  const [followedPacks, setFollowedPacks] = useState<Pack[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [showFollowers, setShowFollowers] = useState(false)
@@ -109,6 +120,36 @@ export default function ProfilePage() {
           }
         }
 
+        // Fetch owned packs
+        const { data: ownerPacksData, error: ownerPacksError } = await supabase
+          .from('packs')
+          .select('id, name, description, owner_id, is_private')
+          .eq('owner_id', userData.user.id)
+          .order('created_at', { ascending: false })
+
+        if (!ownerPacksError) {
+          setOwnedPacks(ownerPacksData || [])
+        }
+
+        // Fetch followed packs
+        const { data: followedPackIds, error: followedError } = await supabase
+          .from('pack_followers')
+          .select('pack_id')
+          .eq('user_id', userData.user.id)
+
+        if (!followedError && followedPackIds) {
+          const packIds = followedPackIds.map((f: any) => f.pack_id)
+          if (packIds.length > 0) {
+            const { data: followedPacksData } = await supabase
+              .from('packs')
+              .select('id, name, description, owner_id, is_private')
+              .in('id', packIds)
+              .order('created_at', { ascending: false })
+
+            setFollowedPacks(followedPacksData || [])
+          }
+        }
+
         setLoading(false)
       } catch (err) {
         console.error('Profile fetch error:', err)
@@ -131,11 +172,30 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50 py-8 px-4">
       <div className="max-w-5xl mx-auto">
-        {/* Header */}
-        <div className="mb-12">
-          <Link href="/stack" className="text-amber-600 hover:text-amber-700 font-medium mb-6 inline-block">
-            ← Back
+        {/* Header Navigation */}
+        <div className="flex justify-between items-center mb-8">
+          <Link href="/stack" className="text-amber-600 hover:text-amber-700 font-medium">
+            ← Back to Stack
           </Link>
+          <div className="flex gap-3 items-center">
+            <NotificationBell />
+            <Link
+              href="/packs"
+              className="bg-white text-amber-600 font-medium px-4 py-2 rounded-lg hover:bg-amber-50 transition-colors"
+            >
+              🐾 Packs
+            </Link>
+            <Link
+              href="/dex"
+              className="bg-white text-amber-600 font-medium px-4 py-2 rounded-lg hover:bg-amber-50 transition-colors"
+            >
+              📚 Dex
+            </Link>
+          </div>
+        </div>
+
+        {/* Profile Header */}
+        <div className="mb-12">
 
           <div className="bg-white rounded-xl shadow-lg p-8">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
@@ -263,6 +323,74 @@ export default function ProfilePage() {
                 🐾 Add Your First Pet
               </button>
             </Link>
+          </div>
+        )}
+
+        {/* Your Packs */}
+        {ownedPacks.length > 0 && (
+          <div className="mt-12">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Your Packs ({ownedPacks.length})</h2>
+            <div className="space-y-3 mb-8">
+              {ownedPacks.map((pack) => (
+                <Link key={pack.id} href={`/packs/${pack.id}`}>
+                  <div className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-4 cursor-pointer">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <h3 className="text-lg font-bold text-gray-900">{pack.name}</h3>
+                        {pack.description && (
+                          <p className="text-sm text-gray-600 mt-1">{pack.description}</p>
+                        )}
+                      </div>
+                      {pack.is_private && (
+                        <span className="ml-4 text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-full whitespace-nowrap">
+                          Private
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Followed Packs */}
+        {followedPacks.length > 0 && (
+          <div className="mt-12">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Following ({followedPacks.length})</h2>
+            <div className="space-y-3 mb-8">
+              {followedPacks.map((pack) => (
+                <Link key={pack.id} href={`/packs/${pack.id}`}>
+                  <div className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-4 cursor-pointer">
+                    <h3 className="text-lg font-bold text-gray-900">{pack.name}</h3>
+                    {pack.description && (
+                      <p className="text-sm text-gray-600 mt-1">{pack.description}</p>
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Create Pack or Browse */}
+        {(ownedPacks.length === 0 && followedPacks.length === 0) && (
+          <div className="mt-12 bg-white rounded-xl shadow-lg p-12 text-center">
+            <p className="text-gray-600 text-lg mb-6">
+              No packs yet. Create your first collection or explore public packs!
+            </p>
+            <div className="flex gap-4 justify-center">
+              <Link href="/my-packs">
+                <button className="inline-block bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-8 rounded-lg transition-colors">
+                  Create Pack
+                </button>
+              </Link>
+              <Link href="/packs">
+                <button className="inline-block bg-gray-200 hover:bg-gray-300 text-gray-900 font-bold py-3 px-8 rounded-lg transition-colors">
+                  Discover Packs
+                </button>
+              </Link>
+            </div>
           </div>
         )}
       </div>

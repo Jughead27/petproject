@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { NotificationBell } from '@/app/components/NotificationBell'
 
 interface DexEntry {
   species: string
@@ -138,7 +139,14 @@ export default function DexPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900">The Dex</h1>
-          <div className="flex gap-3">
+          <div className="flex gap-3 items-center">
+            <NotificationBell />
+            <Link
+              href="/packs"
+              className="bg-white text-amber-600 font-medium px-4 py-2 rounded-lg hover:bg-amber-50 transition-colors"
+            >
+              🐾 Packs
+            </Link>
             <Link
               href="/stack"
               className="bg-white text-amber-600 font-medium px-4 py-2 rounded-lg hover:bg-amber-50 transition-colors"

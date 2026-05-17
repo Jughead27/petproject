@@ -34,7 +34,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Routes that require authentication
-  const protectedRoutes = ['/stack', '/dex', '/pets', '/profile', '/setup-username', '/onboarding']
+  const protectedRoutes = ['/stack', '/dex', '/pets', '/profile', '/setup-username', '/onboarding', '/packs', '/my-packs', '/notifications']
 
   // Routes that are auth-only (not accessible if logged in)
   const authRoutes = ['/login', '/signup']

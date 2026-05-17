@@ -60,7 +60,13 @@ export default function NotificationsPage() {
           .order('created_at', { ascending: false })
 
         if (notifData) {
-          setNotifications(notifData as NotificationWithActor[])
+          const notifications = notifData.map((notif: any) => ({
+            ...notif,
+            actor: {
+              username: (Array.isArray(notif.actor) ? notif.actor[0]?.username : notif.actor?.username) || 'Unknown',
+            },
+          }))
+          setNotifications(notifications)
         }
 
         setLoading(false)

@@ -2,9 +2,9 @@
 
 import { createClient } from '@/lib/supabase'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 
-export default function ConfirmPage() {
+function ConfirmContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [error, setError] = useState('')
@@ -74,5 +74,22 @@ export default function ConfirmPage() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function ConfirmPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white rounded-lg shadow-sm border border-amber-100 p-8 text-center">
+            <h1 className="text-xl font-bold text-gray-900 mb-2">Confirming your email...</h1>
+            <p className="text-gray-600">Please wait while we set up your account.</p>
+          </div>
+        </div>
+      }
+    >
+      <ConfirmContent />
+    </Suspense>
   )
 }
