@@ -1,7 +1,7 @@
 # PetProject — Claude Code Handoff Document
 
-> Updated: 2026-05-17 (Phase 1 Pet Profiles MVP — Complete)
-> Continue from: Test full flow on Vercel, then Phase 2 stack/dex features
+> Updated: 2026-05-17 (Phase 2 Core Features — Complete)
+> Continue from: Next features or test on Vercel
 
 ---
 
@@ -429,8 +429,117 @@ The app should feel **warm, confident, and slightly knowing**:
 
 ---
 
+---
+
+## Phase 2 Core Features (Completed 2026-05-17)
+
+### What Was Built This Session (Continued)
+
+**Discovery & Interaction:**
+- ✅ **The Stack** — Swipeable card feed (one pet at a time)
+  - Shows current user all other users' pets one at a time
+  - Four interaction buttons: Pass, Stash, Boop, Follow
+  - Records interactions to boops, stashes, follows tables
+  - Shows pet counter and "you've seen them all" state
+  - Links to view full pet card
+
+- ✅ **The Dex** — Species/breed encyclopedia
+  - Lists all species and breed variants in system
+  - Shows total count of each breed and how many user has spotted (via boops)
+  - Progress bar for each breed showing completion
+  - Filterable by species with counts
+  - Stats showing total species, breed variants, spotted count
+
+- ✅ **Explore Page** — Grid view discovery
+  - Browse all pets in responsive grid (1-4 columns)
+  - Search pets by name
+  - Filter by species (with count)
+  - Advanced age filtering (min/max age range in years)
+  - Pet cards show: avatar, name, species, age, breed, owner
+  - Collapsible filters UI
+  - Shows filtered results count
+
+**User Profiles & Social:**
+- ✅ **Public User Profiles** — `/user/[username]` routes
+  - Shows user's pet collection in grid
+  - Displays follower/following counts
+  - Follow/unfollow button (only for other users)
+  - Links to view followers and following lists
+  - Pet cards clickable to view full card
+
+- ✅ **Enhanced Own Profile** — `/profile`
+  - Added follower/following counts as clickable buttons
+  - Expandable followers list with links to their profiles
+  - Expandable following list with links to their profiles
+  - Shows all user's pets in grid
+
+**Pet Card Enhancements:**
+- ✅ **Interaction Counts** — Boop/Stash displays
+  - Pet card pages show boop count and stash count
+  - Stats displayed as colored cards (pink for boops, blue for stashes)
+  - Owner username links to public profile
+  - Age now displayed on pet cards across all views
+
+**Management:**
+- ✅ **Pet Deletion**
+  - Delete button on edit page (alongside save)
+  - Confirmation dialog with pet name
+  - Redirects to profile after deletion
+  - Red button styling to distinguish from save
+
+### New Routes Created
+- `/app/stack/page.tsx` — Replaced placeholder with full feature
+- `/app/dex/page.tsx` — Replaced placeholder with full feature
+- `/app/explore/page.tsx` — New grid discovery page
+- `/app/user/[username]/page.tsx` — Public user profile viewing
+
+### Files Modified
+- `/app/profile/page.tsx` — Added follower/following display
+- `/app/pets/[id]/page.tsx` — Added interaction counts, owner profile link
+- `/app/pets/[id]/edit/page.tsx` — Added delete functionality
+
+### Key Features Summary
+
+**The Loop:**
+1. User logs in, creates pets
+2. Goes to Stack to discover other pets (swipe mechanics)
+3. Interacts with pets: Boop (like), Stash (bookmark), Follow (watch user), Pass (skip)
+4. Checks Dex to see progress on spotting breed variants
+5. Uses Explore to browse by species/age
+6. Visits other users' profiles to see their pet collections
+7. Builds followers/following network
+
+**Discovery Mechanics:**
+- **Stack** — One pet at a time, sequential swiping (fast, addictive)
+- **Dex** — Gamified tracking of species spotted
+- **Explore** — Bulk browsing with flexible filters
+- **Profiles** — See other users' collections and social graph
+
+### Database Operations Used
+- Reads: pets, users, boops, stashes, follows
+- Writes: boops, stashes, follows (pet interactions), pets (delete)
+- Counts: Used exact count option for stats
+
+### Known Limitations
+- Follow/unfollow counts update in UI but may take a moment to reflect in DB
+- Location filtering deferred (no location field yet)
+- Breed filtering in Explore is just search (not native filters)
+- Posts/comments/notifications not yet implemented
+
+### What's NOT Included (Phase 3+)
+- Posts (photos, milestones, bursts)
+- Comments on posts
+- Notifications (bells, emails)
+- Advanced messaging/DMs
+- Pet collections ("packs")
+- Trending/popular feeds
+- Analytics for pet owners
+
+---
+
 *Last updated: 2026-05-17*
 *Phase 0 completion time: ~2.5 hours*
 *Phase 1 Auth time: ~3 hours (infrastructure built, skipped debugging)*
-*Phase 1 Pet Profiles MVP time: ~1 hour (create, view, edit, profile pages)*
-*Next session: Test on Vercel, then Phase 2 (Stack + Dex)*
+*Phase 1 Pet Profiles MVP time: ~1 hour*
+*Phase 2 Core Features time: ~1 hour (Stack, Dex, Explore, profiles, filtering)*
+*Next session: Test on Vercel, or continue with Phase 3 features*
