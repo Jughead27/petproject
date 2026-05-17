@@ -27,6 +27,7 @@ export default function EditPetPage() {
   const [pet, setPet] = useState<Pet | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   const [error, setError] = useState('')
   const [isOwner, setIsOwner] = useState(false)
 
@@ -208,6 +209,40 @@ export default function EditPetPage() {
       setError('An unexpected error occurred')
     } finally {
       setSaving(false)
+    }
+  }
+
+  const handleDelete = async () => {
+    if (!pet || !window.confirm(`Are you sure you want to delete ${pet.name}? This cannot be undone.`)) {
+      return
+    }
+
+    setDeleting(true)
+
+    try {
+      const supabase = createClient()
+
+      const { error: deleteError } = await supabase
+        .from('pets')
+        .delete()
+        .eq('id', pet.id)
+
+      if (deleteError) {
+        setError('Failed to delete pet. Please try again.')
+        console.error('Delete error:', deleteError)
+        setDeleting(false)
+        return
+      }
+
+      // Redirect to profile
+      router.push('/profile')
+    } catch (err) {
+      console.error('Delete error:', {
+        error: err instanceof Error ? err.message : String(err),
+        timestamp: new Date().toISOString(),
+      })
+      setError('An unexpected error occurred')
+      setDeleting(false)
     }
   }
 
@@ -401,13 +436,23 @@ export default function EditPetPage() {
             </div>
 
             {/* Submit */}
-            <button
-              type="submit"
-              disabled={saving}
-              className="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:opacity-50 transition-colors"
-            >
-              {saving ? 'Saving...' : 'Save Profile'}
-            </button>
+            <div className="flex gap-3">
+              <button
+                type="submit"
+                disabled={saving || deleting}
+                className="flex-1 bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:opacity-50 transition-colors"
+              >
+                {saving ? 'Saving...' : 'Save Profile'}
+              </button>
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={saving || deleting}
+                className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 transition-colors"
+              >
+                {deleting ? 'Deleting...' : '🗑️ Delete'}
+              </button>
+            </div>
           </form>
         </div>
       </div>

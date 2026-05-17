@@ -32,6 +32,8 @@ export default function PetCardPage() {
   const [pet, setPet] = useState<Pet | null>(null)
   const [owner, setOwner] = useState<User | null>(null)
   const [isOwner, setIsOwner] = useState(false)
+  const [boopCount, setBoopCount] = useState(0)
+  const [stashCount, setStashCount] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -71,6 +73,27 @@ export default function PetCardPage() {
           .single()
 
         setOwner(ownerData)
+
+        // Fetch boop count
+        const { data: boopsData, error: boopsError } = await supabase
+          .from('boops')
+          .select('id', { count: 'exact' })
+          .eq('pet_id', petId)
+
+        if (!boopsError && boopsData) {
+          setBoopCount(boopsData.length)
+        }
+
+        // Fetch stash count
+        const { data: stashesData, error: stashesError } = await supabase
+          .from('stashes')
+          .select('id', { count: 'exact' })
+          .eq('pet_id', petId)
+
+        if (!stashesError && stashesData) {
+          setStashCount(stashesData.length)
+        }
+
         setLoading(false)
       } catch (err) {
         console.error('Fetch error:', err)
@@ -184,7 +207,10 @@ export default function PetCardPage() {
             {/* Owner */}
             {owner?.username && (
               <p className="text-sm text-gray-600 mb-6">
-                Pet owner: <span className="font-medium">@{owner.username}</span>
+                Pet owner:{' '}
+                <Link href={`/user/${owner.username}`} className="font-medium text-amber-600 hover:text-amber-700">
+                  @{owner.username}
+                </Link>
               </p>
             )}
 
@@ -198,14 +224,18 @@ export default function PetCardPage() {
               </Link>
             )}
 
-            {/* Coming soon features */}
-            <div className="border-t pt-6 space-y-3">
-              <button disabled className="w-full bg-gray-100 text-gray-500 font-medium py-2 rounded-lg text-sm cursor-not-allowed">
-                ❤️ Boop (coming soon)
-              </button>
-              <button disabled className="w-full bg-gray-100 text-gray-500 font-medium py-2 rounded-lg text-sm cursor-not-allowed">
-                🔖 Stash (coming soon)
-              </button>
+            {/* Interaction stats */}
+            <div className="border-t pt-6">
+              <div className="grid grid-cols-2 gap-3 mb-6">
+                <div className="bg-pink-50 rounded-lg p-3 text-center">
+                  <p className="text-2xl font-bold text-pink-600">{boopCount}</p>
+                  <p className="text-sm text-pink-700 font-medium">Boops</p>
+                </div>
+                <div className="bg-blue-50 rounded-lg p-3 text-center">
+                  <p className="text-2xl font-bold text-blue-600">{stashCount}</p>
+                  <p className="text-sm text-blue-700 font-medium">Stashes</p>
+                </div>
+              </div>
               <button disabled className="w-full bg-gray-100 text-gray-500 font-medium py-2 rounded-lg text-sm cursor-not-allowed">
                 👁️ Follow (coming soon)
               </button>

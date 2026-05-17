@@ -18,12 +18,21 @@ interface User {
   username: string | null
 }
 
+interface FollowUser {
+  id: string
+  username: string | null
+}
+
 export default function ProfilePage() {
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
   const [pets, setPets] = useState<Pet[]>([])
+  const [followers, setFollowers] = useState<FollowUser[]>([])
+  const [following, setFollowing] = useState<FollowUser[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [showFollowers, setShowFollowers] = useState(false)
+  const [showFollowing, setShowFollowing] = useState(false)
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -62,6 +71,44 @@ export default function ProfilePage() {
           setPets(petsData || [])
         }
 
+        // Fetch followers (users who follow this user)
+        const { data: followersData, error: followersError } = await supabase
+          .from('follows')
+          .select('follower_id')
+          .eq('following_id', userData.user.id)
+
+        if (!followersError && followersData) {
+          // Get follower usernames
+          const followerIds = followersData.map((f: any) => f.follower_id)
+          if (followerIds.length > 0) {
+            const { data: followerUsers } = await supabase
+              .from('users')
+              .select('id, username')
+              .in('id', followerIds)
+
+            setFollowers(followerUsers || [])
+          }
+        }
+
+        // Fetch following (users this user follows)
+        const { data: followingData, error: followingError } = await supabase
+          .from('follows')
+          .select('following_id')
+          .eq('follower_id', userData.user.id)
+
+        if (!followingError && followingData) {
+          // Get following usernames
+          const followingIds = followingData.map((f: any) => f.following_id)
+          if (followingIds.length > 0) {
+            const { data: followingUsers } = await supabase
+              .from('users')
+              .select('id, username')
+              .in('id', followingIds)
+
+            setFollowing(followingUsers || [])
+          }
+        }
+
         setLoading(false)
       } catch (err) {
         console.error('Profile fetch error:', err)
@@ -91,10 +138,68 @@ export default function ProfilePage() {
           </Link>
 
           <div className="bg-white rounded-xl shadow-lg p-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
               {user?.username ? `@${user.username}` : 'Your Profile'}
             </h1>
-            <p className="text-gray-600">Pet Collection</p>
+            <p className="text-gray-600 mb-6">Pet Collection</p>
+
+            {/* Stats */}
+            <div className="grid grid-cols-3 gap-4 text-center">
+              <div>
+                <p className="text-2xl font-bold text-amber-600">{pets.length}</p>
+                <p className="text-sm text-gray-600">Pets</p>
+              </div>
+              <button
+                onClick={() => setShowFollowers(!showFollowers)}
+                className="hover:bg-gray-50 rounded-lg p-2 transition-colors"
+              >
+                <p className="text-2xl font-bold text-amber-600">{followers.length}</p>
+                <p className="text-sm text-gray-600 hover:text-amber-600">Followers</p>
+              </button>
+              <button
+                onClick={() => setShowFollowing(!showFollowing)}
+                className="hover:bg-gray-50 rounded-lg p-2 transition-colors"
+              >
+                <p className="text-2xl font-bold text-amber-600">{following.length}</p>
+                <p className="text-sm text-gray-600 hover:text-amber-600">Following</p>
+              </button>
+            </div>
+
+            {/* Followers list */}
+            {showFollowers && followers.length > 0 && (
+              <div className="mt-6 pt-6 border-t">
+                <h3 className="font-semibold text-gray-900 mb-3">Followers</h3>
+                <div className="space-y-2">
+                  {followers.map((follower) => (
+                    <Link
+                      key={follower.id}
+                      href={`/user/${follower.username}`}
+                      className="block p-2 rounded-lg hover:bg-amber-50 transition-colors text-amber-600 hover:text-amber-700"
+                    >
+                      @{follower.username}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Following list */}
+            {showFollowing && following.length > 0 && (
+              <div className="mt-6 pt-6 border-t">
+                <h3 className="font-semibold text-gray-900 mb-3">Following</h3>
+                <div className="space-y-2">
+                  {following.map((followedUser) => (
+                    <Link
+                      key={followedUser.id}
+                      href={`/user/${followedUser.username}`}
+                      className="block p-2 rounded-lg hover:bg-amber-50 transition-colors text-amber-600 hover:text-amber-700"
+                    >
+                      @{followedUser.username}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
