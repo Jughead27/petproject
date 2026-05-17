@@ -82,6 +82,31 @@ RESEND_API_KEY=[REDACTED]
 
 ---
 
+## Security Incident & Remediation (2026-05-17)
+
+**What Happened:**
+- GitGuardian detected exposed Resend API key in GitHub history
+- Key was documented in `HANDOFF.md` (environment variables section)
+- Exposure was **git history only** (NOT in Vercel environment variables)
+
+**Remediation Taken:**
+- ✅ Revoked old Resend API key immediately (now useless)
+- ✅ Generated new Resend API key
+- ✅ Used `git filter-branch` to remove old key from all 13 commits
+- ✅ Force-pushed cleaned history to GitHub (old key unrecoverable)
+- ✅ Updated documentation with `[REDACTED]` placeholder
+- ✅ Added new key to Vercel (Preview + Production environments)
+- ✅ Verified `.env.local` protected by `.gitignore`
+
+**Prevention Going Forward:**
+- Never document real API keys in markdown (use `[REDACTED]` placeholders)
+- Plan to implement pre-commit hooks with `secretlint` to block secrets before commit
+- `.env.local` is in `.gitignore` and will never be tracked
+
+**Lesson:** Real secrets should only live in `.env.local` (not tracked) or encrypted config. Documentation uses placeholders only.
+
+---
+
 ## Useful Commands (Windows)
 
 ```powershell
