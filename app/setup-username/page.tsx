@@ -30,8 +30,8 @@ export default function SetupUsernamePage() {
           .single()
 
         if (existingUser?.username) {
-          // User already has username, redirect to stack
-          router.push('/stack')
+          // User already has username, redirect to onboarding
+          router.push('/onboarding')
           return
         }
 
@@ -94,8 +94,8 @@ export default function SetupUsernamePage() {
         return
       }
 
-      // Success, redirect to stack
-      router.push('/stack')
+      // Success, redirect to onboarding
+      router.push('/onboarding')
     } catch (err) {
       console.error('Username setup error:', { timestamp: new Date().toISOString() })
       setError('An unexpected error occurred')
