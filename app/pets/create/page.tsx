@@ -22,6 +22,7 @@ export default function CreatePetPage() {
   const router = useRouter()
   const [name, setName] = useState('')
   const [species, setSpecies] = useState('')
+  const [breed, setBreed] = useState('')
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
   const [avatarPreview, setAvatarPreview] = useState('')
   const [error, setError] = useState('')
@@ -92,6 +93,7 @@ export default function CreatePetPage() {
           owner_id: userData.user.id,
           name: name.trim(),
           species,
+          breed: breed.trim() || null,
           avatar_url: avatarUrl,
           card_number: cardNumber,
         })
@@ -170,6 +172,22 @@ export default function CreatePetPage() {
                 </option>
               ))}
             </select>
+          </div>
+
+          {/* Breed */}
+          <div>
+            <label htmlFor="breed" className="block text-sm font-medium text-gray-700 mb-2">
+              Breed (optional)
+            </label>
+            <input
+              id="breed"
+              type="text"
+              value={breed}
+              onChange={(e) => setBreed(e.target.value)}
+              disabled={loading}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:opacity-50"
+              placeholder="e.g. Golden Retriever, Tabby, etc."
+            />
           </div>
 
           {/* Avatar Photo */}
