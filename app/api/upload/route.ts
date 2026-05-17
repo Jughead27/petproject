@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     await r2Client.send(command)
 
     // Return public URL
-    const publicUrl = `${process.env.CLOUDFLARE_R2_ENDPOINT}/${R2_BUCKET}/${key}`
+    const publicUrl = `${process.env.CLOUDFLARE_R2_PUBLIC_URL}/${R2_BUCKET}/${key}`
 
     return NextResponse.json({ url: publicUrl })
   } catch (error) {
