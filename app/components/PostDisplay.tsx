@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { logPostDelete, logCommentCreate, logCommentDelete } from '@/lib/audit'
+import { notifyPostComment } from '@/lib/notifications'
 
 interface Post {
   id: string
@@ -147,6 +148,12 @@ export function PostDisplay({ petId, currentUserId }: PostDisplayProps) {
       }
 
       await logCommentCreate(userData.user.id, comment.id, text, postId)
+
+      // Notify post owner if different from commenter
+      const post = posts.find((p) => p.id === postId)
+      if (post && post.user_id !== userData.user.id) {
+        await notifyPostComment(post.user_id, userData.user.id, postId, comment.id, post.author.username)
+      }
 
       // Clear input and refresh
       setCommentTexts({ ...commentTexts, [postId]: '' })

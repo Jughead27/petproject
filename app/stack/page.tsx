@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { notifyBoop, notifyFollow } from '@/lib/notifications'
 
 interface Pet {
   id: string
@@ -110,12 +111,24 @@ export default function StackPage() {
     try {
       const supabase = createClient()
 
+      // Get current user's username for notifications
+      const { data: currentUserData } = await supabase
+        .from('users')
+        .select('username')
+        .eq('id', user.id)
+        .single()
+
+      const currentUsername = currentUserData?.username || 'Someone'
+
       // Record the interaction based on action type
       if (action === 'boop') {
         await supabase.from('boops').insert({
           pet_id: currentPet.id,
           user_id: user.id,
         })
+
+        // Notify pet owner
+        await notifyBoop(currentPet.owner_id, user.id, currentPet.id, currentUsername)
       } else if (action === 'stash') {
         await supabase.from('stashes').insert({
           pet_id: currentPet.id,
@@ -126,6 +139,9 @@ export default function StackPage() {
           follower_id: user.id,
           following_id: currentPet.owner_id,
         })
+
+        // Notify the followed user
+        await notifyFollow(currentPet.owner_id, user.id, currentUsername)
       }
       // 'pass' doesn't record anything
 
