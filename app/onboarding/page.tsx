@@ -4,11 +4,17 @@ import Link from 'next/link'
 
 export default function OnboardingPage() {
   return (
-    <div className="min-h-screen bg-app flex items-center justify-center p-6" style={{
+    <div style={{
+      minHeight: '100vh',
+      background: 'var(--app-bg)',
       backgroundImage: `
         radial-gradient(circle at 20% 20%, rgba(217, 119, 87, 0.08), transparent 50%),
         radial-gradient(circle at 80% 80%, rgba(90, 122, 154, 0.06), transparent 50%)
-      `
+      `,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '24px',
     }}>
       <div style={{ width: '100%', maxWidth: '360px' }}>
         <div style={{ textAlign: 'center', marginBottom: '48px' }}>
@@ -23,7 +29,8 @@ export default function OnboardingPage() {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '32px' }}>
           <Link href="/pets/create" style={{ textDecoration: 'none' }}>
-            <button className="w-full button-text" style={{
+            <button style={{
+              width: '100%',
               padding: '16px',
               borderRadius: 'var(--radius-md)',
               background: 'var(--acc)',
@@ -31,13 +38,16 @@ export default function OnboardingPage() {
               border: 'none',
               cursor: 'pointer',
               transition: 'opacity 200ms',
+              fontSize: '12.5px',
+              fontWeight: 600,
             }} onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'} onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}>
               🐾 Add my first pet
             </button>
           </Link>
 
           <Link href="/stack" style={{ textDecoration: 'none' }}>
-            <button className="w-full button-text" style={{
+            <button style={{
+              width: '100%',
               padding: '16px',
               borderRadius: 'var(--radius-md)',
               background: 'transparent',
@@ -45,13 +55,15 @@ export default function OnboardingPage() {
               border: '1px solid var(--line)',
               cursor: 'pointer',
               transition: 'background 200ms',
+              fontSize: '12.5px',
+              fontWeight: 600,
             }} onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0, 0, 0, 0.03)'} onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
               👀 Browse first, add pet later
             </button>
           </Link>
         </div>
 
-        <p className="text-xs text-center" style={{ color: 'var(--ink-2)' }}>
+        <p style={{ fontSize: '10.5px', textAlign: 'center', color: 'var(--ink-2)' }}>
           You can always add a pet later from your profile.
         </p>
       </div>

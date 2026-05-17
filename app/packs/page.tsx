@@ -26,21 +26,36 @@ export default function PacksPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-app flex items-center justify-center">
+      <div style={{
+        minHeight: '100vh',
+        background: 'var(--app-bg)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
         <p style={{ color: 'var(--ink-2)' }}>Loading packs...</p>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-app pb-20" style={{
+    <div style={{
+      minHeight: '100vh',
+      background: 'var(--app-bg)',
       backgroundImage: `
         radial-gradient(circle at 20% 20%, rgba(217, 119, 87, 0.08), transparent 50%),
         radial-gradient(circle at 80% 80%, rgba(90, 122, 154, 0.06), transparent 50%)
-      `
+      `,
+      paddingBottom: '100px',
     }}>
       {/* Header */}
-      <div className="flex justify-between items-start p-6" style={{ paddingTop: 'var(--space-8)' }}>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        padding: '24px',
+        paddingTop: '18px',
+      }}>
         <div>
           <p className="kicker" style={{ color: 'var(--acc)' }}>SNOUT</p>
           <h1 className="display-lg" style={{ color: 'var(--ink)' }}>Packs</h1>
@@ -51,18 +66,50 @@ export default function PacksPage() {
       </div>
 
       {/* Placeholder Content */}
-      <div className="flex flex-col items-center justify-center px-6 py-12">
-        <p className="text-4xl mb-6">📦</p>
-        <h2 className="display-lg" style={{ color: 'var(--ink)', marginBottom: '12px', textAlign: 'center' }}>
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingLeft: '24px',
+        paddingRight: '24px',
+        paddingTop: '48px',
+        paddingBottom: '48px',
+      }}>
+        <p style={{ fontSize: '32px', marginBottom: '24px' }}>📦</p>
+        <h2 style={{
+          fontFamily: '"Instrument Serif", Georgia, serif',
+          fontSize: '28px',
+          fontWeight: 400,
+          fontStyle: 'italic',
+          color: 'var(--ink)',
+          marginBottom: '12px',
+          textAlign: 'center',
+          lineHeight: 1,
+        }}>
           Packs Coming Soon
         </h2>
-        <p className="text-sm text-center" style={{ color: 'var(--ink-2)', maxWidth: '300px', marginBottom: '24px' }}>
+        <p style={{
+          fontSize: '11.5px',
+          textAlign: 'center',
+          color: 'var(--ink-2)',
+          maxWidth: '300px',
+          marginBottom: '24px',
+          lineHeight: 1.3,
+        }}>
           Create and share collections of your favorite pets. This feature is in development.
         </p>
         <Link
           href="/stack"
-          className="px-6 py-2 rounded-lg button-text"
-          style={{ background: 'var(--acc)', color: '#fff' }}
+          style={{
+            padding: '12px 24px',
+            borderRadius: '12px',
+            background: 'var(--acc)',
+            color: '#fff',
+            textDecoration: 'none',
+            fontSize: '12.5px',
+            fontWeight: 600,
+          }}
         >
           Back to Stack
         </Link>
@@ -91,9 +138,26 @@ export default function PacksPage() {
           { emoji: '🐾', label: 'Packs', href: '/packs', active: true },
           { emoji: '🏆', label: 'Shelf', href: '/profile', active: false },
         ].map(tab => (
-          <Link key={tab.label} href={tab.href} className="flex flex-col items-center gap-0.5" style={{ opacity: tab.active ? 1 : 0.45 }}>
+          <Link
+            key={tab.label}
+            href={tab.href}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '4px',
+              textDecoration: 'none',
+              opacity: tab.active ? 1 : 0.45,
+            }}
+          >
             <span style={{ fontSize: '22px' }}>{tab.emoji}</span>
-            <span className="text-xs font-medium" style={{ color: tab.active ? 'var(--acc)' : 'var(--ink)' }}>{tab.label}</span>
+            <span style={{
+              fontSize: '10.5px',
+              fontWeight: 600,
+              color: tab.active ? 'var(--acc)' : 'var(--ink)',
+            }}>
+              {tab.label}
+            </span>
           </Link>
         ))}
       </div>

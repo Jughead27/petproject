@@ -70,21 +70,36 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-app flex items-center justify-center">
+      <div style={{
+        minHeight: '100vh',
+        background: 'var(--app-bg)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
         <p style={{ color: 'var(--ink-2)' }}>Loading profile...</p>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-app pb-20" style={{
+    <div style={{
+      minHeight: '100vh',
+      background: 'var(--app-bg)',
       backgroundImage: `
         radial-gradient(circle at 20% 20%, rgba(217, 119, 87, 0.08), transparent 50%),
         radial-gradient(circle at 80% 80%, rgba(90, 122, 154, 0.06), transparent 50%)
-      `
+      `,
+      paddingBottom: '100px',
     }}>
       {/* Header */}
-      <div className="flex justify-between items-start p-6" style={{ paddingTop: 'var(--space-8)' }}>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        padding: '24px',
+        paddingTop: '18px',
+      }}>
         <div>
           <p className="kicker" style={{ color: 'var(--acc)' }}>SNOUT</p>
           <h1 className="display-lg" style={{ color: 'var(--ink)' }}>Your Shelf</h1>
@@ -94,8 +109,15 @@ export default function ProfilePage() {
         </div>
         <button
           onClick={handleLogout}
-          className="w-10 h-10 rounded-full hover:opacity-70"
-          style={{ background: 'rgba(0, 0, 0, 0.06)', color: 'var(--ink)' }}
+          style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: '50%',
+            background: 'rgba(0, 0, 0, 0.06)',
+            color: 'var(--ink)',
+            border: 'none',
+            cursor: 'pointer',
+          }}
         >
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.7">
             <path d="M6 3h-2a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2" />
@@ -105,15 +127,23 @@ export default function ProfilePage() {
       </div>
 
       {/* Pet Grid */}
-      <div className="px-6">
+      <div style={{ paddingLeft: '24px', paddingRight: '24px' }}>
         {pets.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-4xl mb-4">🐾</p>
-            <p className="text-sm" style={{ color: 'var(--ink-2)', marginBottom: '16px' }}>You haven't added any pets yet</p>
+          <div style={{ textAlign: 'center', paddingTop: '48px', paddingBottom: '48px' }}>
+            <p style={{ fontSize: '32px', marginBottom: '16px' }}>🐾</p>
+            <p style={{ fontSize: '11.5px', color: 'var(--ink-2)', marginBottom: '16px' }}>You haven't added any pets yet</p>
             <Link
               href="/pets/create"
-              className="inline-block px-6 py-2 rounded-lg button-text"
-              style={{ background: 'var(--acc)', color: '#fff' }}
+              style={{
+                display: 'inline-block',
+                padding: '12px 24px',
+                borderRadius: '12px',
+                background: 'var(--acc)',
+                color: '#fff',
+                textDecoration: 'none',
+                fontSize: '12.5px',
+                fontWeight: 600,
+              }}
             >
               Add your first pet
             </Link>
@@ -130,12 +160,18 @@ export default function ProfilePage() {
                 <Link
                   key={pet.id}
                   href={`/pets/${pet.id}`}
-                  className="rounded-lg overflow-hidden hover:opacity-80 transition-opacity"
                   style={{
                     background: 'var(--paper)',
                     border: '1px solid var(--line)',
                     boxShadow: 'var(--shadow-sm)',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    display: 'block',
+                    textDecoration: 'none',
+                    transition: 'opacity 200ms',
                   }}
+                  onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
+                  onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
                 >
                   <div style={{
                     aspectRatio: '3/4',
@@ -181,8 +217,16 @@ export default function ProfilePage() {
             <div style={{ textAlign: 'center', marginBottom: '20px' }}>
               <Link
                 href="/pets/create"
-                className="inline-block px-6 py-2 rounded-lg button-text"
-                style={{ background: 'var(--acc)', color: '#fff' }}
+                style={{
+                  display: 'inline-block',
+                  padding: '12px 24px',
+                  borderRadius: '12px',
+                  background: 'var(--acc)',
+                  color: '#fff',
+                  textDecoration: 'none',
+                  fontSize: '12.5px',
+                  fontWeight: 600,
+                }}
               >
                 Add another pet
               </Link>
@@ -214,9 +258,26 @@ export default function ProfilePage() {
           { emoji: '🐾', label: 'Packs', href: '/packs', active: false },
           { emoji: '🏆', label: 'Shelf', href: '/profile', active: true },
         ].map(tab => (
-          <Link key={tab.label} href={tab.href} className="flex flex-col items-center gap-0.5" style={{ opacity: tab.active ? 1 : 0.45 }}>
+          <Link
+            key={tab.label}
+            href={tab.href}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '4px',
+              textDecoration: 'none',
+              opacity: tab.active ? 1 : 0.45,
+            }}
+          >
             <span style={{ fontSize: '22px' }}>{tab.emoji}</span>
-            <span className="text-xs font-medium" style={{ color: tab.active ? 'var(--acc)' : 'var(--ink)' }}>{tab.label}</span>
+            <span style={{
+              fontSize: '10.5px',
+              fontWeight: 600,
+              color: tab.active ? 'var(--acc)' : 'var(--ink)',
+            }}>
+              {tab.label}
+            </span>
           </Link>
         ))}
       </div>

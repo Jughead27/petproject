@@ -123,11 +123,14 @@ export default function CreatePetPage() {
   }
 
   return (
-    <div className="min-h-screen bg-app pb-20" style={{
+    <div style={{
+      minHeight: '100vh',
+      background: 'var(--app-bg)',
       backgroundImage: `
         radial-gradient(circle at 20% 20%, rgba(217, 119, 87, 0.08), transparent 50%),
         radial-gradient(circle at 80% 80%, rgba(90, 122, 154, 0.06), transparent 50%)
-      `
+      `,
+      paddingBottom: '80px',
     }}>
       <div style={{ maxWidth: '360px', margin: '0 auto', padding: '24px' }}>
         <div style={{ marginBottom: '32px' }}>
