@@ -123,21 +123,37 @@ export default function CreatePetPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50 py-8 px-4">
-      <div className="max-w-md mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Your Pet's Card</h1>
-        <p className="text-gray-600 mb-8">Start with the essentials. You can add more details later.</p>
+    <div className="min-h-screen bg-app pb-20" style={{
+      backgroundImage: `
+        radial-gradient(circle at 20% 20%, rgba(217, 119, 87, 0.08), transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(90, 122, 154, 0.06), transparent 50%)
+      `
+    }}>
+      <div style={{ maxWidth: '360px', margin: '0 auto', padding: '24px' }}>
+        <div style={{ marginBottom: '32px' }}>
+          <p className="kicker" style={{ color: 'var(--acc)', marginBottom: '8px' }}>SNOUT</p>
+          <h1 className="display-lg" style={{ color: 'var(--ink)', marginBottom: '8px' }}>Create a Pet Card</h1>
+          <p className="text-sm" style={{ color: 'var(--ink-2)' }}>Start with the essentials. You can add more details later.</p>
+        </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+          <div style={{
+            marginBottom: '24px',
+            padding: '12px 14px',
+            backgroundColor: 'rgba(220, 38, 38, 0.1)',
+            border: '1px solid rgba(220, 38, 38, 0.3)',
+            borderRadius: 'var(--radius-sm)',
+            fontSize: '11.5px',
+            color: '#7f1d1d',
+          }}>
             {error}
           </div>
         )}
 
-        <form onSubmit={handleCreatePet} className="space-y-6">
+        <form onSubmit={handleCreatePet} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           {/* Pet Name */}
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="name" className="label" style={{ display: 'block', color: 'var(--ink)', marginBottom: '8px' }}>
               Pet Name
             </label>
             <input
@@ -146,14 +162,23 @@ export default function CreatePetPage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               disabled={loading}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:opacity-50"
+              style={{
+                width: '100%',
+                padding: '10px 12px',
+                border: '1px solid var(--line)',
+                borderRadius: 'var(--radius-sm)',
+                color: 'var(--ink)',
+                backgroundColor: 'var(--paper)',
+                fontSize: '14px',
+                opacity: loading ? 0.5 : 1,
+              }}
               placeholder="e.g. Luna"
             />
           </div>
 
           {/* Species */}
           <div>
-            <label htmlFor="species" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="species" className="label" style={{ display: 'block', color: 'var(--ink)', marginBottom: '8px' }}>
               Species
             </label>
             <select
@@ -161,7 +186,16 @@ export default function CreatePetPage() {
               value={species}
               onChange={(e) => setSpecies(e.target.value)}
               disabled={loading}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:opacity-50"
+              style={{
+                width: '100%',
+                padding: '10px 12px',
+                border: '1px solid var(--line)',
+                borderRadius: 'var(--radius-sm)',
+                color: 'var(--ink)',
+                backgroundColor: 'var(--paper)',
+                fontSize: '14px',
+                opacity: loading ? 0.5 : 1,
+              }}
             >
               <option value="">Select a species...</option>
               {SPECIES_LIST.map((s) => (
@@ -174,32 +208,53 @@ export default function CreatePetPage() {
 
           {/* Avatar Photo */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="label" style={{ display: 'block', color: 'var(--ink)', marginBottom: '8px' }}>
               Photo
             </label>
-            <div className="relative">
+            <div style={{ position: 'relative' }}>
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleAvatarChange}
                 disabled={loading}
-                className="hidden"
+                style={{ display: 'none' }}
                 id="avatar-upload"
               />
               <label
                 htmlFor="avatar-upload"
-                className="block w-full px-4 py-8 border-2 border-dashed border-gray-300 rounded-lg text-center cursor-pointer hover:border-amber-500 hover:bg-amber-50 transition-colors disabled:opacity-50"
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  padding: '32px 16px',
+                  border: '2px dashed var(--line)',
+                  borderRadius: 'var(--radius-md)',
+                  textAlign: 'center',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  backgroundColor: 'transparent',
+                  transition: 'all 200ms',
+                  opacity: loading ? 0.5 : 1,
+                }}
+                onMouseEnter={(e) => !loading && (e.currentTarget.style.borderColor = 'var(--acc)', e.currentTarget.style.backgroundColor = 'rgba(217, 119, 87, 0.05)')}
+                onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--line)', e.currentTarget.style.backgroundColor = 'transparent')}
               >
                 {avatarPreview ? (
                   <img
                     src={avatarPreview}
                     alt="Preview"
-                    className="h-32 w-32 object-cover rounded-lg mx-auto"
+                    style={{
+                      height: '128px',
+                      width: '128px',
+                      objectFit: 'cover',
+                      borderRadius: 'var(--radius-sm)',
+                      margin: '0 auto',
+                      display: 'block',
+                    }}
                   />
                 ) : (
-                  <div className="text-gray-600">
-                    <p className="font-medium">📸 Click to upload a photo</p>
-                    <p className="text-xs text-gray-500">or drag and drop</p>
+                  <div>
+                    <p className="display-sm" style={{ color: 'var(--ink)', margin: '0 0 6px 0' }}>📸</p>
+                    <p className="button-text" style={{ color: 'var(--ink)', margin: '0 0 4px 0' }}>Click to upload</p>
+                    <p className="text-xs" style={{ color: 'var(--ink-2)', margin: 0 }}>or drag and drop</p>
                   </div>
                 )}
               </label>
@@ -210,13 +265,25 @@ export default function CreatePetPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:opacity-50 transition-colors"
+            className="button-text"
+            style={{
+              width: '100%',
+              padding: '12px',
+              marginTop: '8px',
+              background: 'var(--acc)',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 'var(--radius-md)',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              opacity: loading ? 0.7 : 1,
+              transition: 'opacity 200ms',
+            }}
           >
             {loading ? 'Creating card...' : 'Create Pet Card'}
           </button>
         </form>
 
-        <p className="text-xs text-gray-500 text-center mt-6">
+        <p className="text-xs text-center" style={{ color: 'var(--ink-2)', marginTop: '24px' }}>
           Your pet card will be live immediately. You can edit details anytime.
         </p>
       </div>
