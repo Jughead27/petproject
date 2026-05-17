@@ -4,6 +4,8 @@ import { createClient } from '@/lib/supabase'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { PostCreator } from '@/app/components/PostCreator'
+import { PostDisplay } from '@/app/components/PostDisplay'
 
 interface Pet {
   id: string
@@ -32,8 +34,10 @@ export default function PetCardPage() {
   const [pet, setPet] = useState<Pet | null>(null)
   const [owner, setOwner] = useState<User | null>(null)
   const [isOwner, setIsOwner] = useState(false)
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
   const [boopCount, setBoopCount] = useState(0)
   const [stashCount, setStashCount] = useState(0)
+  const [postRefresh, setPostRefresh] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -44,6 +48,9 @@ export default function PetCardPage() {
 
         // Get current user
         const { data: userData } = await supabase.auth.getUser()
+        if (userData.user) {
+          setCurrentUserId(userData.user.id)
+        }
 
         // Fetch pet
         const { data: petData, error: petError } = await supabase
@@ -239,6 +246,23 @@ export default function PetCardPage() {
               <button disabled className="w-full bg-gray-100 text-gray-500 font-medium py-2 rounded-lg text-sm cursor-not-allowed">
                 👁️ Follow (coming soon)
               </button>
+            </div>
+
+            {/* Posts Section */}
+            <div className="border-t pt-6 mt-6">
+              <h2 className="text-lg font-bold text-gray-900 mb-4">Updates</h2>
+
+              {/* Post Creator (owner only) */}
+              {isOwner && (
+                <PostCreator
+                  petId={pet.id}
+                  isOwner={isOwner}
+                  onPostCreated={() => setPostRefresh((p) => p + 1)}
+                />
+              )}
+
+              {/* Posts Display */}
+              <PostDisplay key={postRefresh} petId={pet.id} currentUserId={currentUserId} />
             </div>
           </div>
         </div>
