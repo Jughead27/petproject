@@ -4,26 +4,15 @@ import { createClient } from '@/lib/supabase'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { notifyBoop, notifyFollow } from '@/lib/notifications'
-import { NotificationBell } from '@/app/components/NotificationBell'
 
 interface Pet {
   id: string
   name: string
   species: string
   breed: string | null
-  age_years: number | null
-  age_months: number | null
-  bio: string | null
   avatar_url: string | null
-  cover_url: string | null
   card_number: number | null
-  is_nursery: boolean
   owner_id: string
-}
-
-interface User {
-  id: string
 }
 
 interface UserProfile {
@@ -35,41 +24,31 @@ export default function StackPage() {
   const [pets, setPets] = useState<Pet[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [loading, setLoading] = useState(true)
-  const [actioning, setActioning] = useState(false)
   const [owner, setOwner] = useState<UserProfile | null>(null)
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<{ id: string } | null>(null)
   const [noMore, setNoMore] = useState(false)
+  const [counters, setCounters] = useState({ boops: 0, stashed: 0, packs: 0, cards: 0 })
 
   useEffect(() => {
     const loadStack = async () => {
       try {
         const supabase = createClient()
-
-        // Get current user
         const { data: userData } = await supabase.auth.getUser()
         if (!userData.user) {
           router.push('/login')
           return
         }
 
-        setUser(userData.user as User)
+        setUser(userData.user as { id: string })
 
-        // Fetch all pets except user's own
-        const { data: allPets, error: petsError } = await supabase
+        const { data: allPets } = await supabase
           .from('pets')
           .select('*')
           .neq('owner_id', userData.user.id)
           .order('created_at', { ascending: false })
 
-        if (petsError) {
-          console.error('Pets fetch error:', petsError)
-        }
-
         setPets(allPets || [])
-        if (!allPets || allPets.length === 0) {
-          setNoMore(true)
-        }
-
+        setNoMore(!allPets || allPets.length === 0)
         setLoading(false)
       } catch (err) {
         console.error('Stack load error:', err)
@@ -80,10 +59,9 @@ export default function StackPage() {
     loadStack()
   }, [router])
 
-  // Fetch owner of current pet
   useEffect(() => {
     const loadOwner = async () => {
-      if (currentIndex < pets.length) {
+      if (currentIndex < pets.length && user) {
         const currentPet = pets[currentIndex]
         try {
           const supabase = createClient()
@@ -92,73 +70,46 @@ export default function StackPage() {
             .select('username')
             .eq('id', currentPet.owner_id)
             .single()
-
           setOwner(ownerData)
         } catch (err) {
           console.error('Owner fetch error:', err)
         }
       }
     }
-
     loadOwner()
-  }, [currentIndex, pets])
+  }, [currentIndex, pets, user])
 
-  const handleAction = async (action: 'boop' | 'stash' | 'follow' | 'pass') => {
+  const handleBoop = async () => {
     if (currentIndex >= pets.length || !user) return
-
-    setActioning(true)
     const currentPet = pets[currentIndex]
-
     try {
       const supabase = createClient()
-
-      // Get current user's username for notifications
-      const { data: currentUserData } = await supabase
-        .from('users')
-        .select('username')
-        .eq('id', user.id)
-        .single()
-
-      const currentUsername = currentUserData?.username || 'Someone'
-
-      // Record the interaction based on action type
-      if (action === 'boop') {
-        await supabase.from('boops').insert({
-          pet_id: currentPet.id,
-          user_id: user.id,
-        })
-
-        // Notify pet owner
-        await notifyBoop(currentPet.owner_id, user.id, currentPet.id, currentUsername)
-      } else if (action === 'stash') {
-        await supabase.from('stashes').insert({
-          pet_id: currentPet.id,
-          user_id: user.id,
-        })
-      } else if (action === 'follow') {
-        await supabase.from('follows').insert({
-          follower_id: user.id,
-          following_id: currentPet.owner_id,
-        })
-
-        // Notify the followed user
-        await notifyFollow(currentPet.owner_id, user.id, currentUsername)
-      }
-      // 'pass' doesn't record anything
-
-      // Move to next card
-      setCurrentIndex((prev) => {
-        const next = prev + 1
-        if (next >= pets.length) {
-          setNoMore(true)
-        }
-        return next
-      })
+      await supabase.from('boops').insert({ pet_id: currentPet.id, user_id: user.id })
+      setCounters(prev => ({ ...prev, boops: prev.boops + 1 }))
     } catch (err) {
-      console.error(`${action} error:`, err)
-    } finally {
-      setActioning(false)
+      console.error('Boop error:', err)
     }
+  }
+
+  const handleStash = async () => {
+    if (currentIndex >= pets.length || !user) return
+    const currentPet = pets[currentIndex]
+    try {
+      const supabase = createClient()
+      await supabase.from('stashes').insert({ pet_id: currentPet.id, user_id: user.id })
+      setCounters(prev => ({ ...prev, stashed: prev.stashed + 1 }))
+      advanceCard()
+    } catch (err) {
+      console.error('Stash error:', err)
+    }
+  }
+
+  const advanceCard = () => {
+    setCurrentIndex(prev => {
+      const next = prev + 1
+      if (next >= pets.length) setNoMore(true)
+      return next
+    })
   }
 
   const handleLogout = async () => {
@@ -173,202 +124,249 @@ export default function StackPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50 flex items-center justify-center">
-        <p className="text-gray-600">Loading pets...</p>
+      <div className="min-h-screen bg-app flex items-center justify-center">
+        <p style={{ color: 'var(--ink-2)' }}>Loading pets...</p>
       </div>
     )
   }
 
   if (noMore || pets.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-app flex items-center justify-center p-6">
         <div className="text-center">
           <p className="text-4xl mb-4">🥺</p>
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">You've seen them all!</h1>
-          <p className="text-gray-600 mb-8 max-w-sm">
-            Come back later for more pets to discover. Or check out The Dex to see what you've spotted.
-          </p>
-
-          <div className="space-x-4">
-            <button
-              onClick={() => {
-                setCurrentIndex(0)
-                setNoMore(false)
-              }}
-              className="inline-block bg-amber-600 hover:bg-amber-700 text-white font-medium px-6 py-2 rounded-lg"
-            >
+          <h1 className="display-lg" style={{ color: 'var(--ink)', marginBottom: '16px' }}>That&apos;s everyone for today</h1>
+          <p style={{ color: 'var(--ink-2)', marginBottom: '32px' }} className="max-w-sm">Come back later for more pets to discover. Or check out The Dex to see what you&apos;ve spotted.</p>
+          <div className="flex gap-4 justify-center mb-8">
+            <button onClick={() => { setCurrentIndex(0); setNoMore(false) }} className="px-6 py-2 rounded-lg text-white button-text hover:opacity-90" style={{ background: 'var(--acc)' }}>
               Start over
             </button>
-
-            <Link
-              href="/dex"
-              className="inline-block bg-gray-600 hover:bg-gray-700 text-white font-medium px-6 py-2 rounded-lg"
-            >
+            <Link href="/dex" className="px-6 py-2 rounded-lg text-white button-text hover:opacity-90" style={{ background: 'var(--ink)' }}>
               The Dex
             </Link>
           </div>
-
-          <div className="mt-8">
-            <button
-              onClick={handleLogout}
-              className="text-red-600 hover:text-red-700 font-medium text-sm"
-            >
-              Log out
-            </button>
-          </div>
+          <button onClick={handleLogout} className="text-sm hover:opacity-70" style={{ color: 'var(--ink-2)' }}>
+            Log out
+          </button>
         </div>
       </div>
     )
   }
 
   const currentPet = pets[currentIndex]
+  const viewedToday = currentIndex + 1
+  const dailyTarget = 12
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-app" style={{
+      backgroundImage: `
+        radial-gradient(circle at 20% 20%, rgba(217, 119, 87, 0.08), transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(90, 122, 154, 0.06), transparent 50%)
+      `
+    }}>
       {/* Header */}
-      <div className="absolute top-6 left-6 right-6 flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">The Stack</h1>
-        <div className="flex gap-3 items-center">
-          <NotificationBell />
-          <Link
-            href="/packs"
-            className="bg-white text-amber-600 font-medium px-4 py-2 rounded-lg hover:bg-amber-50 transition-colors"
-          >
-            🐾 Packs
-          </Link>
-          <Link
-            href="/profile"
-            className="bg-white text-amber-600 font-medium px-4 py-2 rounded-lg hover:bg-amber-50 transition-colors"
-          >
-            👤 Profile
-          </Link>
-          <Link
-            href="/dex"
-            className="bg-white text-amber-600 font-medium px-4 py-2 rounded-lg hover:bg-amber-50 transition-colors"
-          >
-            📚 Dex
-          </Link>
+      <div className="flex justify-between items-start p-6" style={{ paddingTop: 'var(--space-7)' }}>
+        <div>
+          <p className="kicker" style={{ color: 'var(--acc)' }}>SNOUT</p>
+          <h1 className="display-lg" style={{ color: 'var(--ink)' }}>Stack</h1>
+          <p className="text-xs" style={{ color: 'var(--ink-2)', marginTop: '4px' }}>One card at a time · {String(viewedToday).padStart(2, '0')} / {dailyTarget} today</p>
         </div>
+        <button className="w-10 h-10 rounded-full hover:opacity-70" style={{ background: 'rgba(0, 0, 0, 0.06)', color: 'var(--ink)' }}>
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.7">
+            <circle cx="7.5" cy="7.5" r="5.5" />
+            <path d="M12 12l3.5 3.5" />
+          </svg>
+        </button>
       </div>
 
-      {/* Card */}
-      <div className="w-full max-w-lg mt-20 mb-6">
-        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
-          {/* Cover photo */}
-          <div className="h-56 bg-gradient-to-br from-amber-200 to-orange-300 relative overflow-hidden">
-            {currentPet.cover_url ? (
-              <img src={currentPet.cover_url} alt="Cover" className="w-full h-full object-cover" />
-            ) : null}
-          </div>
+      {/* Card Stack Container */}
+      <div className="relative mx-auto" style={{ maxWidth: '340px', height: '590px', margin: '0 26px' }}>
+        {/* Back peek cards */}
+        <div style={{
+          position: 'absolute',
+          inset: '22px 38px 32px 38px',
+          borderRadius: 'var(--radius-md)',
+          border: '1px solid var(--line)',
+          backgroundColor: 'var(--paper)',
+          transform: 'rotate(-2.4deg)',
+          opacity: 0.5,
+          zIndex: 1,
+        }} />
+        <div style={{
+          position: 'absolute',
+          inset: '14px 30px 24px 30px',
+          borderRadius: 'var(--radius-md)',
+          border: '1px solid var(--line)',
+          backgroundColor: 'var(--paper)',
+          transform: 'rotate(1.8deg)',
+          opacity: 0.78,
+          zIndex: 2,
+        }} />
 
-          {/* Content */}
-          <div className="relative px-6 pb-6">
-            {/* Avatar */}
-            <div className="flex justify-between items-start -mt-12 mb-4 relative z-10">
-              <div className="relative">
-                {currentPet.avatar_url ? (
-                  <img
-                    src={currentPet.avatar_url}
-                    alt={currentPet.name}
-                    className="w-24 h-24 rounded-full border-4 border-white object-cover shadow-lg"
-                  />
-                ) : (
-                  <div className="w-24 h-24 rounded-full border-4 border-white bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center shadow-lg">
-                    <span className="text-3xl">🐾</span>
-                  </div>
-                )}
-                {currentPet.is_nursery && (
-                  <span className="absolute bottom-0 right-0 bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                    🍼
-                  </span>
-                )}
+        {/* Active Card */}
+        <div style={{
+          position: 'absolute',
+          inset: '0 0 16px 0',
+          borderRadius: 'var(--radius-lg)',
+          boxShadow: 'var(--shadow-card)',
+          backgroundColor: 'var(--paper)',
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
+          transform: 'rotate(-0.5deg)',
+          zIndex: 3,
+        }}>
+          {/* Photo Region */}
+          <div className="flex-1 relative bg-gray-300 overflow-hidden">
+            {currentPet.avatar_url ? (
+              <img src={currentPet.avatar_url} alt={currentPet.name} className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center" style={{ color: '#ccc' }}>
+                <span className="text-4xl">🐾</span>
               </div>
-              <Link href={`/pets/${currentPet.id}`} className="text-amber-600 hover:text-amber-700 font-medium text-sm">
-                View card →
-              </Link>
-            </div>
-
-            {/* Pet info */}
-            <div className="mb-4">
-              <div className="flex items-baseline gap-2 mb-2">
-                <h2 className="text-2xl font-bold text-gray-900">{currentPet.name}</h2>
-                {currentPet.card_number && (
-                  <span className="text-xs font-medium text-amber-600 bg-amber-50 px-2 py-1 rounded-full">
-                    {currentPet.species} #{currentPet.card_number}
-                  </span>
-                )}
-              </div>
-
-              {currentPet.breed && <p className="text-gray-600 mb-2">{currentPet.breed}</p>}
-
-              {(currentPet.age_years !== null || currentPet.age_months !== null) && (
-                <p className="text-sm text-gray-500 mb-2">
-                  {currentPet.age_years && `${currentPet.age_years}y `}
-                  {currentPet.age_months && `${currentPet.age_months}m`}
-                </p>
-              )}
-            </div>
-
-            {/* Bio */}
-            {currentPet.bio && <p className="text-gray-700 mb-4 italic text-sm">{currentPet.bio}</p>}
-
-            {/* Owner */}
-            {owner?.username && (
-              <p className="text-xs text-gray-500 mb-6">
-                Pet owner: <span className="font-medium">@{owner.username}</span>
-              </p>
             )}
 
-            {/* Card counter */}
-            <p className="text-xs text-gray-400 text-center mb-6">
-              {currentIndex + 1} of {pets.length}
-            </p>
+            {/* Corner Brackets */}
+            {[
+              { top: '14px', left: '14px', styles: 'border-t-2 border-l-2' },
+              { top: '14px', right: '14px', styles: 'border-t-2 border-r-2' },
+              { bottom: '14px', left: '14px', styles: 'border-b-2 border-l-2' },
+              { bottom: '14px', right: '14px', styles: 'border-b-2 border-r-2' },
+            ].map((bracket, i) => (
+              <div
+                key={i}
+                className="absolute w-5 h-5"
+                style={{
+                  ...bracket,
+                  borderColor: 'rgba(255, 255, 255, 0.7)',
+                } as any}
+              />
+            ))}
 
-            {/* Actions */}
-            <div className="grid grid-cols-4 gap-3">
-              <button
-                onClick={() => handleAction('pass')}
-                disabled={actioning}
-                className="py-2 px-2 bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium rounded-lg transition-colors disabled:opacity-50 text-sm flex flex-col items-center gap-1"
-              >
-                <span className="text-lg">👋</span>
-                <span className="hidden sm:inline">Pass</span>
-              </button>
-              <button
-                onClick={() => handleAction('stash')}
-                disabled={actioning}
-                className="py-2 px-2 bg-blue-50 hover:bg-blue-100 text-blue-600 font-medium rounded-lg transition-colors disabled:opacity-50 text-sm flex flex-col items-center gap-1"
-              >
-                <span className="text-lg">🔖</span>
-                <span className="hidden sm:inline">Stash</span>
-              </button>
-              <button
-                onClick={() => handleAction('boop')}
-                disabled={actioning}
-                className="py-2 px-2 bg-pink-50 hover:bg-pink-100 text-pink-600 font-medium rounded-lg transition-colors disabled:opacity-50 text-sm flex flex-col items-center gap-1"
-              >
-                <span className="text-lg">❤️</span>
-                <span className="hidden sm:inline">Boop</span>
-              </button>
-              <button
-                onClick={() => handleAction('follow')}
-                disabled={actioning}
-                className="py-2 px-2 bg-green-50 hover:bg-green-100 text-green-600 font-medium rounded-lg transition-colors disabled:opacity-50 text-sm flex flex-col items-center gap-1"
-              >
-                <span className="text-lg">👁️</span>
-                <span className="hidden sm:inline">Follow</span>
-              </button>
+            {/* Card Number Pill */}
+            <div style={{
+              position: 'absolute',
+              top: '14px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              padding: '5px 12px',
+              borderRadius: 'var(--radius-pill)',
+              background: 'rgba(0, 0, 0, 0.55)',
+              backdropFilter: 'blur(10px)',
+            }}>
+              <p className="button-text-small" style={{ color: '#fff', letterSpacing: '1.5px' }}>
+                CARD · {String(viewedToday).padStart(2, '0')}/{String(dailyTarget).padStart(2, '0')}
+              </p>
             </div>
           </div>
+
+          {/* Meta Block */}
+          <div style={{ padding: '16px 18px 14px' }}>
+            {/* Name & Card Number */}
+            <div className="flex justify-between items-baseline gap-2 mb-2">
+              <h2 className="display-xl" style={{ color: 'var(--ink)' }}>@{owner?.username || currentPet.name}</h2>
+              <p className="text-xs" style={{ color: 'var(--ink-2)', whiteSpace: 'nowrap' }}>#{currentPet.card_number} · {currentPet.species}</p>
+            </div>
+
+            {/* Breed Chip */}
+            {currentPet.breed && (
+              <div style={{ marginTop: '8px' }}>
+                <span className="chip-text" style={{
+                  display: 'inline-block',
+                  padding: '3px 9px',
+                  borderRadius: 'var(--radius-pill)',
+                  background: 'rgba(217, 119, 87, 0.12)',
+                  color: 'var(--acc)',
+                }}>
+                  {currentPet.breed}
+                </span>
+              </div>
+            )}
+          </div>
         </div>
+
+        {/* Boop Button */}
+        <button
+          onClick={handleBoop}
+          className="absolute text-white flex flex-col items-center justify-center hover:opacity-90 active:scale-95"
+          style={{
+            width: '70px',
+            height: '70px',
+            top: '332px',
+            right: '-4px',
+            borderRadius: 'var(--radius-pill)',
+            border: '4px solid var(--paper)',
+            background: 'var(--acc)',
+            boxShadow: 'var(--shadow-boop)',
+            transform: 'rotate(-8deg)',
+            zIndex: 10,
+            fontSize: '26px',
+          }}
+        >
+          <span className="text-2xl">👉</span>
+          <p className="button-text-small">BOOP</p>
+        </button>
       </div>
 
-      {/* Bottom nav */}
-      <div className="fixed bottom-6 text-center">
-        <button
-          onClick={handleLogout}
-          className="text-red-600 hover:text-red-700 font-medium text-sm"
-        >
+      {/* Gesture Hints */}
+      <div className="flex justify-between text-xs mt-4 px-7" style={{ color: 'var(--ink-2)' }}>
+        <span>← their roll</span>
+        <span className="font-semibold" style={{ color: 'var(--acc)' }}>↑ next pet</span>
+        <span>stash →</span>
+      </div>
+
+      {/* Counters Strip */}
+      <div className="flex gap-2 mt-4 px-6 mx-auto" style={{ maxWidth: '340px' }}>
+        {[
+          { label: 'BOOPS', value: counters.boops },
+          { label: 'STASHED', value: counters.stashed },
+          { label: 'PACKS', value: counters.packs },
+          { label: 'CARDS', value: counters.cards },
+        ].map(counter => (
+          <div key={counter.label} className="flex-1 text-center py-2" style={{
+            border: '1px solid var(--line)',
+            borderRadius: 'var(--radius-sm)',
+            backgroundColor: 'var(--paper)',
+          }}>
+            <p className="display-sm" style={{ color: 'var(--ink)' }}>{counter.value}</p>
+            <p className="label" style={{ color: 'var(--ink-2)', marginTop: '3px' }}>{counter.label}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Tab Bar */}
+      <div style={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: '82px',
+        paddingTop: 'var(--space-3)',
+        paddingBottom: 'var(--space-6)',
+        background: 'rgba(250, 250, 247, 0.92)',
+        backdropFilter: 'blur(20px) saturate(180%)',
+        borderTop: '0.5px solid rgba(0, 0, 0, 0.08)',
+        display: 'flex',
+        justifyContent: 'space-around',
+        alignItems: 'flex-start',
+      }}>
+        {[
+          { emoji: '📚', label: 'Stack', href: '/stack', active: true },
+          { emoji: '📖', label: 'Dex', href: '/dex', active: false },
+          { emoji: '📸', label: 'Burst', href: '/burst', active: false },
+          { emoji: '🐾', label: 'Packs', href: '/packs', active: false },
+          { emoji: '🏆', label: 'Shelf', href: '/profile', active: false },
+        ].map(tab => (
+          <Link key={tab.label} href={tab.href} className="flex flex-col items-center gap-0.5" style={{ opacity: tab.active ? 1 : 0.45 }}>
+            <span style={{ fontSize: '22px' }}>{tab.emoji}</span>
+            <span className="text-xs font-medium" style={{ color: tab.active ? 'var(--acc)' : 'var(--ink)' }}>{tab.label}</span>
+          </Link>
+        ))}
+      </div>
+
+      {/* Logout */}
+      <div style={{ position: 'fixed', bottom: '96px', left: '50%', transform: 'translateX(-50%)' }}>
+        <button onClick={handleLogout} className="text-sm" style={{ color: 'var(--ink-2)', cursor: 'pointer' }}>
           Log out
         </button>
       </div>
