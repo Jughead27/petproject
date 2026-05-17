@@ -106,46 +106,110 @@ export default function SetupUsernamePage() {
 
   if (checking) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50 flex items-center justify-center p-4">
-        <div className="w-full max-w-md bg-white rounded-lg shadow-sm border border-amber-100 p-8">
-          <p className="text-gray-600">Loading...</p>
+      <div style={{
+        minHeight: '100vh',
+        background: 'var(--app-bg)',
+        backgroundImage: `
+          radial-gradient(circle at 20% 20%, rgba(217, 119, 87, 0.08), transparent 50%),
+          radial-gradient(circle at 80% 80%, rgba(90, 122, 154, 0.06), transparent 50%)
+        `,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px',
+      }}>
+        <div style={{
+          width: '100%',
+          maxWidth: '360px',
+          background: 'var(--paper)',
+          borderRadius: 'var(--radius-lg)',
+          boxShadow: 'var(--shadow-sm)',
+          border: '1px solid var(--line)',
+          padding: '32px',
+        }}>
+          <p style={{ color: 'var(--ink-2)' }}>Loading...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-sm border border-amber-100 p-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Choose your username</h1>
-        <p className="text-sm text-gray-600 mb-6">
+    <div style={{
+      minHeight: '100vh',
+      background: 'var(--app-bg)',
+      backgroundImage: `
+        radial-gradient(circle at 20% 20%, rgba(217, 119, 87, 0.08), transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(90, 122, 154, 0.06), transparent 50%)
+      `,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '24px',
+    }}>
+      <div style={{
+        width: '100%',
+        maxWidth: '360px',
+        background: 'var(--paper)',
+        borderRadius: 'var(--radius-lg)',
+        boxShadow: 'var(--shadow-sm)',
+        border: '1px solid var(--line)',
+        padding: '32px',
+      }}>
+        <h1 className="display-lg" style={{ color: 'var(--ink)', marginBottom: '8px' }}>Choose your username</h1>
+        <p className="text-sm" style={{ color: 'var(--ink-2)', marginBottom: '24px', lineHeight: 1.5 }}>
           This is how other pet owners will find you on PetProject.
         </p>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-700">
+          <div style={{
+            marginBottom: '16px',
+            padding: '12px 14px',
+            backgroundColor: 'rgba(220, 38, 38, 0.1)',
+            border: '1px solid rgba(220, 38, 38, 0.3)',
+            borderRadius: 'var(--radius-sm)',
+            fontSize: '11.5px',
+            color: '#7f1d1d',
+          }}>
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSetUsername} className="space-y-4">
+        <form onSubmit={handleSetUsername} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="username" className="label" style={{ display: 'block', color: 'var(--ink)', marginBottom: '6px' }}>
               Username
             </label>
-            <div className="relative">
-              <span className="absolute left-3 top-2 text-gray-500 text-sm">@</span>
+            <div style={{ position: 'relative' }}>
+              <span style={{
+                position: 'absolute',
+                left: '12px',
+                top: '10px',
+                color: 'var(--ink-2)',
+                fontSize: '14px',
+              }}>@</span>
               <input
                 id="username"
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 disabled={loading}
-                className="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:opacity-50"
+                style={{
+                  width: '100%',
+                  paddingLeft: '30px',
+                  paddingRight: '12px',
+                  paddingTop: '10px',
+                  paddingBottom: '10px',
+                  border: '1px solid var(--line)',
+                  borderRadius: 'var(--radius-sm)',
+                  color: 'var(--ink)',
+                  backgroundColor: 'var(--paper)',
+                  fontSize: '14px',
+                  opacity: loading ? 0.5 : 1,
+                }}
                 placeholder="yourname"
               />
             </div>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs" style={{ color: 'var(--ink-2)', marginTop: '6px' }}>
               3-20 characters, letters/numbers/underscores
             </p>
           </div>
@@ -153,7 +217,19 @@ export default function SetupUsernamePage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-amber-600 hover:bg-amber-700 text-white font-medium py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:opacity-50 transition-colors"
+            className="button-text"
+            style={{
+              width: '100%',
+              padding: '12px',
+              marginTop: '8px',
+              background: 'var(--acc)',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 'var(--radius-sm)',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              opacity: loading ? 0.7 : 1,
+              transition: 'opacity 200ms',
+            }}
           >
             {loading ? 'Setting username...' : 'Continue'}
           </button>

@@ -58,29 +58,53 @@ function LoginContent() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Welcome back</h1>
+      <h1 className="display-lg" style={{ color: 'var(--ink)', marginBottom: '24px' }}>Welcome back</h1>
 
       {searchParams.get('error') === 'confirmation_failed' && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-700">
+        <div style={{
+          marginBottom: '16px',
+          padding: '12px 14px',
+          backgroundColor: 'rgba(220, 38, 38, 0.1)',
+          border: '1px solid rgba(220, 38, 38, 0.3)',
+          borderRadius: 'var(--radius-sm)',
+          fontSize: '11.5px',
+          color: '#7f1d1d',
+        }}>
           Email confirmation failed. Please try signing up again or contact support.
         </div>
       )}
 
       {searchParams.get('error') === 'invalid_confirmation_link' && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-700">
+        <div style={{
+          marginBottom: '16px',
+          padding: '12px 14px',
+          backgroundColor: 'rgba(220, 38, 38, 0.1)',
+          border: '1px solid rgba(220, 38, 38, 0.3)',
+          borderRadius: 'var(--radius-sm)',
+          fontSize: '11.5px',
+          color: '#7f1d1d',
+        }}>
           Invalid confirmation link. Please try signing up again.
         </div>
       )}
 
       {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-700">
+        <div style={{
+          marginBottom: '16px',
+          padding: '12px 14px',
+          backgroundColor: 'rgba(220, 38, 38, 0.1)',
+          border: '1px solid rgba(220, 38, 38, 0.3)',
+          borderRadius: 'var(--radius-sm)',
+          fontSize: '11.5px',
+          color: '#7f1d1d',
+        }}>
           {error}
         </div>
       )}
 
-      <form onSubmit={handleLogin} className="space-y-4">
+      <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="email" className="label" style={{ display: 'block', color: 'var(--ink)', marginBottom: '6px' }}>
             Email
           </label>
           <input
@@ -89,13 +113,22 @@ function LoginContent() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={loading}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:opacity-50"
+            style={{
+              width: '100%',
+              padding: '10px 12px',
+              border: '1px solid var(--line)',
+              borderRadius: 'var(--radius-sm)',
+              color: 'var(--ink)',
+              backgroundColor: 'var(--paper)',
+              fontSize: '14px',
+              opacity: loading ? 0.5 : 1,
+            }}
             placeholder="you@example.com"
           />
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="password" className="label" style={{ display: 'block', color: 'var(--ink)', marginBottom: '6px' }}>
             Password
           </label>
           <input
@@ -104,7 +137,16 @@ function LoginContent() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             disabled={loading}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:opacity-50"
+            style={{
+              width: '100%',
+              padding: '10px 12px',
+              border: '1px solid var(--line)',
+              borderRadius: 'var(--radius-sm)',
+              color: 'var(--ink)',
+              backgroundColor: 'var(--paper)',
+              fontSize: '14px',
+              opacity: loading ? 0.5 : 1,
+            }}
             placeholder="••••••••••••"
           />
         </div>
@@ -112,17 +154,26 @@ function LoginContent() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-amber-600 hover:bg-amber-700 text-white font-medium py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:opacity-50 transition-colors"
+          className="button-text"
+          style={{
+            width: '100%',
+            padding: '12px',
+            marginTop: '8px',
+            background: 'var(--acc)',
+            color: '#fff',
+            border: 'none',
+            borderRadius: 'var(--radius-sm)',
+            cursor: loading ? 'not-allowed' : 'pointer',
+            opacity: loading ? 0.7 : 1,
+            transition: 'opacity 200ms',
+          }}
         >
           {loading ? 'Logging in...' : 'Log in'}
         </button>
       </form>
 
-      <p className="text-sm text-gray-600 text-center mt-6">
-        Don't have an account?{' '}
-        <span className="text-gray-500">
-          Check your email for an invite link or ask a friend to send you one.
-        </span>
+      <p className="text-xs" style={{ color: 'var(--ink-2)', textAlign: 'center', marginTop: '24px', lineHeight: 1.5 }}>
+        Don't have an account? Check your email for an invite link or ask a friend to send you one.
       </p>
     </div>
   )
