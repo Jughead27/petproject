@@ -124,18 +124,8 @@ export default function EditPetPage() {
     if (!pet) return
 
     // Validation
-    if (!breed.trim()) {
-      setError('Please enter a breed')
-      return
-    }
-
     if (ageYears === null && ageMonths === null) {
       setError('Please enter age (years or months)')
-      return
-    }
-
-    if (!bio.trim()) {
-      setError('Please enter a bio')
       return
     }
 
