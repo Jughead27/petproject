@@ -41,19 +41,18 @@ export default function CreatePetPage() {
     e.preventDefault()
     setError('')
 
-    // Validation
     if (!name.trim()) {
-      setError('Please enter a pet name')
+      setError('Pet name required')
       return
     }
 
     if (!species) {
-      setError('Please select a species')
+      setError('Species required')
       return
     }
 
     if (!avatarFile) {
-      setError('Please upload a photo')
+      setError('Photo required')
       return
     }
 
@@ -62,30 +61,22 @@ export default function CreatePetPage() {
     try {
       const supabase = createClient()
 
-      // Get current user
       const { data: userData } = await supabase.auth.getUser()
       if (!userData.user) {
         setError('Not authenticated')
         return
       }
 
-      // Upload avatar to R2
       const avatarUrl = await uploadToR2(avatarFile, 'pets/avatars', userData.user.id)
 
-      // Get next card number for this species
-      const { data: speciesCount, error: countError } = await supabase
+      const { data: speciesCount } = await supabase
         .from('pets')
         .select('id', { count: 'exact' })
         .eq('owner_id', userData.user.id)
         .eq('species', species)
 
-      if (countError) {
-        console.error('Count error:', countError)
-      }
-
       const cardNumber = (speciesCount?.length || 0) + 1
 
-      // Insert pet
       const { data: newPet, error: insertError } = await supabase
         .from('pets')
         .insert({
@@ -99,24 +90,19 @@ export default function CreatePetPage() {
         .single()
 
       if (insertError) {
-        setError('Failed to create pet. Please try again.')
-        console.error('Insert error:', insertError)
+        setError('Failed to create. Try again.')
         return
       }
 
       if (!newPet) {
-        setError('Failed to create pet')
+        setError('Failed to create')
         return
       }
 
-      // Redirect to pet card
       router.push(`/pets/${newPet.id}`)
     } catch (err) {
-      console.error('Create pet error:', {
-        error: err instanceof Error ? err.message : String(err),
-        timestamp: new Date().toISOString(),
-      })
-      setError('An unexpected error occurred')
+      console.error('Create pet error:', err)
+      setError('Something went wrong')
     } finally {
       setLoading(false)
     }
@@ -130,33 +116,73 @@ export default function CreatePetPage() {
         radial-gradient(circle at 20% 20%, rgba(217, 119, 87, 0.08), transparent 50%),
         radial-gradient(circle at 80% 80%, rgba(90, 122, 154, 0.06), transparent 50%)
       `,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '24px',
       paddingBottom: '80px',
     }}>
-      <div style={{ maxWidth: '360px', margin: '0 auto', padding: '24px' }}>
-        <div style={{ marginBottom: '32px' }}>
-          <p className="kicker" style={{ color: 'var(--acc)', marginBottom: '8px' }}>SNOUT</p>
-          <h1 className="display-lg" style={{ color: 'var(--ink)', marginBottom: '8px' }}>Create a Pet Card</h1>
-          <p className="text-sm" style={{ color: 'var(--ink-2)' }}>Start with the essentials. You can add more details later.</p>
+      <div style={{ maxWidth: '400px', width: '100%' }}>
+        {/* Header */}
+        <div style={{ marginBottom: '40px', textAlign: 'center' }}>
+          <p style={{
+            fontSize: '11px',
+            fontWeight: 700,
+            letterSpacing: '2.5px',
+            textTransform: 'uppercase',
+            color: 'var(--acc)',
+            margin: '0 0 12px 0',
+          }}>
+            Create
+          </p>
+          <h1 style={{
+            fontFamily: '"Instrument Serif", Georgia, serif',
+            fontSize: '32px',
+            fontWeight: 400,
+            fontStyle: 'italic',
+            color: 'var(--ink)',
+            margin: '0 0 12px 0',
+            lineHeight: 1,
+          }}>
+            Your Pet
+          </h1>
+          <p style={{
+            fontSize: '13px',
+            color: 'var(--ink-2)',
+            margin: 0,
+          }}>
+            Name, species, photo. That's it.
+          </p>
         </div>
 
+        {/* Error */}
         {error && (
           <div style={{
             marginBottom: '24px',
-            padding: '12px 14px',
+            padding: '14px 16px',
             backgroundColor: 'rgba(220, 38, 38, 0.1)',
             border: '1px solid rgba(220, 38, 38, 0.3)',
-            borderRadius: 'var(--radius-sm)',
-            fontSize: '11.5px',
+            borderRadius: '0px',
+            fontSize: '12px',
             color: '#7f1d1d',
           }}>
             {error}
           </div>
         )}
 
+        {/* Form */}
         <form onSubmit={handleCreatePet} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          {/* Pet Name */}
+          {/* Name */}
           <div>
-            <label htmlFor="name" className="label" style={{ display: 'block', color: 'var(--ink)', marginBottom: '8px' }}>
+            <label htmlFor="name" style={{
+              display: 'block',
+              fontSize: '11px',
+              fontWeight: 700,
+              letterSpacing: '0.6px',
+              textTransform: 'uppercase',
+              color: 'var(--ink)',
+              marginBottom: '8px',
+            }}>
               Pet Name
             </label>
             <input
@@ -167,21 +193,30 @@ export default function CreatePetPage() {
               disabled={loading}
               style={{
                 width: '100%',
-                padding: '10px 12px',
-                border: '1px solid var(--line)',
-                borderRadius: 'var(--radius-sm)',
+                padding: '14px 16px',
+                border: '2px solid var(--line)',
+                borderRadius: '0px',
                 color: 'var(--ink)',
                 backgroundColor: 'var(--paper)',
                 fontSize: '14px',
+                fontWeight: 500,
                 opacity: loading ? 0.5 : 1,
               }}
-              placeholder="e.g. Luna"
+              placeholder="Luna"
             />
           </div>
 
           {/* Species */}
           <div>
-            <label htmlFor="species" className="label" style={{ display: 'block', color: 'var(--ink)', marginBottom: '8px' }}>
+            <label htmlFor="species" style={{
+              display: 'block',
+              fontSize: '11px',
+              fontWeight: 700,
+              letterSpacing: '0.6px',
+              textTransform: 'uppercase',
+              color: 'var(--ink)',
+              marginBottom: '8px',
+            }}>
               Species
             </label>
             <select
@@ -191,16 +226,17 @@ export default function CreatePetPage() {
               disabled={loading}
               style={{
                 width: '100%',
-                padding: '10px 12px',
-                border: '1px solid var(--line)',
-                borderRadius: 'var(--radius-sm)',
+                padding: '14px 16px',
+                border: '2px solid var(--line)',
+                borderRadius: '0px',
                 color: 'var(--ink)',
                 backgroundColor: 'var(--paper)',
                 fontSize: '14px',
+                fontWeight: 500,
                 opacity: loading ? 0.5 : 1,
               }}
             >
-              <option value="">Select a species...</option>
+              <option value="">Choose...</option>
               {SPECIES_LIST.map((s) => (
                 <option key={s} value={s}>
                   {s}
@@ -209,86 +245,94 @@ export default function CreatePetPage() {
             </select>
           </div>
 
-          {/* Avatar Photo */}
+          {/* Photo */}
           <div>
-            <label className="label" style={{ display: 'block', color: 'var(--ink)', marginBottom: '8px' }}>
+            <label style={{
+              display: 'block',
+              fontSize: '11px',
+              fontWeight: 700,
+              letterSpacing: '0.6px',
+              textTransform: 'uppercase',
+              color: 'var(--ink)',
+              marginBottom: '8px',
+            }}>
               Photo
             </label>
-            <div style={{ position: 'relative' }}>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleAvatarChange}
-                disabled={loading}
-                style={{ display: 'none' }}
-                id="avatar-upload"
-              />
-              <label
-                htmlFor="avatar-upload"
-                style={{
-                  display: 'block',
-                  width: '100%',
-                  padding: '32px 16px',
-                  border: '2px dashed var(--line)',
-                  borderRadius: 'var(--radius-md)',
-                  textAlign: 'center',
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  backgroundColor: 'transparent',
-                  transition: 'all 200ms',
-                  opacity: loading ? 0.5 : 1,
-                }}
-                onMouseEnter={(e) => !loading && (e.currentTarget.style.borderColor = 'var(--acc)', e.currentTarget.style.backgroundColor = 'rgba(217, 119, 87, 0.05)')}
-                onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--line)', e.currentTarget.style.backgroundColor = 'transparent')}
-              >
-                {avatarPreview ? (
-                  <img
-                    src={avatarPreview}
-                    alt="Preview"
-                    style={{
-                      height: '128px',
-                      width: '128px',
-                      objectFit: 'cover',
-                      borderRadius: 'var(--radius-sm)',
-                      margin: '0 auto',
-                      display: 'block',
-                    }}
-                  />
-                ) : (
-                  <div>
-                    <p className="display-sm" style={{ color: 'var(--ink)', margin: '0 0 6px 0' }}>📸</p>
-                    <p className="button-text" style={{ color: 'var(--ink)', margin: '0 0 4px 0' }}>Click to upload</p>
-                    <p className="text-xs" style={{ color: 'var(--ink-2)', margin: 0 }}>or drag and drop</p>
-                  </div>
-                )}
-              </label>
-            </div>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarChange}
+              disabled={loading}
+              style={{ display: 'none' }}
+              id="avatar-upload"
+            />
+            <label
+              htmlFor="avatar-upload"
+              style={{
+                display: 'block',
+                width: '100%',
+                padding: '32px 20px',
+                border: '2px dashed var(--line)',
+                borderRadius: '0px',
+                textAlign: 'center',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                backgroundColor: 'var(--paper)',
+                transition: 'all 180ms',
+                opacity: loading ? 0.5 : 1,
+              }}
+              onMouseEnter={(e) => !loading && (e.currentTarget.style.borderColor = 'var(--acc)', e.currentTarget.style.backgroundColor = 'rgba(217, 119, 87, 0.05)')}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--line)', e.currentTarget.style.backgroundColor = 'var(--paper)')}
+            >
+              {avatarPreview ? (
+                <img
+                  src={avatarPreview}
+                  alt="Preview"
+                  style={{
+                    height: '140px',
+                    width: '140px',
+                    objectFit: 'cover',
+                    borderRadius: '0px',
+                    margin: '0 auto',
+                    display: 'block',
+                    border: '2px solid var(--line)',
+                  }}
+                />
+              ) : (
+                <div>
+                  <p style={{ fontSize: '32px', margin: '0 0 8px 0' }}>📸</p>
+                  <p style={{ color: 'var(--ink)', margin: '0 0 4px 0', fontWeight: 600, fontSize: '13px' }}>Upload photo</p>
+                  <p style={{ color: 'var(--ink-2)', margin: 0, fontSize: '12px' }}>JPG, PNG</p>
+                </div>
+              )}
+            </label>
           </div>
 
           {/* Submit */}
           <button
             type="submit"
             disabled={loading}
-            className="button-text"
             style={{
               width: '100%',
-              padding: '12px',
-              marginTop: '8px',
+              padding: '18px 20px',
+              marginTop: '12px',
               background: 'var(--acc)',
               color: '#fff',
               border: 'none',
-              borderRadius: 'var(--radius-md)',
+              borderRadius: '0px',
               cursor: loading ? 'not-allowed' : 'pointer',
               opacity: loading ? 0.7 : 1,
-              transition: 'opacity 200ms',
+              transition: 'all 180ms ease',
+              fontSize: '14px',
+              fontWeight: 700,
+              letterSpacing: '0.5px',
+              boxShadow: '0 8px 24px rgba(217, 119, 87, 0.3)',
             }}
+            onMouseEnter={(e) => !loading && (e.currentTarget.style.transform = 'translateY(-2px)', e.currentTarget.style.boxShadow = '0 12px 32px rgba(217, 119, 87, 0.4)')}
+            onMouseLeave={(e) => !loading && (e.currentTarget.style.transform = 'translateY(0)', e.currentTarget.style.boxShadow = '0 8px 24px rgba(217, 119, 87, 0.3)')}
           >
-            {loading ? 'Creating card...' : 'Create Pet Card'}
+            {loading ? 'Creating...' : 'Create'}
           </button>
         </form>
-
-        <p className="text-xs text-center" style={{ color: 'var(--ink-2)', marginTop: '24px' }}>
-          Your pet card will be live immediately. You can edit details anytime.
-        </p>
       </div>
     </div>
   )

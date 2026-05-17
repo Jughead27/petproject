@@ -10,7 +10,6 @@ interface Pet {
   name: string
   species: string
   avatar_url: string | null
-  card_number: number | null
 }
 
 interface UserProfile {
@@ -44,7 +43,7 @@ export default function ProfilePage() {
 
         const { data: petsData } = await supabase
           .from('pets')
-          .select('id, name, species, avatar_url, card_number')
+          .select('id, name, species, avatar_url')
           .eq('owner_id', userData.user.id)
           .order('created_at', { ascending: false })
         setPets(petsData || [])
@@ -77,7 +76,7 @@ export default function ProfilePage() {
         alignItems: 'center',
         justifyContent: 'center',
       }}>
-        <p style={{ color: 'var(--ink-2)' }}>Loading profile...</p>
+        <p style={{ color: 'var(--ink-2)' }}>Loading...</p>
       </div>
     )
   }
@@ -99,12 +98,36 @@ export default function ProfilePage() {
         alignItems: 'flex-start',
         padding: '24px',
         paddingTop: '18px',
+        borderBottom: '1px solid var(--line)',
       }}>
         <div>
-          <p className="kicker" style={{ color: 'var(--acc)' }}>SNOUT</p>
-          <h1 className="display-lg" style={{ color: 'var(--ink)' }}>Your Shelf</h1>
-          <p className="text-xs" style={{ color: 'var(--ink-2)', marginTop: '4px' }}>
-            @{profile?.username || 'user'} · {pets.length} pet{pets.length !== 1 ? 's' : ''}
+          <p style={{
+            fontSize: '11px',
+            fontWeight: 700,
+            letterSpacing: '2.5px',
+            textTransform: 'uppercase',
+            color: 'var(--acc)',
+            margin: '0 0 8px 0',
+          }}>
+            Shelf
+          </p>
+          <h1 style={{
+            fontFamily: '"Instrument Serif", Georgia, serif',
+            fontSize: '32px',
+            fontWeight: 400,
+            fontStyle: 'italic',
+            color: 'var(--ink)',
+            margin: '0 0 6px 0',
+            lineHeight: 1,
+          }}>
+            Your Pets
+          </h1>
+          <p style={{
+            fontSize: '12px',
+            color: 'var(--ink-2)',
+            margin: 0,
+          }}>
+            @{profile?.username} · {pets.length} pet{pets.length !== 1 ? 's' : ''}
           </p>
         </div>
         <button
@@ -112,40 +135,63 @@ export default function ProfilePage() {
           style={{
             width: '40px',
             height: '40px',
-            borderRadius: '50%',
-            background: 'rgba(0, 0, 0, 0.06)',
+            borderRadius: '0px',
+            background: 'transparent',
+            border: '1px solid var(--line)',
             color: 'var(--ink)',
-            border: 'none',
             cursor: 'pointer',
+            fontSize: '18px',
+            transition: 'all 180ms ease',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
           }}
+          onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.12)')}
+          onMouseLeave={(e) => (e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.08)')}
+          title="Logout"
         >
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.7">
-            <path d="M6 3h-2a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2" />
-            <path d="M13 12l3-3m0 0l-3-3" />
-          </svg>
+          ↪
         </button>
       </div>
 
-      {/* Pet Grid */}
-      <div style={{ paddingLeft: '24px', paddingRight: '24px' }}>
+      {/* Content */}
+      <div style={{ padding: '32px 24px' }}>
         {pets.length === 0 ? (
           <div style={{ textAlign: 'center', paddingTop: '48px', paddingBottom: '48px' }}>
-            <p style={{ fontSize: '32px', marginBottom: '16px' }}>🐾</p>
-            <p style={{ fontSize: '11.5px', color: 'var(--ink-2)', marginBottom: '16px' }}>You haven't added any pets yet</p>
-            <Link
-              href="/pets/create"
-              style={{
-                display: 'inline-block',
-                padding: '12px 24px',
-                borderRadius: '12px',
-                background: 'var(--acc)',
-                color: '#fff',
-                textDecoration: 'none',
-                fontSize: '12.5px',
-                fontWeight: 600,
-              }}
+            <p style={{ fontSize: '48px', marginBottom: '16px' }}>🐾</p>
+            <h2 style={{
+              fontFamily: '"Instrument Serif", Georgia, serif',
+              fontSize: '24px',
+              fontWeight: 400,
+              fontStyle: 'italic',
+              color: 'var(--ink)',
+              marginBottom: '12px',
+              lineHeight: 1,
+            }}>
+              No pets yet
+            </h2>
+            <p style={{
+              fontSize: '13px',
+              color: 'var(--ink-2)',
+              marginBottom: '24px',
+            }}>
+              Create your first pet to get started
+            </p>
+            <Link href="/pets/create" style={{
+              padding: '16px 32px',
+              background: 'var(--acc)',
+              color: '#fff',
+              textDecoration: 'none',
+              fontSize: '13px',
+              fontWeight: 700,
+              letterSpacing: '0.5px',
+              borderRadius: '0px',
+              boxShadow: '0 8px 24px rgba(217, 119, 87, 0.3)',
+              transition: 'all 180ms ease',
+              display: 'inline-block',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-2px)', e.currentTarget.style.boxShadow = '0 12px 32px rgba(217, 119, 87, 0.4)')}
+            onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)', e.currentTarget.style.boxShadow = '0 8px 24px rgba(217, 119, 87, 0.3)')}
             >
-              Add your first pet
+              Create Pet
             </Link>
           </div>
         ) : (
@@ -153,8 +199,8 @@ export default function ProfilePage() {
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
-              gap: '12px',
-              marginBottom: '16px',
+              gap: '16px',
+              marginBottom: '32px',
             }}>
               {pets.map(pet => (
                 <Link
@@ -162,16 +208,18 @@ export default function ProfilePage() {
                   href={`/pets/${pet.id}`}
                   style={{
                     background: 'var(--paper)',
-                    border: '1px solid var(--line)',
-                    boxShadow: 'var(--shadow-sm)',
-                    borderRadius: '12px',
+                    border: '2px solid var(--line)',
+                    borderRadius: '0px',
                     overflow: 'hidden',
-                    display: 'block',
+                    display: 'flex',
+                    flexDirection: 'column',
                     textDecoration: 'none',
-                    transition: 'opacity 200ms',
+                    transition: 'all 180ms ease',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                    cursor: 'pointer',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
-                  onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+                  onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.15)', e.currentTarget.style.transform = 'translateY(-2px)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.08)', e.currentTarget.style.transform = 'translateY(0)')}
                 >
                   <div style={{
                     aspectRatio: '3/4',
@@ -179,34 +227,33 @@ export default function ProfilePage() {
                     backgroundImage: pet.avatar_url ? `url(${pet.avatar_url})` : undefined,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
-                    position: 'relative',
-                    overflow: 'hidden',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
+                    fontSize: '32px',
                   }}>
-                    {!pet.avatar_url && <span style={{ fontSize: '32px' }}>🐾</span>}
-                    {pet.card_number && (
-                      <div style={{
-                        position: 'absolute',
-                        top: '6px',
-                        left: '6px',
-                        padding: '2px 6px',
-                        borderRadius: '4px',
-                        background: 'rgba(0, 0, 0, 0.5)',
-                        color: '#fff',
-                        fontSize: '8px',
-                        fontWeight: 600,
-                      }}>
-                        #{String(pet.card_number).padStart(3, '0')}
-                      </div>
-                    )}
+                    {!pet.avatar_url && '🐾'}
                   </div>
-                  <div style={{ padding: '10px' }}>
-                    <h3 className="display-sm" style={{ color: 'var(--ink)', marginBottom: '4px' }}>
+                  <div style={{ padding: '12px' }}>
+                    <h3 style={{
+                      fontFamily: '"Instrument Serif", Georgia, serif',
+                      fontSize: '16px',
+                      fontWeight: 400,
+                      fontStyle: 'italic',
+                      color: 'var(--ink)',
+                      margin: '0 0 4px 0',
+                      lineHeight: 1,
+                    }}>
                       {pet.name}
                     </h3>
-                    <p className="label" style={{ color: 'var(--ink-2)' }}>
+                    <p style={{
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      color: 'var(--ink-2)',
+                      margin: 0,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                    }}>
                       {pet.species}
                     </p>
                   </div>
@@ -214,21 +261,25 @@ export default function ProfilePage() {
               ))}
             </div>
 
-            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-              <Link
-                href="/pets/create"
-                style={{
-                  display: 'inline-block',
-                  padding: '12px 24px',
-                  borderRadius: '12px',
-                  background: 'var(--acc)',
-                  color: '#fff',
-                  textDecoration: 'none',
-                  fontSize: '12.5px',
-                  fontWeight: 600,
-                }}
+            <div style={{ textAlign: 'center' }}>
+              <Link href="/pets/create" style={{
+                padding: '16px 32px',
+                background: 'transparent',
+                color: 'var(--acc)',
+                textDecoration: 'none',
+                fontSize: '13px',
+                fontWeight: 700,
+                letterSpacing: '0.5px',
+                borderRadius: '0px',
+                border: '2px solid var(--acc)',
+                transition: 'all 180ms ease',
+                display: 'inline-block',
+                boxShadow: '0 2px 8px rgba(217, 119, 87, 0.15)',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--acc)', e.currentTarget.style.color = '#fff', e.currentTarget.style.boxShadow = '0 8px 24px rgba(217, 119, 87, 0.3)')}
+              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent', e.currentTarget.style.color = 'var(--acc)', e.currentTarget.style.boxShadow = '0 2px 8px rgba(217, 119, 87, 0.15)')}
               >
-                Add another pet
+                + Add Pet
               </Link>
             </div>
           </>
@@ -242,39 +293,37 @@ export default function ProfilePage() {
         left: 0,
         right: 0,
         height: '82px',
-        paddingTop: 'var(--space-3)',
-        paddingBottom: 'var(--space-6)',
-        background: 'rgba(250, 250, 247, 0.92)',
-        backdropFilter: 'blur(20px) saturate(180%)',
-        borderTop: '0.5px solid rgba(0, 0, 0, 0.08)',
+        paddingTop: '8px',
+        paddingBottom: '14px',
+        background: 'rgba(239, 236, 229, 0.96)',
+        backdropFilter: 'blur(20px)',
+        borderTop: '1px solid var(--line)',
         display: 'flex',
         justifyContent: 'space-around',
         alignItems: 'flex-start',
       }}>
         {[
           { emoji: '📚', label: 'Stack', href: '/stack', active: false },
-          { emoji: '📖', label: 'Dex', href: '/dex', active: false },
-          { emoji: '📸', label: 'Burst', href: '/burst', active: false },
-          { emoji: '🐾', label: 'Packs', href: '/packs', active: false },
           { emoji: '🏆', label: 'Shelf', href: '/profile', active: true },
         ].map(tab => (
-          <Link
-            key={tab.label}
-            href={tab.href}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '4px',
-              textDecoration: 'none',
-              opacity: tab.active ? 1 : 0.45,
-            }}
+          <Link key={tab.label} href={tab.href} style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '4px',
+            textDecoration: 'none',
+            opacity: tab.active ? 1 : 0.5,
+            transition: 'opacity 180ms',
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
+          onMouseLeave={(e) => (e.currentTarget.style.opacity = tab.active ? '1' : '0.5')}
           >
             <span style={{ fontSize: '22px' }}>{tab.emoji}</span>
             <span style={{
-              fontSize: '10.5px',
-              fontWeight: 600,
+              fontSize: '10px',
+              fontWeight: 700,
               color: tab.active ? 'var(--acc)' : 'var(--ink)',
+              letterSpacing: '0.5px',
             }}>
               {tab.label}
             </span>
