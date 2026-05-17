@@ -73,7 +73,13 @@ export default function ShelfPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-app flex items-center justify-center">
+      <div style={{
+        minHeight: '100vh',
+        background: 'var(--app-bg)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
         <p style={{ color: 'var(--ink-2)' }}>Loading pet card...</p>
       </div>
     )
@@ -81,11 +87,28 @@ export default function ShelfPage() {
 
   if (!pet) {
     return (
-      <div className="min-h-screen bg-app flex items-center justify-center p-6">
-        <div className="text-center">
-          <p className="text-4xl mb-4">🐾</p>
-          <h1 className="display-lg" style={{ color: 'var(--ink)', marginBottom: '16px' }}>Pet not found</h1>
-          <Link href="/stack" className="text-sm" style={{ color: 'var(--acc)' }}>
+      <div style={{
+        minHeight: '100vh',
+        background: 'var(--app-bg)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px',
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ fontSize: '32px', marginBottom: '16px' }}>🐾</p>
+          <h1 style={{
+            fontFamily: '"Instrument Serif", Georgia, serif',
+            fontSize: '28px',
+            fontWeight: 400,
+            fontStyle: 'italic',
+            color: 'var(--ink)',
+            marginBottom: '16px',
+            lineHeight: 1,
+          }}>
+            Pet not found
+          </h1>
+          <Link href="/stack" style={{ color: 'var(--acc)', fontSize: '11.5px' }}>
             Back to Stack
           </Link>
         </div>
@@ -98,7 +121,11 @@ export default function ShelfPage() {
     : '—'
 
   return (
-    <div className="min-h-screen bg-app pb-20">
+    <div style={{
+      minHeight: '100vh',
+      background: 'var(--app-bg)',
+      paddingBottom: '100px',
+    }}>
       {/* Hero Section */}
       <div style={{
         height: '260px',
@@ -130,14 +157,20 @@ export default function ShelfPage() {
         }}>
           <button
             onClick={() => router.back()}
-            className="w-10 h-10 rounded-full hover:opacity-70"
             style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
               background: 'rgba(255, 255, 255, 0.18)',
               color: '#fff',
               border: '0.5px solid rgba(255, 255, 255, 0.3)',
               backdropFilter: 'blur(12px)',
               fontSize: '18px',
+              cursor: 'pointer',
+              transition: 'opacity 200ms',
             }}
+            onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.7')}
+            onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
           >
             ←
           </button>
@@ -158,14 +191,24 @@ export default function ShelfPage() {
           {isOwner && (
             <Link
               href={`/pets/${petId}/edit`}
-              className="w-10 h-10 rounded-full hover:opacity-70 flex items-center justify-center"
               style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
                 background: 'rgba(255, 255, 255, 0.18)',
                 color: '#fff',
                 border: '0.5px solid rgba(255, 255, 255, 0.3)',
                 backdropFilter: 'blur(12px)',
                 fontSize: '16px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textDecoration: 'none',
+                cursor: 'pointer',
+                transition: 'opacity 200ms',
               }}
+              onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.7')}
+              onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
             >
               ✎
             </Link>
@@ -212,28 +255,71 @@ export default function ShelfPage() {
         {/* Identity Block */}
         <div style={{ marginBottom: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', marginBottom: '6px' }}>
-            <h1 className="display-xl" style={{ color: 'var(--ink)' }}>{pet.name}</h1>
-            <p className="label" style={{ color: 'var(--ink-2)' }}>
+            <h1 style={{
+              fontFamily: '"Instrument Serif", Georgia, serif',
+              fontSize: '32px',
+              fontWeight: 400,
+              fontStyle: 'italic',
+              letterSpacing: '-0.5px',
+              color: 'var(--ink)',
+              lineHeight: 1,
+              margin: 0,
+            }}>
+              {pet.name}
+            </h1>
+            <p style={{
+              fontSize: '10.5px',
+              fontWeight: 600,
+              letterSpacing: '0.6px',
+              color: 'var(--ink-2)',
+              lineHeight: 1,
+              margin: 0,
+            }}>
               {pet.species}{pet.breed ? ` · ${pet.breed}` : ''}
             </p>
           </div>
-          <p className="text-sm" style={{ color: 'var(--ink-2)' }}>
+          <p style={{
+            fontSize: '11.5px',
+            fontWeight: 400,
+            color: 'var(--ink-2)',
+            lineHeight: 1.3,
+          }}>
             {ageDisplay}{pet.age_years !== null && ' old'}
           </p>
         </div>
 
         {/* Action Buttons */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '20px' }}>
-          <button className="py-3 rounded-lg button-text hover:opacity-90 transition-opacity" style={{
+          <button style={{
+            padding: '12px',
+            borderRadius: '12px',
             background: 'var(--ink)',
             color: 'var(--paper)',
-          }}>
+            border: 'none',
+            cursor: 'pointer',
+            fontSize: '12.5px',
+            fontWeight: 600,
+            transition: 'opacity 200ms',
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.9')}
+          onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+          >
             Follow
           </button>
-          <button className="py-3 rounded-lg button-text hover:opacity-90 transition-opacity" style={{
+          <button style={{
+            padding: '12px',
+            borderRadius: '12px',
             background: 'var(--acc)',
             color: '#fff',
-          }}>
+            border: 'none',
+            cursor: 'pointer',
+            fontSize: '12.5px',
+            fontWeight: 600,
+            transition: 'opacity 200ms',
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.9')}
+          onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+          >
             Send treat
           </button>
         </div>
@@ -247,7 +333,14 @@ export default function ShelfPage() {
             borderRadius: '4px',
             marginBottom: '20px',
           }}>
-            <p className="text-sm" style={{ color: 'var(--ink)', fontStyle: 'italic', lineHeight: 1.5 }}>
+            <p style={{
+              fontSize: '11.5px',
+              fontWeight: 400,
+              color: 'var(--ink)',
+              fontStyle: 'italic',
+              lineHeight: 1.5,
+              margin: 0,
+            }}>
               "{pet.bio}"
             </p>
           </div>
@@ -255,7 +348,17 @@ export default function ShelfPage() {
 
         {/* Trophy Case */}
         <div style={{ marginBottom: '24px' }}>
-          <p className="label" style={{ color: 'var(--ink-2)', marginBottom: '12px' }}>TROPHY CASE</p>
+          <p style={{
+            fontSize: '10.5px',
+            fontWeight: 600,
+            letterSpacing: '0.6px',
+            color: 'var(--ink-2)',
+            marginBottom: '12px',
+            lineHeight: 1,
+            margin: '0 0 12px 0',
+          }}>
+            TROPHY CASE
+          </p>
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(5, 1fr)',
@@ -286,7 +389,17 @@ export default function ShelfPage() {
 
         {/* Snapshot Wall */}
         <div style={{ marginBottom: '24px' }}>
-          <p className="label" style={{ color: 'var(--ink-2)', marginBottom: '12px' }}>SNAPSHOT WALL</p>
+          <p style={{
+            fontSize: '10.5px',
+            fontWeight: 600,
+            letterSpacing: '0.6px',
+            color: 'var(--ink-2)',
+            marginBottom: '12px',
+            lineHeight: 1,
+            margin: '0 0 12px 0',
+          }}>
+            SNAPSHOT WALL
+          </p>
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(3, 1fr)',
@@ -320,8 +433,27 @@ export default function ShelfPage() {
           backgroundColor: 'var(--app-bg)',
           textAlign: 'center',
         }}>
-          <p className="text-xs" style={{ color: 'var(--ink-2)', marginBottom: '4px' }}>OWNER</p>
-          <p className="display-sm" style={{ color: 'var(--ink)' }}>@{owner?.username || 'unknown'}</p>
+          <p style={{
+            fontSize: '10.5px',
+            fontWeight: 400,
+            color: 'var(--ink-2)',
+            marginBottom: '4px',
+            lineHeight: 1,
+            margin: '0 0 4px 0',
+          }}>
+            OWNER
+          </p>
+          <p style={{
+            fontFamily: '"Instrument Serif", Georgia, serif',
+            fontSize: '18px',
+            fontWeight: 400,
+            fontStyle: 'italic',
+            color: 'var(--ink)',
+            lineHeight: 1,
+            margin: 0,
+          }}>
+            @{owner?.username || 'unknown'}
+          </p>
         </div>
       </div>
 
@@ -348,9 +480,26 @@ export default function ShelfPage() {
           { emoji: '🐾', label: 'Packs', href: '/packs', active: false },
           { emoji: '🏆', label: 'Shelf', href: '/profile', active: true },
         ].map(tab => (
-          <Link key={tab.label} href={tab.href} className="flex flex-col items-center gap-0.5" style={{ opacity: tab.active ? 1 : 0.45 }}>
+          <Link
+            key={tab.label}
+            href={tab.href}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '4px',
+              textDecoration: 'none',
+              opacity: tab.active ? 1 : 0.45,
+            }}
+          >
             <span style={{ fontSize: '22px' }}>{tab.emoji}</span>
-            <span className="text-xs font-medium" style={{ color: tab.active ? 'var(--acc)' : 'var(--ink)' }}>{tab.label}</span>
+            <span style={{
+              fontSize: '10.5px',
+              fontWeight: 600,
+              color: tab.active ? 'var(--acc)' : 'var(--ink)',
+            }}>
+              {tab.label}
+            </span>
           </Link>
         ))}
       </div>

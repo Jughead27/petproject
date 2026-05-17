@@ -36,7 +36,13 @@ export default function BurstPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-app flex items-center justify-center">
+      <div style={{
+        minHeight: '100vh',
+        background: 'var(--app-bg)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
         <p style={{ color: 'var(--ink-2)' }}>Loading burst...</p>
       </div>
     )
@@ -188,9 +194,26 @@ export default function BurstPage() {
           { emoji: '🐾', label: 'Packs', href: '/packs', active: false },
           { emoji: '🏆', label: 'Shelf', href: '/profile', active: false },
         ].map(tab => (
-          <Link key={tab.label} href={tab.href} className="flex flex-col items-center gap-0.5" style={{ opacity: tab.active ? 1 : 0.45 }}>
+          <Link
+            key={tab.label}
+            href={tab.href}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '4px',
+              textDecoration: 'none',
+              opacity: tab.active ? 1 : 0.45,
+            }}
+          >
             <span style={{ fontSize: '22px' }}>{tab.emoji}</span>
-            <span className="text-xs font-medium" style={{ color: '#fff' }}>{tab.label}</span>
+            <span style={{
+              fontSize: '10.5px',
+              fontWeight: 600,
+              color: '#fff',
+            }}>
+              {tab.label}
+            </span>
           </Link>
         ))}
       </div>
