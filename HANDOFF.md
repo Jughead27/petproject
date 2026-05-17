@@ -537,9 +537,109 @@ The app should feel **warm, confident, and slightly knowing**:
 
 ---
 
+---
+
+## Phase 3 Posts & Comments (Completed 2026-05-17)
+
+### Privacy-First & SOC2-Ready Posts
+
+**Infrastructure:**
+- ✅ **Audit Logging** (`lib/audit.ts`) — Immutable logs for all mutations
+  - Tracks: action (create/update/delete/recover), table, record_id, user_id, old/new values, timestamp
+  - All post/comment operations logged
+  - No PII in logs (server-side logging only)
+
+- ✅ **Database Schema Updates** (`SCHEMA_UPDATES.md`)
+  - New `audit_logs` table with immutable schema
+  - Updated `posts` and `comments` with `is_deleted`, `deleted_at` for soft delete
+  - RLS policies for privacy and access control
+  - Recovery functions for 30-day undo window
+
+**Features:**
+- ✅ **Post Creation** — Inline form on pet cards (owner only)
+  - No modal (modeless interaction)
+  - Auto-focus textarea
+  - Smart defaults
+  - Optimistic updates
+  - Validation + error handling
+
+- ✅ **Post Display** — Full feed with comments
+  - Posts ordered by creation date
+  - Author profile link
+  - Timestamp (date + time)
+  - Delete button (owner only, with confirmation)
+  - Comment count visible
+
+- ✅ **Comments** — Inline threading
+  - Text input under each post
+  - Enter to submit (Shift+Enter for new line)
+  - Show timestamp
+  - Delete button (author only)
+  - Real-time updates
+
+- ✅ **Soft Delete** — 30-day recovery window
+  - Soft delete (is_deleted=true, deleted_at timestamp)
+  - Posts/comments hidden from view when deleted
+  - Admin function to recover within 30 days
+  - Hard delete after 30 days (auto cleanup)
+  - Full audit trail of deletions
+
+**Privacy & Security:**
+- Posts are **private by default** (is_private=true)
+- RLS policies enforce owner-only edit/delete
+- No tracking of engagement (who viewed, when)
+- No analytics code
+- Audit logging for compliance
+- Deleted content removed from all views immediately (soft delete)
+
+**Design (Best Practice):**
+- Modeless (no popups except confirmation)
+- Inline actions (delete right on post/comment)
+- Keyboard friendly (Enter to submit)
+- Clear language ("Delete this post?")
+- Accessible (semantic HTML, ARIA)
+- Mobile-first (touch-friendly buttons)
+
+### Components Created
+- `/app/components/PostCreator.tsx` — Post creation form
+- `/app/components/PostDisplay.tsx` — Posts with comments display
+- `/lib/audit.ts` — Audit logging utilities
+
+### Files Updated
+- `/app/pets/[id]/page.tsx` — Added post section with creator and display
+
+### Database Requirements
+**Run these SQL commands in Supabase SQL Editor** (see `SCHEMA_UPDATES.md`):
+1. Create `audit_logs` table with RLS
+2. Add `is_deleted`, `deleted_at` to `posts` table
+3. Add `is_deleted`, `deleted_at` to `comments` table
+4. Create recovery functions
+5. Update RLS policies
+
+### What's NOT Included (Phase 4+)
+- Notifications (when someone comments)
+- Email notifications
+- Real-time updates (WebSocket)
+- Media uploads (just text for now)
+- Reactions/emojis on posts
+- Post editing (only delete/recreate)
+- Threading/sub-comments
+- Post liking/reactions
+
+### Known Limitations
+- No image uploads in posts yet (text only)
+- No @mentions or #hashtags
+- No markdown formatting
+- Comments not editable (only deletable)
+- No spam filtering/moderation
+- No email notifications yet
+
+---
+
 *Last updated: 2026-05-17*
 *Phase 0 completion time: ~2.5 hours*
 *Phase 1 Auth time: ~3 hours (infrastructure built, skipped debugging)*
 *Phase 1 Pet Profiles MVP time: ~1 hour*
 *Phase 2 Core Features time: ~1 hour (Stack, Dex, Explore, profiles, filtering)*
-*Next session: Test on Vercel, or continue with Phase 3 features*
+*Phase 3 Posts & Comments time: ~45 min (audit logging, soft delete, privacy)*
+*Next session: Test on Vercel, Phase 4 (Notifications), or Phase 5 (Packs)*
