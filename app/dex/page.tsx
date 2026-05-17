@@ -19,7 +19,6 @@ interface BreedCard {
 
 export default function DexPage() {
   const router = useRouter()
-  const [breeds, setBreeds] = useState<BreedCard[]>([])
   const [activeSpecies, setActiveSpecies] = useState('Dogs')
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState<{ id: string } | null>(null)
@@ -45,8 +44,14 @@ export default function DexPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-app flex items-center justify-center">
-        <p style={{ color: 'var(--ink-2)' }}>Loading breeds...</p>
+      <div style={{
+        minHeight: '100vh',
+        background: 'var(--app-bg)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <p style={{ color: 'var(--ink-2)', fontSize: '13.5px' }}>Loading breeds...</p>
       </div>
     )
   }
@@ -55,22 +60,61 @@ export default function DexPage() {
   const spottedCount = 47
 
   return (
-    <div className="min-h-screen bg-app pb-20" style={{
+    <div style={{
+      minHeight: '100vh',
+      background: 'var(--app-bg)',
       backgroundImage: `
         radial-gradient(circle at 20% 20%, rgba(217, 119, 87, 0.08), transparent 50%),
         radial-gradient(circle at 80% 80%, rgba(90, 122, 154, 0.06), transparent 50%)
-      `
+      `,
+      paddingBottom: '160px',
     }}>
       {/* Header */}
-      <div className="flex justify-between items-start p-6" style={{ paddingTop: 'var(--space-8)' }}>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        padding: '24px',
+        paddingTop: '18px',
+      }}>
         <div>
-          <p className="kicker" style={{ color: 'var(--acc)' }}>SNOUT</p>
-          <h1 className="display-lg" style={{ color: 'var(--ink)' }}>The Dex</h1>
-          <p className="text-xs" style={{ color: 'var(--ink-2)', marginTop: '4px' }}>
+          <p style={{
+            fontSize: '11px',
+            fontWeight: 700,
+            letterSpacing: '2.5px',
+            textTransform: 'uppercase',
+            lineHeight: 1,
+            color: 'var(--acc)',
+            margin: 0,
+          }}>SNOUT</p>
+          <h1 style={{
+            fontFamily: '"Instrument Serif", Georgia, serif',
+            fontSize: '28px',
+            fontWeight: 400,
+            fontStyle: 'italic',
+            lineHeight: 1,
+            color: 'var(--ink)',
+            margin: 0,
+          }}>The Dex</h1>
+          <p style={{
+            fontSize: '10.5px',
+            fontWeight: 400,
+            lineHeight: 1,
+            color: 'var(--ink-2)',
+            marginTop: '4px',
+          }}>
             {totalBreeds} breeds · you&apos;ve spotted {spottedCount}
           </p>
         </div>
-        <button className="w-10 h-10 rounded-full hover:opacity-70" style={{ background: 'rgba(0, 0, 0, 0.06)', color: 'var(--ink)' }}>
+        <button style={{
+          width: '40px',
+          height: '40px',
+          borderRadius: '50%',
+          background: 'rgba(0, 0, 0, 0.06)',
+          border: 'none',
+          color: 'var(--ink)',
+          cursor: 'pointer',
+        }}>
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.7">
             <circle cx="7.5" cy="7.5" r="5.5" />
             <path d="M12 12l3.5 3.5" />
@@ -79,16 +123,29 @@ export default function DexPage() {
       </div>
 
       {/* Species Filter Chips */}
-      <div className="flex gap-2 overflow-x-auto px-6 pb-2" style={{ scrollBehavior: 'smooth' }}>
+      <div style={{
+        display: 'flex',
+        gap: '8px',
+        overflowX: 'auto',
+        paddingLeft: '24px',
+        paddingRight: '24px',
+        paddingBottom: '8px',
+        scrollBehavior: 'smooth',
+      }}>
         {SPECIES_LIST.map(species => (
           <button
             key={species}
             onClick={() => setActiveSpecies(species)}
-            className="px-4 py-1.5 rounded-full whitespace-nowrap text-sm font-medium transition-colors"
             style={{
+              padding: '8px 16px',
+              borderRadius: '999px',
+              whiteSpace: 'nowrap',
+              fontSize: '13.5px',
+              fontWeight: 500,
               background: activeSpecies === species ? 'var(--ink)' : 'transparent',
               color: activeSpecies === species ? 'var(--paper)' : 'var(--ink)',
               border: `1px solid ${activeSpecies === species ? 'var(--ink)' : 'var(--line)'}`,
+              cursor: 'pointer',
             }}
           >
             {species}
@@ -97,10 +154,29 @@ export default function DexPage() {
       </div>
 
       {/* Completion Bar */}
-      <div className="px-6 mt-4">
-        <div className="flex justify-between items-center mb-1">
-          <p className="label" style={{ color: 'var(--ink-2)' }}>{activeSpecies}</p>
-          <p className="label" style={{ color: 'var(--ink-2)' }}>23 / 197 spotted</p>
+      <div style={{ paddingLeft: '24px', paddingRight: '24px', marginTop: '16px' }}>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '6px',
+        }}>
+          <p style={{
+            fontSize: '10.5px',
+            fontWeight: 600,
+            letterSpacing: '0.6px',
+            lineHeight: 1,
+            color: 'var(--ink-2)',
+            margin: 0,
+          }}>{activeSpecies}</p>
+          <p style={{
+            fontSize: '10.5px',
+            fontWeight: 600,
+            letterSpacing: '0.6px',
+            lineHeight: 1,
+            color: 'var(--ink-2)',
+            margin: 0,
+          }}>23 / 197 spotted</p>
         </div>
         <div style={{
           height: '3px',
@@ -118,7 +194,11 @@ export default function DexPage() {
       </div>
 
       {/* Breed Grid */}
-      <div className="px-6 mt-6">
+      <div style={{
+        paddingLeft: '24px',
+        paddingRight: '24px',
+        marginTop: '24px',
+      }}>
         <div style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
@@ -129,12 +209,14 @@ export default function DexPage() {
             return (
               <div
                 key={i}
-                className="rounded-lg overflow-hidden border hover:opacity-75 transition-opacity"
                 style={{
-                  background: 'var(--paper)',
+                  borderRadius: '12px',
+                  overflow: 'hidden',
                   border: '1px solid var(--line)',
+                  background: 'var(--paper)',
                   boxShadow: 'var(--shadow-sm)',
                   opacity: spotted ? 1 : 0.55,
+                  cursor: 'pointer',
                 }}
               >
                 {/* Photo/Placeholder */}
@@ -154,38 +236,62 @@ export default function DexPage() {
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     />
                   ) : (
-                    <p style={{ fontSize: '32px', color: 'var(--ink-2)', opacity: 0.6 }}>?</p>
+                    <p style={{ fontSize: '32px', color: 'var(--ink-2)', opacity: 0.6, margin: 0 }}>?</p>
                   )}
                   {/* Number Badge */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '6px',
-                      left: '6px',
-                      padding: '2px 6px',
-                      borderRadius: '4px',
-                      background: 'rgba(0, 0, 0, 0.5)',
-                      color: '#fff',
-                      fontSize: '9px',
-                      fontWeight: 600,
-                      letterSpacing: '0.5px',
-                      textShadow: '0 1px 2px #000',
-                    }}
-                  >
+                  <div style={{
+                    position: 'absolute',
+                    top: '6px',
+                    left: '6px',
+                    padding: '2px 6px',
+                    borderRadius: '4px',
+                    background: 'rgba(0, 0, 0, 0.5)',
+                    color: '#fff',
+                    fontSize: '9px',
+                    fontWeight: 600,
+                    letterSpacing: '0.5px',
+                    textShadow: '0 1px 2px #000',
+                  }}>
                     #{String(12 + i).padStart(3, '0')}
                   </div>
                 </div>
 
                 {/* Meta */}
                 <div style={{ padding: '8px 10px' }}>
-                  <h3 className="display-sm" style={{ color: 'var(--ink)', marginBottom: '6px' }}>
+                  <h3 style={{
+                    fontFamily: '"Instrument Serif", Georgia, serif',
+                    fontSize: '18px',
+                    fontWeight: 400,
+                    fontStyle: 'italic',
+                    lineHeight: 1,
+                    color: 'var(--ink)',
+                    marginBottom: '6px',
+                    margin: '0 0 6px 0',
+                  }}>
                     {spotted ? ['Corgi', 'Husky', 'Golden Retriever'][i] : '???'}
                   </h3>
-                  <div className="flex justify-between items-end">
-                    <p className="label" style={{ color: spotted ? 'var(--acc)' : 'var(--ink-2)' }}>
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-end',
+                  }}>
+                    <p style={{
+                      fontSize: '10.5px',
+                      fontWeight: 600,
+                      letterSpacing: '0.6px',
+                      lineHeight: 1,
+                      color: spotted ? 'var(--acc)' : 'var(--ink-2)',
+                      margin: 0,
+                    }}>
                       {spotted ? '✓ SPOTTED' : '— WILD'}
                     </p>
-                    {spotted && <p className="text-xs" style={{ color: 'var(--ink-2)' }}>234 pets</p>}
+                    {spotted && <p style={{
+                      fontSize: '10.5px',
+                      fontWeight: 400,
+                      lineHeight: 1,
+                      color: 'var(--ink-2)',
+                      margin: 0,
+                    }}>234 pets</p>}
                   </div>
                 </div>
               </div>
@@ -201,8 +307,8 @@ export default function DexPage() {
         left: 0,
         right: 0,
         height: '82px',
-        paddingTop: 'var(--space-3)',
-        paddingBottom: 'var(--space-6)',
+        paddingTop: '8px',
+        paddingBottom: '14px',
         background: 'rgba(250, 250, 247, 0.92)',
         backdropFilter: 'blur(20px) saturate(180%)',
         borderTop: '0.5px solid rgba(0, 0, 0, 0.08)',
@@ -217,9 +323,20 @@ export default function DexPage() {
           { emoji: '🐾', label: 'Packs', href: '/packs', active: false },
           { emoji: '🏆', label: 'Shelf', href: '/profile', active: false },
         ].map(tab => (
-          <Link key={tab.label} href={tab.href} className="flex flex-col items-center gap-0.5" style={{ opacity: tab.active ? 1 : 0.45 }}>
+          <Link key={tab.label} href={tab.href} style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '4px',
+            textDecoration: 'none',
+            opacity: tab.active ? 1 : 0.45,
+          }}>
             <span style={{ fontSize: '22px' }}>{tab.emoji}</span>
-            <span className="text-xs font-medium" style={{ color: tab.active ? 'var(--acc)' : 'var(--ink)' }}>{tab.label}</span>
+            <span style={{
+              fontSize: '10.5px',
+              fontWeight: 600,
+              color: tab.active ? 'var(--acc)' : 'var(--ink)',
+            }}>{tab.label}</span>
           </Link>
         ))}
       </div>

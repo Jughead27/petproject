@@ -124,28 +124,87 @@ export default function StackPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-app flex items-center justify-center">
-        <p style={{ color: 'var(--ink-2)' }}>Loading pets...</p>
+      <div style={{
+        minHeight: '100vh',
+        background: 'var(--app-bg)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <p style={{ color: 'var(--ink-2)', fontSize: '13.5px' }}>Loading pets...</p>
       </div>
     )
   }
 
   if (noMore || pets.length === 0) {
     return (
-      <div className="min-h-screen bg-app flex items-center justify-center p-6">
-        <div className="text-center">
-          <p className="text-4xl mb-4">🥺</p>
-          <h1 className="display-lg" style={{ color: 'var(--ink)', marginBottom: '16px' }}>That&apos;s everyone for today</h1>
-          <p style={{ color: 'var(--ink-2)', marginBottom: '32px' }} className="max-w-sm">Come back later for more pets to discover. Or check out The Dex to see what you&apos;ve spotted.</p>
-          <div className="flex gap-4 justify-center mb-8">
-            <button onClick={() => { setCurrentIndex(0); setNoMore(false) }} className="px-6 py-2 rounded-lg text-white button-text hover:opacity-90" style={{ background: 'var(--acc)' }}>
+      <div style={{
+        minHeight: '100vh',
+        background: 'var(--app-bg)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px',
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ fontSize: '48px', marginBottom: '16px' }}>🥺</p>
+          <h1 style={{
+            fontFamily: '"Instrument Serif", Georgia, serif',
+            fontSize: '28px',
+            fontWeight: 400,
+            fontStyle: 'italic',
+            color: 'var(--ink)',
+            marginBottom: '16px',
+            lineHeight: 1,
+          }}>That&apos;s everyone for today</h1>
+          <p style={{
+            color: 'var(--ink-2)',
+            marginBottom: '32px',
+            maxWidth: '280px',
+            margin: '0 auto 32px',
+            fontSize: '13.5px',
+            lineHeight: 1.4,
+          }}>Come back later for more pets to discover. Or check out The Dex to see what you&apos;ve spotted.</p>
+          <div style={{
+            display: 'flex',
+            gap: '16px',
+            justifyContent: 'center',
+            marginBottom: '32px',
+          }}>
+            <button onClick={() => { setCurrentIndex(0); setNoMore(false) }} style={{
+              padding: '10px 24px',
+              borderRadius: '12px',
+              color: '#fff',
+              background: 'var(--acc)',
+              border: 'none',
+              fontSize: '12.5px',
+              fontWeight: 600,
+              cursor: 'pointer',
+            }}>
               Start over
             </button>
-            <Link href="/dex" className="px-6 py-2 rounded-lg text-white button-text hover:opacity-90" style={{ background: 'var(--ink)' }}>
-              The Dex
+            <Link href="/dex" style={{ textDecoration: 'none' }}>
+              <button style={{
+                padding: '10px 24px',
+                borderRadius: '12px',
+                color: '#fff',
+                background: 'var(--ink)',
+                border: 'none',
+                fontSize: '12.5px',
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}>
+                The Dex
+              </button>
             </Link>
           </div>
-          <button onClick={handleLogout} className="text-sm hover:opacity-70" style={{ color: 'var(--ink-2)' }}>
+          <button onClick={handleLogout} style={{
+            background: 'none',
+            border: 'none',
+            color: 'var(--ink-2)',
+            fontSize: '11.5px',
+            cursor: 'pointer',
+          }}>
             Log out
           </button>
         </div>
@@ -158,20 +217,58 @@ export default function StackPage() {
   const dailyTarget = 12
 
   return (
-    <div className="min-h-screen bg-app" style={{
+    <div style={{
+      minHeight: '100vh',
+      background: 'var(--app-bg)',
       backgroundImage: `
         radial-gradient(circle at 20% 20%, rgba(217, 119, 87, 0.08), transparent 50%),
         radial-gradient(circle at 80% 80%, rgba(90, 122, 154, 0.06), transparent 50%)
-      `
+      `,
     }}>
       {/* Header */}
-      <div className="flex justify-between items-start p-6" style={{ paddingTop: 'var(--space-7)' }}>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        padding: '16px 24px',
+        paddingTop: '16px',
+      }}>
         <div>
-          <p className="kicker" style={{ color: 'var(--acc)' }}>SNOUT</p>
-          <h1 className="display-lg" style={{ color: 'var(--ink)' }}>Stack</h1>
-          <p className="text-xs" style={{ color: 'var(--ink-2)', marginTop: '4px' }}>One card at a time · {String(viewedToday).padStart(2, '0')} / {dailyTarget} today</p>
+          <p style={{
+            fontSize: '11px',
+            fontWeight: 700,
+            letterSpacing: '2.5px',
+            textTransform: 'uppercase',
+            lineHeight: 1,
+            color: 'var(--acc)',
+            margin: 0,
+          }}>SNOUT</p>
+          <h1 style={{
+            fontFamily: '"Instrument Serif", Georgia, serif',
+            fontSize: '28px',
+            fontWeight: 400,
+            fontStyle: 'italic',
+            lineHeight: 1,
+            color: 'var(--ink)',
+            margin: 0,
+          }}>Stack</h1>
+          <p style={{
+            fontSize: '10.5px',
+            fontWeight: 400,
+            lineHeight: 1,
+            color: 'var(--ink-2)',
+            marginTop: '4px',
+          }}>One card at a time · {String(viewedToday).padStart(2, '0')} / {dailyTarget} today</p>
         </div>
-        <button className="w-10 h-10 rounded-full hover:opacity-70" style={{ background: 'rgba(0, 0, 0, 0.06)', color: 'var(--ink)' }}>
+        <button style={{
+          width: '40px',
+          height: '40px',
+          borderRadius: '50%',
+          background: 'rgba(0, 0, 0, 0.06)',
+          border: 'none',
+          color: 'var(--ink)',
+          cursor: 'pointer',
+        }}>
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.7">
             <circle cx="7.5" cy="7.5" r="5.5" />
             <path d="M12 12l3.5 3.5" />
@@ -180,7 +277,14 @@ export default function StackPage() {
       </div>
 
       {/* Card Stack Container */}
-      <div className="relative mx-auto" style={{ maxWidth: '340px', height: '590px', margin: '0 26px' }}>
+      <div style={{
+        position: 'relative',
+        maxWidth: '340px',
+        height: '590px',
+        margin: '0 auto',
+        marginLeft: '26px',
+        marginRight: '26px',
+      }}>
         {/* Back peek cards */}
         <div style={{
           position: 'absolute',
@@ -217,30 +321,38 @@ export default function StackPage() {
           zIndex: 3,
         }}>
           {/* Photo Region */}
-          <div className="flex-1 relative bg-gray-300 overflow-hidden">
+          <div style={{
+            flex: 1,
+            position: 'relative',
+            backgroundColor: '#ddd',
+            overflow: 'hidden',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
             {currentPet.avatar_url ? (
-              <img src={currentPet.avatar_url} alt={currentPet.name} className="w-full h-full object-cover" />
+              <img src={currentPet.avatar_url} alt={currentPet.name} style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+              }} />
             ) : (
-              <div className="w-full h-full flex items-center justify-center" style={{ color: '#ccc' }}>
-                <span className="text-4xl">🐾</span>
-              </div>
+              <span style={{ fontSize: '48px' }}>🐾</span>
             )}
 
             {/* Corner Brackets */}
             {[
-              { top: '14px', left: '14px', styles: 'border-t-2 border-l-2' },
-              { top: '14px', right: '14px', styles: 'border-t-2 border-r-2' },
-              { bottom: '14px', left: '14px', styles: 'border-b-2 border-l-2' },
-              { bottom: '14px', right: '14px', styles: 'border-b-2 border-r-2' },
+              { top: '14px', left: '14px', borderTop: '2px solid rgba(255, 255, 255, 0.7)', borderLeft: '2px solid rgba(255, 255, 255, 0.7)' },
+              { top: '14px', right: '14px', borderTop: '2px solid rgba(255, 255, 255, 0.7)', borderRight: '2px solid rgba(255, 255, 255, 0.7)' },
+              { bottom: '14px', left: '14px', borderBottom: '2px solid rgba(255, 255, 255, 0.7)', borderLeft: '2px solid rgba(255, 255, 255, 0.7)' },
+              { bottom: '14px', right: '14px', borderBottom: '2px solid rgba(255, 255, 255, 0.7)', borderRight: '2px solid rgba(255, 255, 255, 0.7)' },
             ].map((bracket, i) => (
-              <div
-                key={i}
-                className="absolute w-5 h-5"
-                style={{
-                  ...bracket,
-                  borderColor: 'rgba(255, 255, 255, 0.7)',
-                } as any}
-              />
+              <div key={i} style={{
+                position: 'absolute',
+                width: '20px',
+                height: '20px',
+                ...bracket,
+              }} />
             ))}
 
             {/* Card Number Pill */}
@@ -254,7 +366,14 @@ export default function StackPage() {
               background: 'rgba(0, 0, 0, 0.55)',
               backdropFilter: 'blur(10px)',
             }}>
-              <p className="button-text-small" style={{ color: '#fff', letterSpacing: '1.5px' }}>
+              <p style={{
+                color: '#fff',
+                letterSpacing: '1.5px',
+                fontSize: '10.5px',
+                fontWeight: 800,
+                lineHeight: 1,
+                margin: 0,
+              }}>
                 CARD · {String(viewedToday).padStart(2, '0')}/{String(dailyTarget).padStart(2, '0')}
               </p>
             </div>
@@ -263,20 +382,43 @@ export default function StackPage() {
           {/* Meta Block */}
           <div style={{ padding: '16px 18px 14px' }}>
             {/* Name & Card Number */}
-            <div className="flex justify-between items-baseline gap-2 mb-2">
-              <h2 className="display-xl" style={{ color: 'var(--ink)' }}>@{owner?.username || currentPet.name}</h2>
-              <p className="text-xs" style={{ color: 'var(--ink-2)', whiteSpace: 'nowrap' }}>#{currentPet.card_number} · {currentPet.species}</p>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'baseline',
+              gap: '8px',
+              marginBottom: '8px',
+            }}>
+              <h2 style={{
+                fontFamily: '"Instrument Serif", Georgia, serif',
+                fontSize: '32px',
+                fontWeight: 400,
+                fontStyle: 'italic',
+                lineHeight: 1,
+                letterSpacing: '-0.5px',
+                color: 'var(--ink)',
+                margin: 0,
+              }}>@{owner?.username || currentPet.name}</h2>
+              <p style={{
+                fontSize: '10.5px',
+                color: 'var(--ink-2)',
+                whiteSpace: 'nowrap',
+                margin: 0,
+              }}>#{currentPet.card_number} · {currentPet.species}</p>
             </div>
 
             {/* Breed Chip */}
             {currentPet.breed && (
               <div style={{ marginTop: '8px' }}>
-                <span className="chip-text" style={{
+                <span style={{
                   display: 'inline-block',
                   padding: '3px 9px',
                   borderRadius: 'var(--radius-pill)',
                   background: 'rgba(217, 119, 87, 0.12)',
                   color: 'var(--acc)',
+                  fontSize: '10.5px',
+                  fontWeight: 600,
+                  lineHeight: 1,
                 }}>
                   {currentPet.breed}
                 </span>
@@ -288,8 +430,8 @@ export default function StackPage() {
         {/* Boop Button */}
         <button
           onClick={handleBoop}
-          className="absolute text-white flex flex-col items-center justify-center hover:opacity-90 active:scale-95"
           style={{
+            position: 'absolute',
             width: '70px',
             height: '70px',
             top: '332px',
@@ -301,35 +443,82 @@ export default function StackPage() {
             transform: 'rotate(-8deg)',
             zIndex: 10,
             fontSize: '26px',
+            color: '#fff',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
           }}
         >
-          <span className="text-2xl">👉</span>
-          <p className="button-text-small">BOOP</p>
+          <span style={{ fontSize: '24px' }}>👉</span>
+          <p style={{
+            fontSize: '10.5px',
+            fontWeight: 800,
+            letterSpacing: '0.5px',
+            lineHeight: 1,
+            margin: 0,
+          }}>BOOP</p>
         </button>
       </div>
 
       {/* Gesture Hints */}
-      <div className="flex justify-between text-xs mt-4 px-7" style={{ color: 'var(--ink-2)' }}>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        fontSize: '10.5px',
+        marginTop: '16px',
+        paddingLeft: '56px',
+        paddingRight: '56px',
+        color: 'var(--ink-2)',
+      }}>
         <span>← their roll</span>
-        <span className="font-semibold" style={{ color: 'var(--acc)' }}>↑ next pet</span>
+        <span style={{ fontWeight: 600, color: 'var(--acc)' }}>↑ next pet</span>
         <span>stash →</span>
       </div>
 
       {/* Counters Strip */}
-      <div className="flex gap-2 mt-4 px-6 mx-auto" style={{ maxWidth: '340px' }}>
+      <div style={{
+        display: 'flex',
+        gap: '8px',
+        marginTop: '16px',
+        paddingLeft: '24px',
+        paddingRight: '24px',
+        maxWidth: '340px',
+        margin: '16px auto 0',
+      }}>
         {[
           { label: 'BOOPS', value: counters.boops },
           { label: 'STASHED', value: counters.stashed },
           { label: 'PACKS', value: counters.packs },
           { label: 'CARDS', value: counters.cards },
         ].map(counter => (
-          <div key={counter.label} className="flex-1 text-center py-2" style={{
+          <div key={counter.label} style={{
+            flex: 1,
+            textAlign: 'center',
+            padding: '8px',
             border: '1px solid var(--line)',
             borderRadius: 'var(--radius-sm)',
             backgroundColor: 'var(--paper)',
           }}>
-            <p className="display-sm" style={{ color: 'var(--ink)' }}>{counter.value}</p>
-            <p className="label" style={{ color: 'var(--ink-2)', marginTop: '3px' }}>{counter.label}</p>
+            <p style={{
+              fontFamily: '"Instrument Serif", Georgia, serif',
+              fontSize: '18px',
+              fontWeight: 400,
+              fontStyle: 'italic',
+              lineHeight: 1,
+              color: 'var(--ink)',
+              margin: 0,
+            }}>{counter.value}</p>
+            <p style={{
+              fontSize: '10.5px',
+              fontWeight: 600,
+              letterSpacing: '0.6px',
+              lineHeight: 1,
+              color: 'var(--ink-2)',
+              marginTop: '3px',
+              margin: '3px 0 0 0',
+            }}>{counter.label}</p>
           </div>
         ))}
       </div>
@@ -341,8 +530,8 @@ export default function StackPage() {
         left: 0,
         right: 0,
         height: '82px',
-        paddingTop: 'var(--space-3)',
-        paddingBottom: 'var(--space-6)',
+        paddingTop: '8px',
+        paddingBottom: '14px',
         background: 'rgba(250, 250, 247, 0.92)',
         backdropFilter: 'blur(20px) saturate(180%)',
         borderTop: '0.5px solid rgba(0, 0, 0, 0.08)',
@@ -357,16 +546,33 @@ export default function StackPage() {
           { emoji: '🐾', label: 'Packs', href: '/packs', active: false },
           { emoji: '🏆', label: 'Shelf', href: '/profile', active: false },
         ].map(tab => (
-          <Link key={tab.label} href={tab.href} className="flex flex-col items-center gap-0.5" style={{ opacity: tab.active ? 1 : 0.45 }}>
+          <Link key={tab.label} href={tab.href} style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '4px',
+            textDecoration: 'none',
+            opacity: tab.active ? 1 : 0.45,
+          }}>
             <span style={{ fontSize: '22px' }}>{tab.emoji}</span>
-            <span className="text-xs font-medium" style={{ color: tab.active ? 'var(--acc)' : 'var(--ink)' }}>{tab.label}</span>
+            <span style={{
+              fontSize: '10.5px',
+              fontWeight: 600,
+              color: tab.active ? 'var(--acc)' : 'var(--ink)',
+            }}>{tab.label}</span>
           </Link>
         ))}
       </div>
 
       {/* Logout */}
       <div style={{ position: 'fixed', bottom: '96px', left: '50%', transform: 'translateX(-50%)' }}>
-        <button onClick={handleLogout} className="text-sm" style={{ color: 'var(--ink-2)', cursor: 'pointer' }}>
+        <button onClick={handleLogout} style={{
+          background: 'none',
+          border: 'none',
+          fontSize: '11.5px',
+          color: 'var(--ink-2)',
+          cursor: 'pointer',
+        }}>
           Log out
         </button>
       </div>
