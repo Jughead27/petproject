@@ -85,9 +85,68 @@ export default function CreatePage() {
 
     setUploading(true)
     try {
-      // TODO: Handle upload to R2 and create/update pet
-      alert('Upload complete!')
-      router.push('/profile')
+      const supabase = createClient()
+
+      // Convert data URL to blob
+      const response = await fetch(selectedImage)
+      const blob = await response.blob()
+      const file = new File([blob], 'image.jpg', { type: 'image/jpeg' })
+
+      // Upload to R2
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('userId', user.id)
+
+      let imageUrl: string
+      let petId: string
+
+      if (isNewPet) {
+        // Upload as avatar
+        formData.append('folder', 'pets/avatars')
+        const uploadRes = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        })
+        if (!uploadRes.ok) throw new Error('Upload failed')
+        const uploadData = await uploadRes.json()
+        imageUrl = uploadData.url
+
+        // Create new pet
+        const { data: petData, error: petError } = await supabase
+          .from('pets')
+          .insert({
+            name: newPetName.trim(),
+            species: newPetSpecies,
+            owner_id: user.id,
+            avatar_url: imageUrl,
+          })
+          .select()
+          .single()
+
+        if (petError) throw petError
+        petId = petData.id
+      } else {
+        // Upload as cover photo
+        formData.append('folder', 'pets/covers')
+        const uploadRes = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        })
+        if (!uploadRes.ok) throw new Error('Upload failed')
+        const uploadData = await uploadRes.json()
+        imageUrl = uploadData.url
+
+        // Update existing pet
+        const { error: updateError } = await supabase
+          .from('pets')
+          .update({ cover_photo_url: imageUrl })
+          .eq('id', selectedPetId)
+
+        if (updateError) throw updateError
+        petId = selectedPetId!
+      }
+
+      router.push(`/pets/${petId}`)
     } catch (err) {
       console.error('Upload error:', err)
       alert('Upload failed')
