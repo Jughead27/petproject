@@ -39,8 +39,12 @@ export default function StackPage() {
           .select('id', { count: 'exact', head: true })
           .eq('owner_id', userData.user.id)
 
+        console.log('[Stack] Onboarding check - user pets count:', count)
         if (!count || count === 0) {
+          console.log('[Stack] No pets found, redirecting to /onboarding')
           router.push('/onboarding')
+        } else {
+          console.log('[Stack] User has pets, allowing stack access')
         }
       } catch (err) {
         console.error('Onboarding check error:', err)
