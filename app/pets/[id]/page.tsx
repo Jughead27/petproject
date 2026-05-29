@@ -362,6 +362,7 @@ export default function PetCardPage() {
       }}>
         {[
           { emoji: '📚', label: 'Stack', href: '/stack', active: false },
+          { emoji: '➕', label: 'Create', href: '/create', active: false },
           { emoji: '🏆', label: 'Shelf', href: '/profile', active: false },
         ].map(tab => (
           <Link

@@ -304,6 +304,7 @@ export default function ProfilePage() {
       }}>
         {[
           { emoji: '📚', label: 'Stack', href: '/stack', active: false },
+          { emoji: '➕', label: 'Create', href: '/create', active: false },
           { emoji: '🏆', label: 'Shelf', href: '/profile', active: true },
         ].map(tab => (
           <Link key={tab.label} href={tab.href} style={{

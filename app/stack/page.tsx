@@ -433,6 +433,7 @@ export default function StackPage() {
       }}>
         {[
           { emoji: '📚', label: 'Stack', href: '/stack', active: true },
+          { emoji: '➕', label: 'Create', href: '/create', active: false },
           { emoji: '🏆', label: 'Shelf', href: '/profile', active: false },
         ].map(tab => (
           <Link
