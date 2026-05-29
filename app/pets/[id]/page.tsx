@@ -161,9 +161,9 @@ export default function PetCardPage() {
               width: '36px',
               height: '36px',
               borderRadius: '0px',
-              background: 'rgba(255, 255, 255, 0.15)',
+              background: 'rgba(0, 0, 0, 0.3)',
               color: '#fff',
-              border: '1px solid rgba(255, 255, 255, 0.25)',
+              border: 'none',
               backdropFilter: 'blur(10px)',
               fontSize: '16px',
               cursor: 'pointer',
@@ -172,8 +172,8 @@ export default function PetCardPage() {
               alignItems: 'center',
               justifyContent: 'center',
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)')}
-            onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)')}
+            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(0, 0, 0, 0.4)')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(0, 0, 0, 0.3)')}
           >
             ←
           </button>
@@ -198,10 +198,9 @@ export default function PetCardPage() {
                 width: '36px',
                 height: '36px',
                 borderRadius: '0px',
-                background: 'rgba(255, 255, 255, 0.15)',
+                background: 'var(--acc)',
                 color: '#fff',
-                border: '1px solid rgba(255, 255, 255, 0.25)',
-                backdropFilter: 'blur(10px)',
+                border: 'none',
                 fontSize: '14px',
                 display: 'flex',
                 alignItems: 'center',
@@ -209,9 +208,10 @@ export default function PetCardPage() {
                 textDecoration: 'none',
                 cursor: 'pointer',
                 transition: 'all 160ms ease',
+                boxShadow: '0 4px 10px rgba(8, 145, 178, 0.2)',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)')}
-              onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)')}
+              onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-2px)', e.currentTarget.style.boxShadow = '0 6px 14px rgba(8, 145, 178, 0.3)')}
+              onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)', e.currentTarget.style.boxShadow = '0 4px 10px rgba(8, 145, 178, 0.2)')}
             >
               ✎
             </Link>
