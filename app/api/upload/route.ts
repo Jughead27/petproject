@@ -24,19 +24,19 @@ export async function POST(request: NextRequest) {
     // Resize and compress based on folder type
     if (folder === 'pets/avatars') {
       // Avatar: square 400x400
-      buffer = await sharp(buffer)
+      buffer = await sharp(buffer as unknown as Buffer)
         .resize(400, 400, { fit: 'cover' })
         .webp({ quality: 80 })
         .toBuffer()
     } else if (folder === 'pets/covers') {
       // Cover: landscape 1200x600
-      buffer = await sharp(buffer)
+      buffer = await sharp(buffer as unknown as Buffer)
         .resize(1200, 600, { fit: 'cover' })
         .webp({ quality: 85 })
         .toBuffer()
     } else {
       // Default compression
-      buffer = await sharp(buffer)
+      buffer = await sharp(buffer as unknown as Buffer)
         .webp({ quality: 80 })
         .toBuffer()
     }
