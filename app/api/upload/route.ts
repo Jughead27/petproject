@@ -36,7 +36,14 @@ export async function POST(request: NextRequest) {
     await r2Client.send(command)
 
     // Return public URL
-    const publicUrl = `${process.env.CLOUDFLARE_R2_PUBLIC_URL}/${key}`
+    const baseUrl = process.env.CLOUDFLARE_R2_PUBLIC_URL || 'https://pub-5376365e3b524017b8b27a7b31f2241.r2.dev'
+    const publicUrl = `${baseUrl}/${key}`
+
+    console.log('Upload debug:', {
+      envVar: process.env.CLOUDFLARE_R2_PUBLIC_URL,
+      baseUrl,
+      publicUrl,
+    })
 
     return NextResponse.json({ url: publicUrl })
   } catch (error) {
