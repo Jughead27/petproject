@@ -16,17 +16,12 @@ interface Pet {
   owner_id: string
 }
 
-interface Owner {
-  username: string | null
-}
-
 export default function StackPage() {
   const router = useRouter()
   const [pets, setPets] = useState<Pet[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState<{ id: string } | null>(null)
-  const [owner, setOwner] = useState<Owner | null>(null)
   const [isFollowing, setIsFollowing] = useState(false)
   const [followerCount, setFollowerCount] = useState(0)
   const [loadingFollow, setLoadingFollow] = useState(false)
@@ -61,21 +56,13 @@ export default function StackPage() {
     loadStack()
   }, [router])
 
-  // Load owner and follow state
+  // Load follow state and follower count
   useEffect(() => {
-    const loadOwnerAndFollowState = async () => {
+    const loadFollowState = async () => {
       if (currentIndex < pets.length && user) {
         const currentPet = pets[currentIndex]
         try {
           const supabase = createClient()
-
-          // Get owner info
-          const { data: ownerData } = await supabase
-            .from('users')
-            .select('username')
-            .eq('id', currentPet.owner_id)
-            .single()
-          setOwner(ownerData)
 
           // Get follower count
           const { count } = await supabase
@@ -94,12 +81,12 @@ export default function StackPage() {
 
           setIsFollowing(!!followData)
         } catch (err) {
-          console.error('Owner/follow fetch error:', err)
+          console.error('Follow fetch error:', err)
         }
       }
     }
 
-    loadOwnerAndFollowState()
+    loadFollowState()
   }, [currentIndex, pets, user])
 
   const handleFollow = async () => {
@@ -333,56 +320,27 @@ export default function StackPage() {
               </p>
             )}
 
-            {/* Owner Info and Social Proof */}
+            {/* Follower Count */}
             <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
+              textAlign: 'right',
             }}>
-              <div>
-                <p style={{
-                  fontSize: '11px',
-                  fontWeight: 600,
-                  letterSpacing: '0.5px',
-                  textTransform: 'uppercase',
-                  margin: '0 0 2px 0',
-                  opacity: 0.8,
-                }}>
-                  Owned by
-                </p>
-                <p style={{
-                  fontFamily: '"Instrument Serif", Georgia, serif',
-                  fontSize: '16px',
-                  fontWeight: 400,
-                  fontStyle: 'italic',
-                  margin: 0,
-                }}>
-                  @{owner?.username || '—'}
-                </p>
-              </div>
-
-              {/* Follower Count */}
-              <div style={{
-                textAlign: 'right',
+              <p style={{
+                fontSize: '20px',
+                fontWeight: 700,
+                margin: '0 0 2px 0',
               }}>
-                <p style={{
-                  fontSize: '20px',
-                  fontWeight: 700,
-                  margin: '0 0 2px 0',
-                }}>
-                  {followerCount.toLocaleString()}
-                </p>
-                <p style={{
-                  fontSize: '10px',
-                  fontWeight: 600,
-                  letterSpacing: '0.5px',
-                  textTransform: 'uppercase',
-                  margin: 0,
-                  opacity: 0.8,
-                }}>
-                  Followers
-                </p>
-              </div>
+                {followerCount.toLocaleString()}
+              </p>
+              <p style={{
+                fontSize: '10px',
+                fontWeight: 600,
+                letterSpacing: '0.5px',
+                textTransform: 'uppercase',
+                margin: 0,
+                opacity: 0.8,
+              }}>
+                Followers
+              </p>
             </div>
           </div>
         </div>
