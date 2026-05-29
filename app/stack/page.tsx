@@ -26,6 +26,30 @@ export default function StackPage() {
   const [followerCount, setFollowerCount] = useState(0)
   const [loadingFollow, setLoadingFollow] = useState(false)
 
+  // Check onboarding status immediately
+  useEffect(() => {
+    const checkOnboarding = async () => {
+      try {
+        const supabase = createClient()
+        const { data: userData } = await supabase.auth.getUser()
+        if (!userData.user) return
+
+        const { count } = await supabase
+          .from('pets')
+          .select('id', { count: 'exact', head: true })
+          .eq('owner_id', userData.user.id)
+
+        if (!count || count === 0) {
+          router.push('/onboarding')
+        }
+      } catch (err) {
+        console.error('Onboarding check error:', err)
+      }
+    }
+
+    checkOnboarding()
+  }, [router])
+
   // Load pets
   useEffect(() => {
     const loadStack = async () => {
@@ -38,18 +62,6 @@ export default function StackPage() {
         }
 
         setUser(userData.user as { id: string })
-
-        // Check if user has completed onboarding (has at least one pet OR already made a choice)
-        const { count: userPetCount } = await supabase
-          .from('pets')
-          .select('*', { count: 'exact', head: true })
-          .eq('owner_id', userData.user.id)
-
-        // If user has no pets, send them to onboarding to create one or choose to browse
-        if (!userPetCount || userPetCount === 0) {
-          router.push('/onboarding')
-          return
-        }
 
         const { data: allPets } = await supabase
           .from('pets')
