@@ -46,7 +46,14 @@ export async function middleware(request: NextRequest) {
 
   // Redirect logged-in users away from auth pages
   if (user && isAuthRoute) {
-    return NextResponse.redirect(new URL('/stack', request.url))
+    // Check if user has any pets
+    const { count } = await supabase
+      .from('pets')
+      .select('*', { count: 'exact', head: true })
+      .eq('owner_id', user.id)
+
+    const destination = count && count > 0 ? '/stack' : '/onboarding'
+    return NextResponse.redirect(new URL(destination, request.url))
   }
 
   // Redirect unauthenticated users to login for protected routes
