@@ -160,7 +160,7 @@ export default function PetCardPage() {
             style={{
               width: '36px',
               height: '36px',
-              borderRadius: '8px',
+              borderRadius: '0px',
               background: 'rgba(255, 255, 255, 0.15)',
               color: '#fff',
               border: '1px solid rgba(255, 255, 255, 0.25)',
@@ -197,7 +197,7 @@ export default function PetCardPage() {
               style={{
                 width: '36px',
                 height: '36px',
-                borderRadius: '8px',
+                borderRadius: '0px',
                 background: 'rgba(255, 255, 255, 0.15)',
                 color: '#fff',
                 border: '1px solid rgba(255, 255, 255, 0.25)',
@@ -318,7 +318,7 @@ export default function PetCardPage() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '18px' }}>
           <button style={{
             padding: '12px 16px',
-            borderRadius: '8px',
+            borderRadius: '0px',
             background: 'var(--ink)',
             color: '#fff',
             border: 'none',
@@ -336,7 +336,7 @@ export default function PetCardPage() {
           </button>
           <button style={{
             padding: '12px 16px',
-            borderRadius: '8px',
+            borderRadius: '0px',
             background: 'var(--acc)',
             color: '#fff',
             border: 'none',
@@ -357,7 +357,7 @@ export default function PetCardPage() {
         {/* Owner Info */}
         <div style={{
           padding: '12px 14px',
-          borderRadius: '8px',
+          borderRadius: '0px',
           backgroundColor: 'var(--app-bg)',
           textAlign: 'center',
           border: '1px solid var(--line)',
