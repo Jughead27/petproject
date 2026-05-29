@@ -11,11 +11,12 @@ interface Pet {
   species: string
   breed: string | null
   avatar_url: string | null
+  cover_url: string | null
   bio: string | null
   owner_id: string
 }
 
-interface UserProfile {
+interface Owner {
   username: string | null
 }
 
@@ -24,11 +25,13 @@ export default function StackPage() {
   const [pets, setPets] = useState<Pet[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [loading, setLoading] = useState(true)
-  const [owner, setOwner] = useState<UserProfile | null>(null)
   const [user, setUser] = useState<{ id: string } | null>(null)
-  const [boopCount, setBoopCount] = useState(0)
-  const [justBooped, setJustBooped] = useState(false)
+  const [owner, setOwner] = useState<Owner | null>(null)
+  const [isFollowing, setIsFollowing] = useState(false)
+  const [followerCount, setFollowerCount] = useState(0)
+  const [loadingFollow, setLoadingFollow] = useState(false)
 
+  // Load pets
   useEffect(() => {
     const loadStack = async () => {
       try {
@@ -58,59 +61,127 @@ export default function StackPage() {
     loadStack()
   }, [router])
 
+  // Load owner and follow state
   useEffect(() => {
-    const loadOwner = async () => {
+    const loadOwnerAndFollowState = async () => {
       if (currentIndex < pets.length && user) {
         const currentPet = pets[currentIndex]
         try {
           const supabase = createClient()
+
+          // Get owner info
           const { data: ownerData } = await supabase
             .from('users')
             .select('username')
             .eq('id', currentPet.owner_id)
             .single()
           setOwner(ownerData)
+
+          // Get follower count
+          const { count } = await supabase
+            .from('follows')
+            .select('*', { count: 'exact' })
+            .eq('following_id', currentPet.owner_id)
+          setFollowerCount(count || 0)
+
+          // Check if user follows this pet owner
+          const { data: followData } = await supabase
+            .from('follows')
+            .select('*')
+            .eq('follower_id', user.id)
+            .eq('following_id', currentPet.owner_id)
+            .single()
+
+          setIsFollowing(!!followData)
         } catch (err) {
-          console.error('Owner fetch error:', err)
+          console.error('Owner/follow fetch error:', err)
         }
       }
     }
-    loadOwner()
+
+    loadOwnerAndFollowState()
   }, [currentIndex, pets, user])
 
-  const handleBoop = async () => {
-    if (currentIndex >= pets.length || !user) return
+  const handleFollow = async () => {
+    if (!user || currentIndex >= pets.length) return
+
     const currentPet = pets[currentIndex]
-
-    setJustBooped(true)
-    setBoopCount(prev => prev + 1)
-
-    setTimeout(() => setJustBooped(false), 300)
+    setLoadingFollow(true)
 
     try {
       const supabase = createClient()
-      await supabase.from('boops').insert({ pet_id: currentPet.id, user_id: user.id })
+
+      if (isFollowing) {
+        // Unfollow
+        await supabase
+          .from('follows')
+          .delete()
+          .eq('follower_id', user.id)
+          .eq('following_id', currentPet.owner_id)
+        setIsFollowing(false)
+        setFollowerCount(prev => Math.max(0, prev - 1))
+      } else {
+        // Follow
+        await supabase.from('follows').insert({
+          follower_id: user.id,
+          following_id: currentPet.owner_id,
+        })
+        setIsFollowing(true)
+        setFollowerCount(prev => prev + 1)
+      }
     } catch (err) {
-      console.error('Boop error:', err)
+      console.error('Follow error:', err)
+    } finally {
+      setLoadingFollow(false)
+    }
+  }
+
+  const handleShare = async () => {
+    if (currentIndex >= pets.length) return
+    const currentPet = pets[currentIndex]
+    const url = `${window.location.origin}/pets/${currentPet.id}`
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: currentPet.name,
+          url: url,
+        })
+      } else {
+        // Fallback: copy to clipboard
+        await navigator.clipboard.writeText(url)
+        alert('Link copied to clipboard!')
+      }
+    } catch (err) {
+      console.error('Share error:', err)
     }
   }
 
   const advanceCard = () => {
     setCurrentIndex(prev => {
       const next = prev + 1
-      return next >= pets.length ? pets.length : next
+      return next < pets.length ? next : prev
     })
   }
 
-  const handleLogout = async () => {
-    try {
-      const supabase = createClient()
-      await supabase.auth.signOut()
-      router.push('/login')
-    } catch (err) {
-      console.error('Logout error:', err)
+  // Handle scroll/swipe
+  const handleWheel = (e: React.WheelEvent) => {
+    if (e.deltaY > 0) {
+      advanceCard()
     }
   }
+
+  // Handle keyboard
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowDown' || e.key === ' ') {
+        e.preventDefault()
+        advanceCard()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [currentIndex, pets.length])
 
   if (loading) {
     return (
@@ -188,305 +259,205 @@ export default function StackPage() {
       background: 'var(--app-bg)',
       display: 'flex',
       flexDirection: 'column',
-      padding: '16px 20px',
-      paddingBottom: '100px',
-    }}>
-      {/* Header */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'flex-start',
-        marginBottom: '28px',
-        marginTop: '12px',
-      }}>
-        <div>
-          <p style={{
-            fontSize: '10px',
-            fontWeight: 700,
-            letterSpacing: '2px',
-            textTransform: 'uppercase',
-            color: 'var(--acc)',
-            margin: '0 0 4px 0',
-          }}>
-            Stack
-          </p>
-          <p style={{
-            fontSize: '12px',
-            color: 'var(--ink-2)',
-            margin: 0,
-            fontWeight: 500,
-          }}>
-            {currentIndex + 1} of {pets.length}
-          </p>
-        </div>
-        <button
-          onClick={handleLogout}
-          style={{
-            width: '36px',
-            height: '36px',
-            borderRadius: '0px',
-            background: 'transparent',
-            border: '1px solid var(--line)',
-            color: 'var(--ink)',
-            cursor: 'pointer',
-            fontSize: '16px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'all 160ms ease',
-            boxShadow: '0 2px 6px rgba(0, 0, 0, 0.06)',
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.12)', e.currentTarget.style.background = 'rgba(0, 0, 0, 0.02)')}
-          onMouseLeave={(e) => (e.currentTarget.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.06)', e.currentTarget.style.background = 'transparent')}
-        >
-          ↪
-        </button>
-      </div>
-
-      {/* Main Card Stack */}
+      onWheel: handleWheel,
+    } as any}>
+      {/* Carousel Card - Full Screen */}
       <div style={{
         flex: 1,
         display: 'flex',
         flexDirection: 'column',
-        maxWidth: '440px',
-        margin: '0 auto',
-        width: '100%',
         position: 'relative',
+        overflow: 'hidden',
       }}>
-        {/* Ghost cards (stacked effect) */}
-        {currentIndex + 1 < pets.length && (
-          <div style={{
-            position: 'absolute',
-            width: '100%',
-            height: '500px',
-            background: 'var(--paper)',
-            border: '1px solid var(--line)',
-            borderRadius: '0px',
-            top: '8px',
-            left: '4px',
-            zIndex: 0,
-            opacity: 0.4,
-          }} />
-        )}
-        {currentIndex + 2 < pets.length && (
-          <div style={{
-            position: 'absolute',
-            width: '100%',
-            height: '500px',
-            background: 'var(--paper)',
-            border: '1px solid var(--line)',
-            borderRadius: '0px',
-            top: '16px',
-            left: '8px',
-            zIndex: 0,
-            opacity: 0.2,
-          }} />
-        )}
-
-        {/* Main Card */}
+        {/* Main Image/Photo */}
         <div style={{
-          background: 'var(--paper)',
-          borderRadius: '0px',
-          border: '1px solid var(--line)',
-          padding: '28px 24px 32px',
-          boxShadow: '0 12px 32px rgba(0, 0, 0, 0.08)',
           flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
+          backgroundColor: '#e5e1d7',
+          backgroundImage: currentPet.cover_url || currentPet.avatar_url ? `url(${currentPet.cover_url || currentPet.avatar_url})` : undefined,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
           position: 'relative',
-          zIndex: 1,
-          minHeight: '540px',
-        }}>
-          {/* Avatar */}
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'flex-end',
+        }} onClick={advanceCard}>
+          {/* Dark overlay for text readability */}
           <div style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent 60%)',
+            pointerEvents: 'none',
+          }} />
+
+          {/* Content Overlay at Bottom */}
+          <div style={{
+            position: 'relative',
             width: '100%',
-            marginBottom: '24px',
-            display: 'flex',
-            justifyContent: 'center',
+            padding: '24px 20px 40px',
+            color: '#fff',
           }}>
+            {/* Pet Name and Species */}
+            <div style={{ marginBottom: '16px' }}>
+              <h1 style={{
+                fontFamily: '"Instrument Serif", Georgia, serif',
+                fontSize: '36px',
+                fontWeight: 400,
+                fontStyle: 'italic',
+                margin: '0 0 4px 0',
+                lineHeight: 1,
+              }}>
+                {currentPet.name}
+              </h1>
+              <p style={{
+                fontSize: '12px',
+                fontWeight: 600,
+                letterSpacing: '0.5px',
+                textTransform: 'uppercase',
+                margin: '0 0 8px 0',
+                opacity: 0.9,
+              }}>
+                {currentPet.species}{currentPet.breed ? ` · ${currentPet.breed}` : ''}
+              </p>
+            </div>
+
+            {/* Bio if exists */}
+            {currentPet.bio && (
+              <p style={{
+                fontSize: '13px',
+                fontWeight: 400,
+                lineHeight: 1.5,
+                margin: '0 0 16px 0',
+                opacity: 0.95,
+              }}>
+                "{currentPet.bio}"
+              </p>
+            )}
+
+            {/* Owner Info and Social Proof */}
             <div style={{
-              width: '140px',
-              height: '140px',
-              borderRadius: '0px',
-              background: '#e5e1d7',
-              backgroundImage: currentPet.avatar_url ? `url(${currentPet.avatar_url})` : undefined,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              border: '2px solid var(--line)',
               display: 'flex',
+              justifyContent: 'space-between',
               alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '48px',
-              boxShadow: '0 6px 16px rgba(0, 0, 0, 0.1)',
             }}>
-              {!currentPet.avatar_url && '🐾'}
+              <div>
+                <p style={{
+                  fontSize: '11px',
+                  fontWeight: 600,
+                  letterSpacing: '0.5px',
+                  textTransform: 'uppercase',
+                  margin: '0 0 2px 0',
+                  opacity: 0.8,
+                }}>
+                  Owned by
+                </p>
+                <p style={{
+                  fontFamily: '"Instrument Serif", Georgia, serif',
+                  fontSize: '16px',
+                  fontWeight: 400,
+                  fontStyle: 'italic',
+                  margin: 0,
+                }}>
+                  @{owner?.username || '—'}
+                </p>
+              </div>
+
+              {/* Follower Count */}
+              <div style={{
+                textAlign: 'right',
+              }}>
+                <p style={{
+                  fontSize: '20px',
+                  fontWeight: 700,
+                  margin: '0 0 2px 0',
+                }}>
+                  {followerCount.toLocaleString()}
+                </p>
+                <p style={{
+                  fontSize: '10px',
+                  fontWeight: 600,
+                  letterSpacing: '0.5px',
+                  textTransform: 'uppercase',
+                  margin: 0,
+                  opacity: 0.8,
+                }}>
+                  Followers
+                </p>
+              </div>
             </div>
           </div>
-
-          {/* Pet Info */}
-          <h2 style={{
-            fontFamily: '"Instrument Serif", Georgia, serif',
-            fontSize: '40px',
-            fontWeight: 400,
-            fontStyle: 'italic',
-            color: 'var(--ink)',
-            margin: '0 0 6px 0',
-            lineHeight: 1.1,
-            textAlign: 'center',
-          }}>
-            {currentPet.name}
-          </h2>
-
-          <p style={{
-            fontSize: '11px',
-            fontWeight: 600,
-            letterSpacing: '1px',
-            textTransform: 'uppercase',
-            color: 'var(--ink-2)',
-            margin: '0 0 18px 0',
-            textAlign: 'center',
-          }}>
-            {currentPet.species}
-            {currentPet.breed && ` · ${currentPet.breed}`}
-          </p>
-
-          {/* Bio */}
-          {currentPet.bio && (
-            <p style={{
-              fontSize: '13px',
-              color: 'var(--ink)',
-              lineHeight: 1.7,
-              fontStyle: 'italic',
-              margin: '0 0 24px 0',
-              paddingLeft: '12px',
-              borderLeft: '3px solid var(--acc)',
-            }}>
-              "{currentPet.bio}"
-            </p>
-          )}
-
-          {/* Owner - bottom */}
-          <div style={{
-            marginTop: 'auto',
-            paddingTop: '16px',
-            borderTop: '1px solid var(--line)',
-            textAlign: 'center',
-          }}>
-            <p style={{
-              fontSize: '9px',
-              fontWeight: 700,
-              letterSpacing: '1px',
-              textTransform: 'uppercase',
-              color: 'var(--ink-2)',
-              margin: '0 0 4px 0',
-            }}>
-              Owner
-            </p>
-            <p style={{
-              fontSize: '13px',
-              color: 'var(--ink)',
-              margin: 0,
-              fontWeight: 500,
-            }}>
-              @{owner?.username || '—'}
-            </p>
-          </div>
         </div>
-
-        {/* Action Buttons */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '10px',
-          marginTop: '20px',
-          position: 'relative',
-          zIndex: 2,
-        }}>
-          {/* Boop Button */}
-          <button
-            onClick={handleBoop}
-            style={{
-              padding: '16px 14px',
-              background: justBooped ? 'var(--acc)' : 'var(--ink)',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '0px',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: 600,
-              letterSpacing: '0.4px',
-              transition: 'all 160ms ease',
-              boxShadow: justBooped
-                ? '0 8px 20px rgba(217, 119, 87, 0.35)'
-                : '0 4px 12px rgba(0, 0, 0, 0.15)',
-              transform: justBooped ? 'scale(1.04)' : 'scale(1)',
-            }}
-            onMouseEnter={(e) => {
-              if (!justBooped) {
-                e.currentTarget.style.transform = 'translateY(-2px)'
-                e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.2)'
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!justBooped) {
-                e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)'
-              }
-            }}
-          >
-            👉 Boop {boopCount > 0 && `(${boopCount})`}
-          </button>
-
-          {/* Next Button */}
-          <button
-            onClick={advanceCard}
-            style={{
-              padding: '16px 14px',
-              background: 'transparent',
-              color: 'var(--ink)',
-              border: '1px solid var(--line)',
-              borderRadius: '0px',
-              cursor: 'pointer',
-              fontSize: '13px',
-              fontWeight: 600,
-              letterSpacing: '0.4px',
-              transition: 'all 160ms ease',
-              boxShadow: '0 2px 6px rgba(0, 0, 0, 0.04)',
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(24, 24, 27, 0.04)', e.currentTarget.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.1)')}
-            onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent', e.currentTarget.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.04)')}
-          >
-            Next →
-          </button>
-        </div>
-
-        {/* View Full Card Link */}
-        <Link
-          href={`/pets/${currentPet.id}`}
-          style={{
-            marginTop: '12px',
-            padding: '10px 16px',
-            background: 'transparent',
-            border: '1px solid var(--line)',
-            color: 'var(--ink)',
-            textDecoration: 'none',
-            fontSize: '12px',
-            fontWeight: 500,
-            letterSpacing: '0.3px',
-            borderRadius: '0px',
-            textAlign: 'center',
-            cursor: 'pointer',
-            transition: 'all 160ms ease',
-            boxShadow: '0 2px 6px rgba(0, 0, 0, 0.04)',
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(24, 24, 27, 0.02)', e.currentTarget.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.08)')}
-          onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent', e.currentTarget.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.04)')}
-        >
-          View Full Card
-        </Link>
       </div>
 
-      {/* Tab Bar */}
+      {/* Action Buttons */}
+      <div style={{
+        padding: '20px',
+        background: 'var(--paper)',
+        borderTop: '1px solid var(--line)',
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: '12px',
+      }}>
+        {/* Follow Button */}
+        <button
+          onClick={handleFollow}
+          disabled={loadingFollow}
+          style={{
+            padding: '14px 16px',
+            background: isFollowing ? 'var(--ink)' : 'var(--acc)',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '0px',
+            fontSize: '13px',
+            fontWeight: 600,
+            letterSpacing: '0.4px',
+            cursor: loadingFollow ? 'not-allowed' : 'pointer',
+            opacity: loadingFollow ? 0.7 : 1,
+            transition: 'all 160ms ease',
+            boxShadow: isFollowing ? '0 4px 12px rgba(0, 0, 0, 0.15)' : '0 4px 12px rgba(8, 145, 178, 0.2)',
+          }}
+          onMouseEnter={(e) => !loadingFollow && (e.currentTarget.style.transform = 'translateY(-2px)', e.currentTarget.style.boxShadow = isFollowing ? '0 8px 20px rgba(0, 0, 0, 0.2)' : '0 6px 16px rgba(8, 145, 178, 0.3)')}
+          onMouseLeave={(e) => !loadingFollow && (e.currentTarget.style.transform = 'translateY(0)', e.currentTarget.style.boxShadow = isFollowing ? '0 4px 12px rgba(0, 0, 0, 0.15)' : '0 4px 12px rgba(8, 145, 178, 0.2)')}
+        >
+          {isFollowing ? '✓ Following' : '+ Follow'}
+        </button>
+
+        {/* Share Button */}
+        <button
+          onClick={handleShare}
+          style={{
+            padding: '14px 16px',
+            background: 'transparent',
+            color: 'var(--acc)',
+            border: '1.5px solid var(--acc)',
+            borderRadius: '0px',
+            fontSize: '13px',
+            fontWeight: 600,
+            letterSpacing: '0.4px',
+            cursor: 'pointer',
+            transition: 'all 160ms ease',
+            boxShadow: '0 2px 6px rgba(8, 145, 178, 0.1)',
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--acc)', e.currentTarget.style.color = '#fff', e.currentTarget.style.boxShadow = '0 4px 12px rgba(8, 145, 178, 0.25)')}
+          onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent', e.currentTarget.style.color = 'var(--acc)', e.currentTarget.style.boxShadow = '0 2px 6px rgba(8, 145, 178, 0.1)')}
+        >
+          ↗ Share
+        </button>
+      </div>
+
+      {/* Navigation Info */}
+      <div style={{
+        padding: '12px 20px',
+        background: 'var(--paper)',
+        textAlign: 'center',
+        borderTop: '1px solid var(--line)',
+        fontSize: '11px',
+        color: 'var(--ink-2)',
+        fontWeight: 500,
+      }}>
+        {currentIndex + 1} / {pets.length} · Scroll or tap to next
+      </div>
+
+      {/* Bottom Navigation */}
       <div style={{
         position: 'fixed',
         bottom: 0,
@@ -506,17 +477,20 @@ export default function StackPage() {
           { emoji: '📚', label: 'Stack', href: '/stack', active: true },
           { emoji: '🏆', label: 'Shelf', href: '/profile', active: false },
         ].map(tab => (
-          <Link key={tab.label} href={tab.href} style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '3px',
-            textDecoration: 'none',
-            opacity: tab.active ? 1 : 0.5,
-            transition: 'opacity 160ms',
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.75')}
-          onMouseLeave={(e) => (e.currentTarget.style.opacity = tab.active ? '1' : '0.5')}
+          <Link
+            key={tab.label}
+            href={tab.href}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '3px',
+              textDecoration: 'none',
+              opacity: tab.active ? 1 : 0.5,
+              transition: 'opacity 160ms',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.75')}
+            onMouseLeave={(e) => (e.currentTarget.style.opacity = tab.active ? '1' : '0.5')}
           >
             <span style={{ fontSize: '20px' }}>{tab.emoji}</span>
             <span style={{
