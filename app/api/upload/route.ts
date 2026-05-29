@@ -31,6 +31,7 @@ export async function POST(request: NextRequest) {
       Key: key,
       Body: buffer,
       ContentType: file.type,
+      ACL: 'public-read',
     })
 
     await r2Client.send(command)
