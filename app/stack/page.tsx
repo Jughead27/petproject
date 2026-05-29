@@ -70,7 +70,6 @@ export default function StackPage() {
         const { data: allPets } = await supabase
           .from('pets')
           .select('*')
-          .neq('owner_id', userData.user.id)
           .order('created_at', { ascending: false })
 
         setPets(allPets || [])
