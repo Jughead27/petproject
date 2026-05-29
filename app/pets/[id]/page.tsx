@@ -19,16 +19,11 @@ interface Pet {
   owner_id: string
 }
 
-interface UserProfile {
-  username: string | null
-}
-
 export default function PetCardPage() {
   const router = useRouter()
   const params = useParams()
   const petId = params.id as string
   const [pet, setPet] = useState<Pet | null>(null)
-  const [owner, setOwner] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState<{ id: string } | null>(null)
   const [isOwner, setIsOwner] = useState(false)
@@ -53,13 +48,6 @@ export default function PetCardPage() {
         if (petData) {
           setPet(petData)
           setIsOwner(petData.owner_id === userData.user.id)
-
-          const { data: ownerData } = await supabase
-            .from('users')
-            .select('username')
-            .eq('id', petData.owner_id)
-            .single()
-          setOwner(ownerData)
         }
         setLoading(false)
       } catch (err) {
@@ -354,37 +342,6 @@ export default function PetCardPage() {
           </button>
         </div>
 
-        {/* Owner Info */}
-        <div style={{
-          padding: '12px 14px',
-          borderRadius: '0px',
-          backgroundColor: 'var(--app-bg)',
-          textAlign: 'center',
-          border: '1px solid var(--line)',
-        }}>
-          <p style={{
-            fontSize: '9px',
-            fontWeight: 600,
-            color: 'var(--ink-2)',
-            lineHeight: 1,
-            margin: '0 0 4px 0',
-            letterSpacing: '0.5px',
-            textTransform: 'uppercase',
-          }}>
-            Owned by
-          </p>
-          <p style={{
-            fontFamily: '"Instrument Serif", Georgia, serif',
-            fontSize: '16px',
-            fontWeight: 400,
-            fontStyle: 'italic',
-            color: 'var(--ink)',
-            lineHeight: 1,
-            margin: 0,
-          }}>
-            @{owner?.username || '—'}
-          </p>
-        </div>
       </div>
 
       {/* Tab Bar */}
