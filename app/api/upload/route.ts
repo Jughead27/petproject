@@ -1,6 +1,7 @@
 import { r2Client, R2_BUCKET } from '@/lib/r2'
 import { PutObjectCommand } from '@aws-sdk/client-s3'
 import { NextRequest, NextResponse } from 'next/server'
+import sharp from 'sharp'
 
 export async function POST(request: NextRequest) {
   const formData = await request.formData()
@@ -17,34 +18,47 @@ export async function POST(request: NextRequest) {
 
   try {
     // Convert file to buffer
-    const buffer = Buffer.from(await file.arrayBuffer())
+    let buffer = Buffer.from(await file.arrayBuffer())
+
+    // Resize and compress based on folder type
+    if (folder === 'pets/avatars') {
+      // Avatar: square 400x400
+      buffer = await sharp(buffer)
+        .resize(400, 400, { fit: 'cover' })
+        .webp({ quality: 80 })
+        .toBuffer()
+    } else if (folder === 'pets/covers') {
+      // Cover: landscape 1200x600
+      buffer = await sharp(buffer)
+        .resize(1200, 600, { fit: 'cover' })
+        .webp({ quality: 85 })
+        .toBuffer()
+    } else {
+      // Default compression
+      buffer = await sharp(buffer)
+        .webp({ quality: 80 })
+        .toBuffer()
+    }
 
     // Generate safe filename with timestamp
-    const ext = file.name.split('.').pop()
     const timestamp = Date.now()
     const safeFilename = `${timestamp}`
-    const key = `${folder}/${userId}/${safeFilename}.${ext}`
+    const key = `${folder}/${userId}/${safeFilename}.webp`
 
     // Upload to R2
     const command = new PutObjectCommand({
       Bucket: R2_BUCKET,
       Key: key,
       Body: buffer,
-      ContentType: file.type,
+      ContentType: 'image/webp',
       ACL: 'public-read',
     })
 
     await r2Client.send(command)
 
     // Return public URL
-    const baseUrl = process.env.CLOUDFLARE_R2_PUBLIC_URL || 'https://pub-5376365e3b524017b8b27a7b31f2241.r2.dev'
+    const baseUrl = process.env.CLOUDFLARE_R2_PUBLIC_URL || 'https://pub-5376365e3b524017bb827a73b31f2241.r2.dev'
     const publicUrl = `${baseUrl}/${key}`
-
-    console.log('Upload debug:', {
-      envVar: process.env.CLOUDFLARE_R2_PUBLIC_URL,
-      baseUrl,
-      publicUrl,
-    })
 
     return NextResponse.json({ url: publicUrl })
   } catch (error) {
