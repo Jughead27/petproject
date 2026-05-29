@@ -1,6 +1,7 @@
 'use client'
 
 import { createClient } from '@/lib/supabase'
+import { deleteFromR2 } from '@/lib/r2'
 import { uploadToR2 } from '@/lib/upload'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
@@ -210,6 +211,14 @@ export default function EditPetPage() {
     setDeleting(true)
 
     try {
+      // Delete images from R2 first
+      if (pet.avatar_url) {
+        await deleteFromR2(pet.avatar_url)
+      }
+      if (pet.cover_url) {
+        await deleteFromR2(pet.cover_url)
+      }
+
       const supabase = createClient()
 
       const { error: deleteError } = await supabase
