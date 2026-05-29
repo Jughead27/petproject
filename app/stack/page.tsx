@@ -39,6 +39,18 @@ export default function StackPage() {
 
         setUser(userData.user as { id: string })
 
+        // Check if user has completed onboarding (has at least one pet OR already made a choice)
+        const { count: userPetCount } = await supabase
+          .from('pets')
+          .select('*', { count: 'exact', head: true })
+          .eq('owner_id', userData.user.id)
+
+        // If user has no pets, send them to onboarding to create one or choose to browse
+        if (!userPetCount || userPetCount === 0) {
+          router.push('/onboarding')
+          return
+        }
+
         const { data: allPets } = await supabase
           .from('pets')
           .select('*')
