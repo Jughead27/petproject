@@ -153,45 +153,45 @@ export default function ProfilePage() {
       </div>
 
       {/* Content */}
-      <div style={{ padding: '32px 24px' }}>
+      <div style={{ padding: '24px 20px' }}>
         {pets.length === 0 ? (
-          <div style={{ textAlign: 'center', paddingTop: '48px', paddingBottom: '48px' }}>
-            <p style={{ fontSize: '48px', marginBottom: '16px' }}>🐾</p>
+          <div style={{ textAlign: 'center', paddingTop: '40px', paddingBottom: '40px' }}>
+            <p style={{ fontSize: '44px', marginBottom: '16px' }}>🐾</p>
             <h2 style={{
               fontFamily: '"Instrument Serif", Georgia, serif',
-              fontSize: '24px',
+              fontSize: '28px',
               fontWeight: 400,
               fontStyle: 'italic',
               color: 'var(--ink)',
-              marginBottom: '12px',
-              lineHeight: 1,
+              marginBottom: '10px',
+              lineHeight: 1.1,
             }}>
               No pets yet
             </h2>
             <p style={{
               fontSize: '13px',
               color: 'var(--ink-2)',
-              marginBottom: '24px',
+              marginBottom: '28px',
             }}>
-              Create your first pet to get started
+              Create your first pet card to get started
             </p>
             <Link href="/pets/create" style={{
-              padding: '16px 32px',
+              padding: '12px 28px',
               background: 'var(--acc)',
               color: '#fff',
               textDecoration: 'none',
               fontSize: '13px',
-              fontWeight: 700,
+              fontWeight: 600,
               letterSpacing: '0.5px',
-              borderRadius: '0px',
-              boxShadow: '0 8px 24px rgba(217, 119, 87, 0.3)',
-              transition: 'all 180ms ease',
+              borderRadius: '8px',
+              boxShadow: '0 4px 12px rgba(217, 119, 87, 0.25)',
+              transition: 'all 160ms ease',
               display: 'inline-block',
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-2px)', e.currentTarget.style.boxShadow = '0 12px 32px rgba(217, 119, 87, 0.4)')}
-            onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)', e.currentTarget.style.boxShadow = '0 8px 24px rgba(217, 119, 87, 0.3)')}
+            onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-2px)', e.currentTarget.style.boxShadow = '0 8px 20px rgba(217, 119, 87, 0.35)')}
+            onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)', e.currentTarget.style.boxShadow = '0 4px 12px rgba(217, 119, 87, 0.25)')}
             >
-              Create Pet
+              Create First Pet
             </Link>
           </div>
         ) : (
@@ -199,8 +199,8 @@ export default function ProfilePage() {
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
-              gap: '16px',
-              marginBottom: '32px',
+              gap: '14px',
+              marginBottom: '28px',
             }}>
               {pets.map(pet => (
                 <Link
@@ -208,29 +208,29 @@ export default function ProfilePage() {
                   href={`/pets/${pet.id}`}
                   style={{
                     background: 'var(--paper)',
-                    border: '2px solid var(--line)',
-                    borderRadius: '0px',
+                    border: '1px solid var(--line)',
+                    borderRadius: '10px',
                     overflow: 'hidden',
                     display: 'flex',
                     flexDirection: 'column',
                     textDecoration: 'none',
-                    transition: 'all 180ms ease',
-                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                    transition: 'all 160ms ease',
+                    boxShadow: '0 2px 6px rgba(0, 0, 0, 0.06)',
                     cursor: 'pointer',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.15)', e.currentTarget.style.transform = 'translateY(-2px)')}
-                  onMouseLeave={(e) => (e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.08)', e.currentTarget.style.transform = 'translateY(0)')}
+                  onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.12)', e.currentTarget.style.transform = 'translateY(-3px)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.06)', e.currentTarget.style.transform = 'translateY(0)')}
                 >
                   <div style={{
                     aspectRatio: '3/4',
-                    backgroundColor: '#ddd',
+                    backgroundColor: '#e5e1d7',
                     backgroundImage: pet.avatar_url ? `url(${pet.avatar_url})` : undefined,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '32px',
+                    fontSize: '28px',
                   }}>
                     {!pet.avatar_url && '🐾'}
                   </div>
@@ -248,7 +248,7 @@ export default function ProfilePage() {
                     </h3>
                     <p style={{
                       fontSize: '11px',
-                      fontWeight: 700,
+                      fontWeight: 600,
                       color: 'var(--ink-2)',
                       margin: 0,
                       textTransform: 'uppercase',
@@ -263,23 +263,23 @@ export default function ProfilePage() {
 
             <div style={{ textAlign: 'center' }}>
               <Link href="/pets/create" style={{
-                padding: '16px 32px',
+                padding: '12px 28px',
                 background: 'transparent',
                 color: 'var(--acc)',
                 textDecoration: 'none',
                 fontSize: '13px',
-                fontWeight: 700,
+                fontWeight: 600,
                 letterSpacing: '0.5px',
-                borderRadius: '0px',
-                border: '2px solid var(--acc)',
-                transition: 'all 180ms ease',
+                borderRadius: '8px',
+                border: '1.5px solid var(--acc)',
+                transition: 'all 160ms ease',
                 display: 'inline-block',
-                boxShadow: '0 2px 8px rgba(217, 119, 87, 0.15)',
+                boxShadow: '0 2px 6px rgba(217, 119, 87, 0.1)',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--acc)', e.currentTarget.style.color = '#fff', e.currentTarget.style.boxShadow = '0 8px 24px rgba(217, 119, 87, 0.3)')}
-              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent', e.currentTarget.style.color = 'var(--acc)', e.currentTarget.style.boxShadow = '0 2px 8px rgba(217, 119, 87, 0.15)')}
+              onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--acc)', e.currentTarget.style.color = '#fff', e.currentTarget.style.boxShadow = '0 4px 12px rgba(217, 119, 87, 0.25)')}
+              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent', e.currentTarget.style.color = 'var(--acc)', e.currentTarget.style.boxShadow = '0 2px 6px rgba(217, 119, 87, 0.1)')}
               >
-                + Add Pet
+                + Add Another Pet
               </Link>
             </div>
           </>

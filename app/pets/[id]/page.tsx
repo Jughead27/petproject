@@ -23,7 +23,7 @@ interface UserProfile {
   username: string | null
 }
 
-export default function ShelfPage() {
+export default function PetCardPage() {
   const router = useRouter()
   const params = useParams()
   const petId = params.id as string
@@ -80,7 +80,7 @@ export default function ShelfPage() {
         alignItems: 'center',
         justifyContent: 'center',
       }}>
-        <p style={{ color: 'var(--ink-2)' }}>Loading pet card...</p>
+        <p style={{ color: 'var(--ink-2)' }}>Loading...</p>
       </div>
     )
   }
@@ -108,8 +108,8 @@ export default function ShelfPage() {
           }}>
             Pet not found
           </h1>
-          <Link href="/stack" style={{ color: 'var(--acc)', fontSize: '11.5px' }}>
-            Back to Stack
+          <Link href="/stack" style={{ color: 'var(--acc)', fontSize: '12px', fontWeight: 500 }}>
+            ← Back to Stack
           </Link>
         </div>
       </div>
@@ -118,7 +118,7 @@ export default function ShelfPage() {
 
   const ageDisplay = pet.age_years !== null
     ? `${pet.age_years}y ${pet.age_months || 0}m`
-    : '—'
+    : null
 
   return (
     <div style={{
@@ -128,8 +128,8 @@ export default function ShelfPage() {
     }}>
       {/* Hero Section */}
       <div style={{
-        height: '260px',
-        backgroundColor: '#ddd',
+        height: '240px',
+        backgroundColor: '#e5e1d7',
         backgroundImage: pet.cover_photo_url ? `url(${pet.cover_photo_url})` : undefined,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -140,16 +140,16 @@ export default function ShelfPage() {
         <div style={{
           position: 'absolute',
           inset: 0,
-          background: 'linear-gradient(to bottom, transparent 40%, rgba(250, 250, 247, 0.8) 85%, rgba(250, 250, 247, 1))',
+          background: 'linear-gradient(to bottom, transparent 30%, rgba(250, 250, 247, 0.7) 80%, rgba(250, 250, 247, 1))',
           pointerEvents: 'none',
         }} />
 
         {/* Header Controls */}
         <div style={{
           position: 'absolute',
-          top: '18px',
-          left: '18px',
-          right: '18px',
+          top: '14px',
+          left: '16px',
+          right: '16px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -158,32 +158,35 @@ export default function ShelfPage() {
           <button
             onClick={() => router.back()}
             style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              background: 'rgba(255, 255, 255, 0.18)',
+              width: '36px',
+              height: '36px',
+              borderRadius: '8px',
+              background: 'rgba(255, 255, 255, 0.15)',
               color: '#fff',
-              border: '0.5px solid rgba(255, 255, 255, 0.3)',
-              backdropFilter: 'blur(12px)',
-              fontSize: '18px',
+              border: '1px solid rgba(255, 255, 255, 0.25)',
+              backdropFilter: 'blur(10px)',
+              fontSize: '16px',
               cursor: 'pointer',
-              transition: 'opacity 200ms',
+              transition: 'all 160ms ease',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.7')}
-            onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)')}
           >
             ←
           </button>
 
           {pet.card_number && (
             <div style={{
-              padding: '4px 12px',
-              borderRadius: 'var(--radius-pill)',
-              background: 'rgba(0, 0, 0, 0.4)',
-              backdropFilter: 'blur(10px)',
+              padding: '6px 12px',
+              borderRadius: '6px',
+              background: 'rgba(0, 0, 0, 0.35)',
+              backdropFilter: 'blur(8px)',
             }}>
-              <p className="button-text-small" style={{ color: '#fff', letterSpacing: '1px' }}>
-                CARD #{String(pet.card_number).padStart(3, '0')}
+              <p style={{ color: '#fff', letterSpacing: '1px', fontSize: '9px', fontWeight: 700, margin: 0 }}>
+                #{String(pet.card_number).padStart(3, '0')}
               </p>
             </div>
           )}
@@ -192,23 +195,23 @@ export default function ShelfPage() {
             <Link
               href={`/pets/${petId}/edit`}
               style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-                background: 'rgba(255, 255, 255, 0.18)',
+                width: '36px',
+                height: '36px',
+                borderRadius: '8px',
+                background: 'rgba(255, 255, 255, 0.15)',
                 color: '#fff',
-                border: '0.5px solid rgba(255, 255, 255, 0.3)',
-                backdropFilter: 'blur(12px)',
-                fontSize: '16px',
+                border: '1px solid rgba(255, 255, 255, 0.25)',
+                backdropFilter: 'blur(10px)',
+                fontSize: '14px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 textDecoration: 'none',
                 cursor: 'pointer',
-                transition: 'opacity 200ms',
+                transition: 'all 160ms ease',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.7')}
-              onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+              onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)')}
+              onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)')}
             >
               ✎
             </Link>
@@ -218,13 +221,13 @@ export default function ShelfPage() {
         {/* Avatar Overlay */}
         <div style={{
           position: 'absolute',
-          bottom: '-40px',
-          left: '18px',
-          width: '100px',
-          height: '100px',
-          borderRadius: '50%',
-          border: '4px solid var(--paper)',
-          backgroundColor: '#ddd',
+          bottom: '-44px',
+          left: '16px',
+          width: '88px',
+          height: '88px',
+          borderRadius: '10px',
+          border: '3px solid var(--paper)',
+          backgroundColor: '#e5e1d7',
           backgroundImage: pet.avatar_url ? `url(${pet.avatar_url})` : undefined,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
@@ -233,112 +236,77 @@ export default function ShelfPage() {
           alignItems: 'center',
           justifyContent: 'center',
           zIndex: 5,
-          boxShadow: 'var(--shadow-card)',
+          boxShadow: '0 8px 20px rgba(0, 0, 0, 0.12)',
         }}>
-          {!pet.avatar_url && <span style={{ fontSize: '44px' }}>🐾</span>}
+          {!pet.avatar_url && <span style={{ fontSize: '40px' }}>🐾</span>}
         </div>
       </div>
 
       {/* Content Panel */}
       <div style={{
-        marginTop: '-40px',
-        paddingTop: '60px',
-        paddingLeft: '18px',
-        paddingRight: '18px',
-        paddingBottom: '18px',
-        borderTopLeftRadius: 'var(--radius-lg)',
-        borderTopRightRadius: 'var(--radius-lg)',
+        marginTop: '-44px',
+        paddingTop: '52px',
+        paddingLeft: '16px',
+        paddingRight: '16px',
+        paddingBottom: '24px',
+        borderTopLeftRadius: '12px',
+        borderTopRightRadius: '12px',
         backgroundColor: 'var(--paper)',
         position: 'relative',
         zIndex: 4,
       }}>
-        {/* Identity Block */}
+        {/* Pet Info */}
         <div style={{ marginBottom: '20px' }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', marginBottom: '6px' }}>
-            <h1 style={{
-              fontFamily: '"Instrument Serif", Georgia, serif',
-              fontSize: '32px',
-              fontWeight: 400,
-              fontStyle: 'italic',
-              letterSpacing: '-0.5px',
-              color: 'var(--ink)',
-              lineHeight: 1,
-              margin: 0,
-            }}>
-              {pet.name}
-            </h1>
-            <p style={{
-              fontSize: '10.5px',
-              fontWeight: 600,
-              letterSpacing: '0.6px',
-              color: 'var(--ink-2)',
-              lineHeight: 1,
-              margin: 0,
-            }}>
-              {pet.species}{pet.breed ? ` · ${pet.breed}` : ''}
-            </p>
-          </div>
-          <p style={{
-            fontSize: '11.5px',
+          <h1 style={{
+            fontFamily: '"Instrument Serif", Georgia, serif',
+            fontSize: '36px',
             fontWeight: 400,
-            color: 'var(--ink-2)',
-            lineHeight: 1.3,
+            fontStyle: 'italic',
+            color: 'var(--ink)',
+            lineHeight: 1,
+            margin: '0 0 6px 0',
           }}>
-            {ageDisplay}{pet.age_years !== null && ' old'}
+            {pet.name}
+          </h1>
+          <p style={{
+            fontSize: '11px',
+            fontWeight: 600,
+            letterSpacing: '0.5px',
+            color: 'var(--ink-2)',
+            lineHeight: 1,
+            margin: 0,
+            textTransform: 'uppercase',
+          }}>
+            {pet.species}{pet.breed ? ` · ${pet.breed}` : ''}
           </p>
+          {ageDisplay && (
+            <p style={{
+              fontSize: '12px',
+              fontWeight: 400,
+              color: 'var(--ink-2)',
+              lineHeight: 1.4,
+              margin: '4px 0 0 0',
+            }}>
+              {ageDisplay} old
+            </p>
+          )}
         </div>
 
-        {/* Action Buttons */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '20px' }}>
-          <button style={{
-            padding: '12px',
-            borderRadius: '12px',
-            background: 'var(--ink)',
-            color: 'var(--paper)',
-            border: 'none',
-            cursor: 'pointer',
-            fontSize: '12.5px',
-            fontWeight: 600,
-            transition: 'opacity 200ms',
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.9')}
-          onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
-          >
-            Follow
-          </button>
-          <button style={{
-            padding: '12px',
-            borderRadius: '12px',
-            background: 'var(--acc)',
-            color: '#fff',
-            border: 'none',
-            cursor: 'pointer',
-            fontSize: '12.5px',
-            fontWeight: 600,
-            transition: 'opacity 200ms',
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.9')}
-          onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
-          >
-            Send treat
-          </button>
-        </div>
-
-        {/* Bio Quote Block */}
+        {/* Bio */}
         {pet.bio && (
           <div style={{
             padding: '12px 14px',
             borderLeft: '3px solid var(--acc)',
-            backgroundColor: 'rgba(217, 119, 87, 0.08)',
-            borderRadius: '4px',
+            backgroundColor: 'rgba(217, 119, 87, 0.06)',
+            borderRadius: '6px',
             marginBottom: '20px',
           }}>
             <p style={{
-              fontSize: '11.5px',
+              fontSize: '12px',
               fontWeight: 400,
               color: 'var(--ink)',
               fontStyle: 'italic',
-              lineHeight: 1.5,
+              lineHeight: 1.6,
               margin: 0,
             }}>
               "{pet.bio}"
@@ -346,113 +314,75 @@ export default function ShelfPage() {
           </div>
         )}
 
-        {/* Trophy Case */}
-        <div style={{ marginBottom: '24px' }}>
-          <p style={{
-            fontSize: '10.5px',
+        {/* Action Buttons */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '18px' }}>
+          <button style={{
+            padding: '12px 16px',
+            borderRadius: '8px',
+            background: 'var(--ink)',
+            color: '#fff',
+            border: 'none',
+            cursor: 'pointer',
+            fontSize: '13px',
             fontWeight: 600,
-            letterSpacing: '0.6px',
-            color: 'var(--ink-2)',
-            marginBottom: '12px',
-            lineHeight: 1,
-            margin: '0 0 12px 0',
-          }}>
-            TROPHY CASE
-          </p>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(5, 1fr)',
-            gap: '8px',
-          }}>
-            {[...Array(10)].map((_, i) => {
-              const unlocked = i < 3
-              return (
-                <div
-                  key={i}
-                  style={{
-                    aspectRatio: '1',
-                    borderRadius: 'var(--radius-md)',
-                    border: '1px solid var(--line)',
-                    backgroundColor: unlocked ? 'var(--paper)' : 'transparent',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '20px',
-                  }}
-                >
-                  {unlocked ? ['🏅', '🎖️', '⭐'][i] : '?'}
-                </div>
-              )
-            })}
-          </div>
-        </div>
-
-        {/* Snapshot Wall */}
-        <div style={{ marginBottom: '24px' }}>
-          <p style={{
-            fontSize: '10.5px',
+            letterSpacing: '0.4px',
+            transition: 'all 160ms ease',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-2px)', e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.2)')}
+          onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)', e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)')}
+          >
+            Follow
+          </button>
+          <button style={{
+            padding: '12px 16px',
+            borderRadius: '8px',
+            background: 'var(--acc)',
+            color: '#fff',
+            border: 'none',
+            cursor: 'pointer',
+            fontSize: '13px',
             fontWeight: 600,
-            letterSpacing: '0.6px',
-            color: 'var(--ink-2)',
-            marginBottom: '12px',
-            lineHeight: 1,
-            margin: '0 0 12px 0',
-          }}>
-            SNAPSHOT WALL
-          </p>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '8px',
-          }}>
-            {[...Array(6)].map((_, i) => (
-              <div
-                key={i}
-                style={{
-                  aspectRatio: '1',
-                  borderRadius: 'var(--radius-sm)',
-                  backgroundColor: '#ddd',
-                  border: '1px solid var(--line)',
-                  overflow: 'hidden',
-                }}
-              >
-                <img
-                  src={`https://picsum.photos/120/120?random=${i}`}
-                  alt={`photo ${i}`}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-              </div>
-            ))}
-          </div>
+            letterSpacing: '0.4px',
+            transition: 'all 160ms ease',
+            boxShadow: '0 4px 12px rgba(217, 119, 87, 0.2)',
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-2px)', e.currentTarget.style.boxShadow = '0 6px 16px rgba(217, 119, 87, 0.3)')}
+          onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)', e.currentTarget.style.boxShadow = '0 4px 12px rgba(217, 119, 87, 0.2)')}
+          >
+            Send treat
+          </button>
         </div>
 
         {/* Owner Info */}
         <div style={{
           padding: '12px 14px',
-          borderRadius: 'var(--radius-sm)',
+          borderRadius: '8px',
           backgroundColor: 'var(--app-bg)',
           textAlign: 'center',
+          border: '1px solid var(--line)',
         }}>
           <p style={{
-            fontSize: '10.5px',
-            fontWeight: 400,
+            fontSize: '9px',
+            fontWeight: 600,
             color: 'var(--ink-2)',
-            marginBottom: '4px',
             lineHeight: 1,
             margin: '0 0 4px 0',
+            letterSpacing: '0.5px',
+            textTransform: 'uppercase',
           }}>
-            OWNER
+            Owned by
           </p>
           <p style={{
             fontFamily: '"Instrument Serif", Georgia, serif',
-            fontSize: '18px',
+            fontSize: '16px',
             fontWeight: 400,
             fontStyle: 'italic',
             color: 'var(--ink)',
             lineHeight: 1,
             margin: 0,
           }}>
-            @{owner?.username || 'unknown'}
+            @{owner?.username || '—'}
           </p>
         </div>
       </div>
@@ -463,22 +393,19 @@ export default function ShelfPage() {
         bottom: 0,
         left: 0,
         right: 0,
-        height: '82px',
-        paddingTop: 'var(--space-3)',
-        paddingBottom: 'var(--space-6)',
+        height: '76px',
+        paddingTop: '8px',
+        paddingBottom: '12px',
         background: 'rgba(250, 250, 247, 0.92)',
-        backdropFilter: 'blur(20px) saturate(180%)',
-        borderTop: '0.5px solid rgba(0, 0, 0, 0.08)',
+        backdropFilter: 'blur(16px)',
+        borderTop: '1px solid var(--line)',
         display: 'flex',
         justifyContent: 'space-around',
         alignItems: 'flex-start',
       }}>
         {[
           { emoji: '📚', label: 'Stack', href: '/stack', active: false },
-          { emoji: '📖', label: 'Dex', href: '/dex', active: false },
-          { emoji: '📸', label: 'Burst', href: '/burst', active: false },
-          { emoji: '🐾', label: 'Packs', href: '/packs', active: false },
-          { emoji: '🏆', label: 'Shelf', href: '/profile', active: true },
+          { emoji: '🏆', label: 'Shelf', href: '/profile', active: false },
         ].map(tab => (
           <Link
             key={tab.label}
@@ -487,16 +414,20 @@ export default function ShelfPage() {
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              gap: '4px',
+              gap: '3px',
               textDecoration: 'none',
-              opacity: tab.active ? 1 : 0.45,
+              opacity: tab.active ? 1 : 0.5,
+              transition: 'opacity 160ms',
             }}
+            onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.75')}
+            onMouseLeave={(e) => (e.currentTarget.style.opacity = tab.active ? '1' : '0.5')}
           >
-            <span style={{ fontSize: '22px' }}>{tab.emoji}</span>
+            <span style={{ fontSize: '20px' }}>{tab.emoji}</span>
             <span style={{
-              fontSize: '10.5px',
+              fontSize: '9px',
               fontWeight: 600,
               color: tab.active ? 'var(--acc)' : 'var(--ink)',
+              letterSpacing: '0.4px',
             }}>
               {tab.label}
             </span>

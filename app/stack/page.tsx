@@ -161,20 +161,20 @@ export default function StackPage() {
           Check back later for more pets to discover.
         </p>
         <Link href="/profile" style={{
-          padding: '16px 32px',
+          padding: '12px 28px',
           background: 'var(--ink)',
           color: '#fff',
           textDecoration: 'none',
           fontSize: '13px',
-          fontWeight: 700,
+          fontWeight: 600,
           letterSpacing: '0.5px',
-          borderRadius: '0px',
-          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)',
+          borderRadius: '8px',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
           transition: 'all 180ms ease',
           display: 'inline-block',
         }}
-        onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-2px)', e.currentTarget.style.boxShadow = '0 12px 32px rgba(0, 0, 0, 0.25)')}
-        onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)', e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.2)')}
+        onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-2px)', e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.2)')}
+        onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)', e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)')}
         >
           View Your Pets
         </Link>
@@ -188,21 +188,22 @@ export default function StackPage() {
       background: 'var(--app-bg)',
       display: 'flex',
       flexDirection: 'column',
-      padding: '24px',
-      paddingBottom: '120px',
+      padding: '16px 20px',
+      paddingBottom: '100px',
     }}>
       {/* Header */}
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '32px',
+        alignItems: 'flex-start',
+        marginBottom: '28px',
+        marginTop: '12px',
       }}>
         <div>
           <p style={{
-            fontSize: '11px',
+            fontSize: '10px',
             fontWeight: 700,
-            letterSpacing: '2.5px',
+            letterSpacing: '2px',
             textTransform: 'uppercase',
             color: 'var(--acc)',
             margin: '0 0 4px 0',
@@ -210,9 +211,10 @@ export default function StackPage() {
             Stack
           </p>
           <p style={{
-            fontSize: '13px',
+            fontSize: '12px',
             color: 'var(--ink-2)',
             margin: 0,
+            fontWeight: 500,
           }}>
             {currentIndex + 1} of {pets.length}
           </p>
@@ -220,87 +222,129 @@ export default function StackPage() {
         <button
           onClick={handleLogout}
           style={{
-            width: '40px',
-            height: '40px',
-            borderRadius: '0px',
+            width: '36px',
+            height: '36px',
+            borderRadius: '8px',
             background: 'transparent',
             border: '1px solid var(--line)',
             color: 'var(--ink)',
             cursor: 'pointer',
-            fontSize: '18px',
+            fontSize: '16px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            transition: 'all 180ms ease',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+            transition: 'all 160ms ease',
+            boxShadow: '0 2px 6px rgba(0, 0, 0, 0.06)',
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.12)')}
-          onMouseLeave={(e) => (e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.08)')}
+          onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.12)', e.currentTarget.style.background = 'rgba(0, 0, 0, 0.02)')}
+          onMouseLeave={(e) => (e.currentTarget.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.06)', e.currentTarget.style.background = 'transparent')}
         >
           ↪
         </button>
       </div>
 
-      {/* Main Card */}
+      {/* Main Card Stack */}
       <div style={{
         flex: 1,
         display: 'flex',
         flexDirection: 'column',
-        maxWidth: '400px',
+        maxWidth: '440px',
         margin: '0 auto',
         width: '100%',
+        position: 'relative',
       }}>
-        {/* Avatar + Info Card */}
+        {/* Ghost cards (stacked effect) */}
+        {currentIndex + 1 < pets.length && (
+          <div style={{
+            position: 'absolute',
+            width: '100%',
+            height: '500px',
+            background: 'var(--paper)',
+            border: '1px solid var(--line)',
+            borderRadius: '12px',
+            top: '8px',
+            left: '4px',
+            zIndex: 0,
+            opacity: 0.4,
+          }} />
+        )}
+        {currentIndex + 2 < pets.length && (
+          <div style={{
+            position: 'absolute',
+            width: '100%',
+            height: '500px',
+            background: 'var(--paper)',
+            border: '1px solid var(--line)',
+            borderRadius: '12px',
+            top: '16px',
+            left: '8px',
+            zIndex: 0,
+            opacity: 0.2,
+          }} />
+        )}
+
+        {/* Main Card */}
         <div style={{
           background: 'var(--paper)',
-          borderRadius: '0px',
-          border: '2px solid var(--line)',
-          padding: '32px 24px 24px',
-          marginBottom: '24px',
-          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
+          borderRadius: '12px',
+          border: '1px solid var(--line)',
+          padding: '28px 24px 32px',
+          boxShadow: '0 12px 32px rgba(0, 0, 0, 0.08)',
           flex: 1,
           display: 'flex',
           flexDirection: 'column',
+          position: 'relative',
+          zIndex: 1,
+          minHeight: '540px',
         }}>
           {/* Avatar */}
           <div style={{
-            width: '120px',
-            height: '120px',
-            borderRadius: '0px',
-            background: '#ddd',
-            backgroundImage: currentPet.avatar_url ? `url(${currentPet.avatar_url})` : undefined,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
+            width: '100%',
             marginBottom: '24px',
-            border: '2px solid var(--line)',
             display: 'flex',
-            alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '48px',
           }}>
-            {!currentPet.avatar_url && '🐾'}
+            <div style={{
+              width: '140px',
+              height: '140px',
+              borderRadius: '12px',
+              background: '#e5e1d7',
+              backgroundImage: currentPet.avatar_url ? `url(${currentPet.avatar_url})` : undefined,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              border: '2px solid var(--line)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '48px',
+              boxShadow: '0 6px 16px rgba(0, 0, 0, 0.1)',
+            }}>
+              {!currentPet.avatar_url && '🐾'}
+            </div>
           </div>
 
           {/* Pet Info */}
           <h2 style={{
             fontFamily: '"Instrument Serif", Georgia, serif',
-            fontSize: '36px',
+            fontSize: '40px',
             fontWeight: 400,
             fontStyle: 'italic',
             color: 'var(--ink)',
-            margin: '0 0 8px 0',
-            lineHeight: 1,
+            margin: '0 0 6px 0',
+            lineHeight: 1.1,
+            textAlign: 'center',
           }}>
             {currentPet.name}
           </h2>
 
           <p style={{
-            fontSize: '12px',
-            fontWeight: 700,
-            letterSpacing: '0.6px',
+            fontSize: '11px',
+            fontWeight: 600,
+            letterSpacing: '1px',
             textTransform: 'uppercase',
             color: 'var(--ink-2)',
-            margin: '0 0 20px 0',
+            margin: '0 0 18px 0',
+            textAlign: 'center',
           }}>
             {currentPet.species}
             {currentPet.breed && ` · ${currentPet.breed}`}
@@ -311,103 +355,82 @@ export default function StackPage() {
             <p style={{
               fontSize: '13px',
               color: 'var(--ink)',
-              lineHeight: 1.6,
+              lineHeight: 1.7,
               fontStyle: 'italic',
               margin: '0 0 24px 0',
+              paddingLeft: '12px',
               borderLeft: '3px solid var(--acc)',
-              paddingLeft: '16px',
             }}>
               "{currentPet.bio}"
             </p>
           )}
 
-          {/* Owner */}
+          {/* Owner - bottom */}
           <div style={{
             marginTop: 'auto',
-            paddingTop: '20px',
+            paddingTop: '16px',
             borderTop: '1px solid var(--line)',
+            textAlign: 'center',
           }}>
             <p style={{
-              fontSize: '10px',
+              fontSize: '9px',
               fontWeight: 700,
               letterSpacing: '1px',
               textTransform: 'uppercase',
               color: 'var(--ink-2)',
-              margin: '0 0 6px 0',
+              margin: '0 0 4px 0',
             }}>
               Owner
             </p>
             <p style={{
-              fontSize: '14px',
+              fontSize: '13px',
               color: 'var(--ink)',
               margin: 0,
               fontWeight: 500,
             }}>
-              @{owner?.username || 'loading'}
+              @{owner?.username || '—'}
             </p>
           </div>
         </div>
-
-        {/* View Card Link */}
-        <Link
-          href={`/pets/${currentPet.id}`}
-          style={{
-            padding: '14px 20px',
-            background: 'transparent',
-            border: '2px solid var(--line)',
-            color: 'var(--ink)',
-            textDecoration: 'none',
-            fontSize: '13px',
-            fontWeight: 700,
-            letterSpacing: '0.5px',
-            borderRadius: '0px',
-            textAlign: 'center',
-            cursor: 'pointer',
-            transition: 'all 180ms ease',
-            marginBottom: '16px',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--ink)', e.currentTarget.style.color = 'var(--paper)', e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.15)')}
-          onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent', e.currentTarget.style.color = 'var(--ink)', e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.06)')}
-        >
-          View Card
-        </Link>
 
         {/* Action Buttons */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
-          gap: '12px',
+          gap: '10px',
+          marginTop: '20px',
+          position: 'relative',
+          zIndex: 2,
         }}>
           {/* Boop Button */}
           <button
             onClick={handleBoop}
             style={{
-              padding: '20px 16px',
+              padding: '16px 14px',
               background: justBooped ? 'var(--acc)' : 'var(--ink)',
               color: '#fff',
               border: 'none',
-              borderRadius: '0px',
+              borderRadius: '10px',
               cursor: 'pointer',
-              fontSize: '16px',
-              fontWeight: 700,
-              letterSpacing: '0.5px',
-              transition: 'all 180ms ease',
+              fontSize: '14px',
+              fontWeight: 600,
+              letterSpacing: '0.4px',
+              transition: 'all 160ms ease',
               boxShadow: justBooped
-                ? '0 12px 32px rgba(217, 119, 87, 0.4)'
-                : '0 8px 24px rgba(0, 0, 0, 0.2)',
-              transform: justBooped ? 'scale(1.05)' : 'scale(1)',
+                ? '0 8px 20px rgba(217, 119, 87, 0.35)'
+                : '0 4px 12px rgba(0, 0, 0, 0.15)',
+              transform: justBooped ? 'scale(1.04)' : 'scale(1)',
             }}
             onMouseEnter={(e) => {
               if (!justBooped) {
                 e.currentTarget.style.transform = 'translateY(-2px)'
-                e.currentTarget.style.boxShadow = '0 12px 32px rgba(0, 0, 0, 0.25)'
+                e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.2)'
               }
             }}
             onMouseLeave={(e) => {
               if (!justBooped) {
                 e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.2)'
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)'
               }
             }}
           >
@@ -418,24 +441,49 @@ export default function StackPage() {
           <button
             onClick={advanceCard}
             style={{
-              padding: '20px 16px',
+              padding: '16px 14px',
               background: 'transparent',
               color: 'var(--ink)',
-              border: '2px solid var(--line)',
-              borderRadius: '0px',
+              border: '1px solid var(--line)',
+              borderRadius: '10px',
               cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: 700,
-              letterSpacing: '0.5px',
-              transition: 'all 180ms ease',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
+              fontSize: '13px',
+              fontWeight: 600,
+              letterSpacing: '0.4px',
+              transition: 'all 160ms ease',
+              boxShadow: '0 2px 6px rgba(0, 0, 0, 0.04)',
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--line)', e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.15)')}
-            onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent', e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.06)')}
+            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(24, 24, 27, 0.04)', e.currentTarget.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.1)')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent', e.currentTarget.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.04)')}
           >
-            Next ↪
+            Next →
           </button>
         </div>
+
+        {/* View Full Card Link */}
+        <Link
+          href={`/pets/${currentPet.id}`}
+          style={{
+            marginTop: '12px',
+            padding: '10px 16px',
+            background: 'transparent',
+            border: '1px solid var(--line)',
+            color: 'var(--ink)',
+            textDecoration: 'none',
+            fontSize: '12px',
+            fontWeight: 500,
+            letterSpacing: '0.3px',
+            borderRadius: '8px',
+            textAlign: 'center',
+            cursor: 'pointer',
+            transition: 'all 160ms ease',
+            boxShadow: '0 2px 6px rgba(0, 0, 0, 0.04)',
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(24, 24, 27, 0.02)', e.currentTarget.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.08)')}
+          onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent', e.currentTarget.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.04)')}
+        >
+          View Full Card
+        </Link>
       </div>
 
       {/* Tab Bar */}
@@ -444,11 +492,11 @@ export default function StackPage() {
         bottom: 0,
         left: 0,
         right: 0,
-        height: '82px',
+        height: '76px',
         paddingTop: '8px',
-        paddingBottom: '14px',
-        background: 'rgba(239, 236, 229, 0.96)',
-        backdropFilter: 'blur(20px)',
+        paddingBottom: '12px',
+        background: 'rgba(250, 250, 247, 0.92)',
+        backdropFilter: 'blur(16px)',
         borderTop: '1px solid var(--line)',
         display: 'flex',
         justifyContent: 'space-around',
@@ -462,20 +510,20 @@ export default function StackPage() {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: '4px',
+            gap: '3px',
             textDecoration: 'none',
             opacity: tab.active ? 1 : 0.5,
-            transition: 'opacity 180ms',
+            transition: 'opacity 160ms',
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
+          onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.75')}
           onMouseLeave={(e) => (e.currentTarget.style.opacity = tab.active ? '1' : '0.5')}
           >
-            <span style={{ fontSize: '22px' }}>{tab.emoji}</span>
+            <span style={{ fontSize: '20px' }}>{tab.emoji}</span>
             <span style={{
-              fontSize: '10px',
-              fontWeight: 700,
+              fontSize: '9px',
+              fontWeight: 600,
               color: tab.active ? 'var(--acc)' : 'var(--ink)',
-              letterSpacing: '0.5px',
+              letterSpacing: '0.4px',
             }}>
               {tab.label}
             </span>

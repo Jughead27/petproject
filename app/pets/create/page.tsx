@@ -112,57 +112,53 @@ export default function CreatePetPage() {
     <div style={{
       minHeight: '100vh',
       background: 'var(--app-bg)',
-      backgroundImage: `
-        radial-gradient(circle at 20% 20%, rgba(217, 119, 87, 0.08), transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(90, 122, 154, 0.06), transparent 50%)
-      `,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '24px',
+      padding: '20px',
       paddingBottom: '80px',
     }}>
-      <div style={{ maxWidth: '400px', width: '100%' }}>
+      <div style={{ maxWidth: '420px', width: '100%' }}>
         {/* Header */}
-        <div style={{ marginBottom: '40px', textAlign: 'center' }}>
+        <div style={{ marginBottom: '36px', textAlign: 'center' }}>
           <p style={{
-            fontSize: '11px',
+            fontSize: '10px',
             fontWeight: 700,
-            letterSpacing: '2.5px',
+            letterSpacing: '2px',
             textTransform: 'uppercase',
             color: 'var(--acc)',
-            margin: '0 0 12px 0',
+            margin: '0 0 10px 0',
           }}>
             Create
           </p>
           <h1 style={{
             fontFamily: '"Instrument Serif", Georgia, serif',
-            fontSize: '32px',
+            fontSize: '36px',
             fontWeight: 400,
             fontStyle: 'italic',
             color: 'var(--ink)',
-            margin: '0 0 12px 0',
-            lineHeight: 1,
+            margin: '0 0 8px 0',
+            lineHeight: 1.1,
           }}>
-            Your Pet
+            Your Pet Card
           </h1>
           <p style={{
-            fontSize: '13px',
+            fontSize: '12px',
             color: 'var(--ink-2)',
             margin: 0,
           }}>
-            Name, species, photo. That's it.
+            Name, species, and a photo
           </p>
         </div>
 
         {/* Error */}
         {error && (
           <div style={{
-            marginBottom: '24px',
-            padding: '14px 16px',
-            backgroundColor: 'rgba(220, 38, 38, 0.1)',
-            border: '1px solid rgba(220, 38, 38, 0.3)',
-            borderRadius: '0px',
+            marginBottom: '22px',
+            padding: '12px 14px',
+            backgroundColor: 'rgba(220, 38, 38, 0.08)',
+            border: '1px solid rgba(220, 38, 38, 0.25)',
+            borderRadius: '8px',
             fontSize: '12px',
             color: '#7f1d1d',
           }}>
@@ -171,17 +167,17 @@ export default function CreatePetPage() {
         )}
 
         {/* Form */}
-        <form onSubmit={handleCreatePet} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        <form onSubmit={handleCreatePet} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           {/* Name */}
           <div>
             <label htmlFor="name" style={{
               display: 'block',
-              fontSize: '11px',
-              fontWeight: 700,
-              letterSpacing: '0.6px',
+              fontSize: '10px',
+              fontWeight: 600,
+              letterSpacing: '0.5px',
               textTransform: 'uppercase',
               color: 'var(--ink)',
-              marginBottom: '8px',
+              marginBottom: '6px',
             }}>
               Pet Name
             </label>
@@ -193,14 +189,16 @@ export default function CreatePetPage() {
               disabled={loading}
               style={{
                 width: '100%',
-                padding: '14px 16px',
-                border: '2px solid var(--line)',
-                borderRadius: '0px',
+                padding: '11px 14px',
+                border: '1px solid var(--line)',
+                borderRadius: '8px',
                 color: 'var(--ink)',
                 backgroundColor: 'var(--paper)',
-                fontSize: '14px',
+                fontSize: '13px',
                 fontWeight: 500,
                 opacity: loading ? 0.5 : 1,
+                transition: 'all 160ms ease',
+                boxSizing: 'border-box',
               }}
               placeholder="Luna"
             />
@@ -210,12 +208,12 @@ export default function CreatePetPage() {
           <div>
             <label htmlFor="species" style={{
               display: 'block',
-              fontSize: '11px',
-              fontWeight: 700,
-              letterSpacing: '0.6px',
+              fontSize: '10px',
+              fontWeight: 600,
+              letterSpacing: '0.5px',
               textTransform: 'uppercase',
               color: 'var(--ink)',
-              marginBottom: '8px',
+              marginBottom: '6px',
             }}>
               Species
             </label>
@@ -226,17 +224,18 @@ export default function CreatePetPage() {
               disabled={loading}
               style={{
                 width: '100%',
-                padding: '14px 16px',
-                border: '2px solid var(--line)',
-                borderRadius: '0px',
+                padding: '11px 14px',
+                border: '1px solid var(--line)',
+                borderRadius: '8px',
                 color: 'var(--ink)',
                 backgroundColor: 'var(--paper)',
-                fontSize: '14px',
+                fontSize: '13px',
                 fontWeight: 500,
                 opacity: loading ? 0.5 : 1,
+                boxSizing: 'border-box',
               }}
             >
-              <option value="">Choose...</option>
+              <option value="">Choose one...</option>
               {SPECIES_LIST.map((s) => (
                 <option key={s} value={s}>
                   {s}
@@ -249,12 +248,12 @@ export default function CreatePetPage() {
           <div>
             <label style={{
               display: 'block',
-              fontSize: '11px',
-              fontWeight: 700,
-              letterSpacing: '0.6px',
+              fontSize: '10px',
+              fontWeight: 600,
+              letterSpacing: '0.5px',
               textTransform: 'uppercase',
               color: 'var(--ink)',
-              marginBottom: '8px',
+              marginBottom: '6px',
             }}>
               Photo
             </label>
@@ -271,16 +270,16 @@ export default function CreatePetPage() {
               style={{
                 display: 'block',
                 width: '100%',
-                padding: '32px 20px',
-                border: '2px dashed var(--line)',
-                borderRadius: '0px',
+                padding: '28px 20px',
+                border: '1.5px dashed var(--line)',
+                borderRadius: '8px',
                 textAlign: 'center',
                 cursor: loading ? 'not-allowed' : 'pointer',
                 backgroundColor: 'var(--paper)',
-                transition: 'all 180ms',
+                transition: 'all 160ms',
                 opacity: loading ? 0.5 : 1,
               }}
-              onMouseEnter={(e) => !loading && (e.currentTarget.style.borderColor = 'var(--acc)', e.currentTarget.style.backgroundColor = 'rgba(217, 119, 87, 0.05)')}
+              onMouseEnter={(e) => !loading && (e.currentTarget.style.borderColor = 'var(--acc)', e.currentTarget.style.backgroundColor = 'rgba(217, 119, 87, 0.03)')}
               onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--line)', e.currentTarget.style.backgroundColor = 'var(--paper)')}
             >
               {avatarPreview ? (
@@ -291,17 +290,18 @@ export default function CreatePetPage() {
                     height: '140px',
                     width: '140px',
                     objectFit: 'cover',
-                    borderRadius: '0px',
+                    borderRadius: '8px',
                     margin: '0 auto',
                     display: 'block',
-                    border: '2px solid var(--line)',
+                    border: '1px solid var(--line)',
+                    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.08)',
                   }}
                 />
               ) : (
                 <div>
-                  <p style={{ fontSize: '32px', margin: '0 0 8px 0' }}>📸</p>
-                  <p style={{ color: 'var(--ink)', margin: '0 0 4px 0', fontWeight: 600, fontSize: '13px' }}>Upload photo</p>
-                  <p style={{ color: 'var(--ink-2)', margin: 0, fontSize: '12px' }}>JPG, PNG</p>
+                  <p style={{ fontSize: '28px', margin: '0 0 8px 0' }}>📸</p>
+                  <p style={{ color: 'var(--ink)', margin: '0 0 3px 0', fontWeight: 500, fontSize: '12px' }}>Upload a photo</p>
+                  <p style={{ color: 'var(--ink-2)', margin: 0, fontSize: '11px' }}>JPG, PNG, or similar</p>
                 </div>
               )}
             </label>
@@ -313,24 +313,24 @@ export default function CreatePetPage() {
             disabled={loading}
             style={{
               width: '100%',
-              padding: '18px 20px',
-              marginTop: '12px',
+              padding: '14px 20px',
+              marginTop: '8px',
               background: 'var(--acc)',
               color: '#fff',
               border: 'none',
-              borderRadius: '0px',
+              borderRadius: '8px',
               cursor: loading ? 'not-allowed' : 'pointer',
               opacity: loading ? 0.7 : 1,
-              transition: 'all 180ms ease',
-              fontSize: '14px',
-              fontWeight: 700,
+              transition: 'all 160ms ease',
+              fontSize: '13px',
+              fontWeight: 600,
               letterSpacing: '0.5px',
-              boxShadow: '0 8px 24px rgba(217, 119, 87, 0.3)',
+              boxShadow: '0 4px 12px rgba(217, 119, 87, 0.25)',
             }}
-            onMouseEnter={(e) => !loading && (e.currentTarget.style.transform = 'translateY(-2px)', e.currentTarget.style.boxShadow = '0 12px 32px rgba(217, 119, 87, 0.4)')}
-            onMouseLeave={(e) => !loading && (e.currentTarget.style.transform = 'translateY(0)', e.currentTarget.style.boxShadow = '0 8px 24px rgba(217, 119, 87, 0.3)')}
+            onMouseEnter={(e) => !loading && (e.currentTarget.style.transform = 'translateY(-2px)', e.currentTarget.style.boxShadow = '0 6px 16px rgba(217, 119, 87, 0.35)')}
+            onMouseLeave={(e) => !loading && (e.currentTarget.style.transform = 'translateY(0)', e.currentTarget.style.boxShadow = '0 4px 12px rgba(217, 119, 87, 0.25)')}
           >
-            {loading ? 'Creating...' : 'Create'}
+            {loading ? 'Creating...' : 'Create Pet Card'}
           </button>
         </form>
       </div>
