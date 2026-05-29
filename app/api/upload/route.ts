@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
 
   try {
     // Convert file to buffer
-    let buffer = Buffer.from(await file.arrayBuffer())
+    let buffer = Buffer.from(await file.arrayBuffer() as ArrayBuffer)
 
     // Resize and compress based on folder type
     if (folder === 'pets/avatars') {
