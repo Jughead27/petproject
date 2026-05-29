@@ -19,24 +19,28 @@ export async function POST(request: NextRequest) {
   try {
     // Convert file to buffer
     const arrayBuffer = await file.arrayBuffer()
-    let buffer = new Uint8Array(arrayBuffer)
+    // @ts-ignore - Sharp type definitions are overly strict with ArrayBuffer types
+    let buffer: Buffer = Buffer.from(arrayBuffer)
 
     // Resize and compress based on folder type
     if (folder === 'pets/avatars') {
       // Avatar: square 400x400
-      buffer = await sharp(buffer as unknown as Buffer)
+      // @ts-ignore
+      buffer = await sharp(buffer)
         .resize(400, 400, { fit: 'cover' })
         .webp({ quality: 80 })
         .toBuffer()
     } else if (folder === 'pets/covers') {
       // Cover: landscape 1200x600
-      buffer = await sharp(buffer as unknown as Buffer)
+      // @ts-ignore
+      buffer = await sharp(buffer)
         .resize(1200, 600, { fit: 'cover' })
         .webp({ quality: 85 })
         .toBuffer()
     } else {
       // Default compression
-      buffer = await sharp(buffer as unknown as Buffer)
+      // @ts-ignore
+      buffer = await sharp(buffer)
         .webp({ quality: 80 })
         .toBuffer()
     }
