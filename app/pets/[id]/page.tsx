@@ -181,7 +181,7 @@ export default function PetCardPage() {
           {pet.card_number && (
             <div style={{
               padding: '6px 12px',
-              borderRadius: '6px',
+              borderRadius: '0px',
               background: 'rgba(0, 0, 0, 0.35)',
               backdropFilter: 'blur(8px)',
             }}>
@@ -225,7 +225,7 @@ export default function PetCardPage() {
           left: '16px',
           width: '88px',
           height: '88px',
-          borderRadius: '10px',
+          borderRadius: '0px',
           border: '3px solid var(--paper)',
           backgroundColor: '#e5e1d7',
           backgroundImage: pet.avatar_url ? `url(${pet.avatar_url})` : undefined,
@@ -298,7 +298,7 @@ export default function PetCardPage() {
             padding: '12px 14px',
             borderLeft: '3px solid var(--acc)',
             backgroundColor: 'rgba(217, 119, 87, 0.06)',
-            borderRadius: '6px',
+            borderRadius: '0px',
             marginBottom: '20px',
           }}>
             <p style={{

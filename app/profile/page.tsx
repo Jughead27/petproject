@@ -209,7 +209,7 @@ export default function ProfilePage() {
                   style={{
                     background: 'var(--paper)',
                     border: '1px solid var(--line)',
-                    borderRadius: '10px',
+                    borderRadius: '0px',
                     overflow: 'hidden',
                     display: 'flex',
                     flexDirection: 'column',
