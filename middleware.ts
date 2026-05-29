@@ -49,9 +49,10 @@ export async function middleware(request: NextRequest) {
     // Check if user has any pets
     const { count } = await supabase
       .from('pets')
-      .select('*', { count: 'exact', head: true })
+      .select('id', { count: 'exact', head: true })
       .eq('owner_id', user.id)
 
+    // If count is 0 or null, go to onboarding; otherwise go to stack
     const destination = count && count > 0 ? '/stack' : '/onboarding'
     return NextResponse.redirect(new URL(destination, request.url))
   }
