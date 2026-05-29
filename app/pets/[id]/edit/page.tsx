@@ -339,7 +339,7 @@ export default function EditPetPage() {
 
         <div style={{
           background: 'var(--paper)',
-          borderRadius: 'var(--radius-lg)',
+          borderRadius: '0px',
           border: '1px solid var(--line)',
           boxShadow: 'var(--shadow-sm)',
           padding: '32px',
@@ -370,7 +370,7 @@ export default function EditPetPage() {
               padding: '12px 14px',
               backgroundColor: 'rgba(220, 38, 38, 0.1)',
               border: '1px solid rgba(220, 38, 38, 0.3)',
-              borderRadius: 'var(--radius-sm)',
+              borderRadius: '0px',
               fontSize: '11.5px',
               color: '#7f1d1d',
             }}>
@@ -400,7 +400,7 @@ export default function EditPetPage() {
                   width: '100%',
                   padding: '10px 12px',
                   border: '1px solid var(--line)',
-                  borderRadius: 'var(--radius-sm)',
+                  borderRadius: '0px',
                   color: 'var(--ink)',
                   backgroundColor: 'var(--paper)',
                   fontSize: '14px',
@@ -434,7 +434,7 @@ export default function EditPetPage() {
                     width: '100%',
                     padding: '10px 12px',
                     border: '1px solid var(--line)',
-                    borderRadius: 'var(--radius-sm)',
+                    borderRadius: '0px',
                     color: 'var(--ink)',
                     backgroundColor: 'var(--paper)',
                     fontSize: '14px',
@@ -465,7 +465,7 @@ export default function EditPetPage() {
                     width: '100%',
                     padding: '10px 12px',
                     border: '1px solid var(--line)',
-                    borderRadius: 'var(--radius-sm)',
+                    borderRadius: '0px',
                     color: 'var(--ink)',
                     backgroundColor: 'var(--paper)',
                     fontSize: '14px',
@@ -497,7 +497,7 @@ export default function EditPetPage() {
                   width: '100%',
                   padding: '10px 12px',
                   border: '1px solid var(--line)',
-                  borderRadius: 'var(--radius-sm)',
+                  borderRadius: '0px',
                   color: 'var(--ink)',
                   backgroundColor: 'var(--paper)',
                   fontSize: '14px',
@@ -542,14 +542,14 @@ export default function EditPetPage() {
                     width: '100%',
                     padding: '32px 16px',
                     border: '2px dashed var(--line)',
-                    borderRadius: 'var(--radius-md)',
+                    borderRadius: '0px',
                     textAlign: 'center',
                     cursor: saving ? 'not-allowed' : 'pointer',
                     backgroundColor: 'transparent',
                     transition: 'all 200ms',
                     opacity: saving ? 0.5 : 1,
                   }}
-                  onMouseEnter={(e) => !saving && (e.currentTarget.style.borderColor = 'var(--acc)', e.currentTarget.style.backgroundColor = 'rgba(217, 119, 87, 0.05)')}
+                  onMouseEnter={(e) => !saving && (e.currentTarget.style.borderColor = 'var(--acc)', e.currentTarget.style.backgroundColor = 'rgba(8, 145, 178, 0.05)')}
                   onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--line)', e.currentTarget.style.backgroundColor = 'transparent')}
                 >
                   {coverPreview ? (
@@ -560,7 +560,7 @@ export default function EditPetPage() {
                         height: '128px',
                         width: '100%',
                         objectFit: 'cover',
-                        borderRadius: 'var(--radius-sm)',
+                        borderRadius: '0px',
                         display: 'block',
                       }}
                     />
@@ -602,14 +602,14 @@ export default function EditPetPage() {
                     width: '100%',
                     padding: '32px 16px',
                     border: '2px dashed var(--line)',
-                    borderRadius: 'var(--radius-md)',
+                    borderRadius: '0px',
                     textAlign: 'center',
                     cursor: saving ? 'not-allowed' : 'pointer',
                     backgroundColor: 'transparent',
                     transition: 'all 200ms',
                     opacity: saving ? 0.5 : 1,
                   }}
-                  onMouseEnter={(e) => !saving && (e.currentTarget.style.borderColor = 'var(--acc)', e.currentTarget.style.backgroundColor = 'rgba(217, 119, 87, 0.05)')}
+                  onMouseEnter={(e) => !saving && (e.currentTarget.style.borderColor = 'var(--acc)', e.currentTarget.style.backgroundColor = 'rgba(8, 145, 178, 0.05)')}
                   onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--line)', e.currentTarget.style.backgroundColor = 'transparent')}
                 >
                   {avatarPreview ? (
@@ -620,7 +620,7 @@ export default function EditPetPage() {
                         height: '128px',
                         width: '128px',
                         objectFit: 'cover',
-                        borderRadius: 'var(--radius-sm)',
+                        borderRadius: '0px',
                         margin: '0 auto',
                         display: 'block',
                       }}
@@ -646,7 +646,7 @@ export default function EditPetPage() {
                   background: 'var(--acc)',
                   color: '#fff',
                   border: 'none',
-                  borderRadius: 'var(--radius-md)',
+                  borderRadius: '0px',
                   cursor: saving || deleting ? 'not-allowed' : 'pointer',
                   opacity: saving || deleting ? 0.7 : 1,
                   transition: 'opacity 200ms',
@@ -662,10 +662,10 @@ export default function EditPetPage() {
                 disabled={saving || deleting}
                 style={{
                   padding: '12px',
-                  background: '#dc2626',
+                  background: '#6b7280',
                   color: '#fff',
                   border: 'none',
-                  borderRadius: 'var(--radius-md)',
+                  borderRadius: '0px',
                   cursor: saving || deleting ? 'not-allowed' : 'pointer',
                   opacity: saving || deleting ? 0.7 : 1,
                   transition: 'opacity 200ms',
