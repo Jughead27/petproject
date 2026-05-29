@@ -57,6 +57,41 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(destination, request.url))
   }
 
+  // Redirect root path for logged-in users
+  if (user && pathname === '/') {
+    const { count } = await supabase
+      .from('pets')
+      .select('id', { count: 'exact', head: true })
+      .eq('owner_id', user.id)
+
+    const destination = count && count > 0 ? '/stack' : '/onboarding'
+    return NextResponse.redirect(new URL(destination, request.url))
+  }
+
+  // For authenticated users on protected routes, check onboarding status
+  if (user && isProtectedRoute && pathname !== '/setup-username' && pathname !== '/onboarding') {
+    const { data: userRecord } = await supabase
+      .from('users')
+      .select('username')
+      .eq('id', user.id)
+      .single()
+
+    // If no username, redirect to setup
+    if (!userRecord?.username) {
+      return NextResponse.redirect(new URL('/setup-username', request.url))
+    }
+
+    // If has username but no pets, redirect to onboarding
+    const { count } = await supabase
+      .from('pets')
+      .select('id', { count: 'exact', head: true })
+      .eq('owner_id', user.id)
+
+    if (!count || count === 0) {
+      return NextResponse.redirect(new URL('/onboarding', request.url))
+    }
+  }
+
   // Redirect unauthenticated users to login for protected routes
   if (!user && isProtectedRoute) {
     return NextResponse.redirect(new URL('/login', request.url))
