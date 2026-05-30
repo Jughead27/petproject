@@ -403,17 +403,18 @@ export default function PetCardPage() {
               color: 'var(--ink-2)',
               cursor: 'pointer',
               fontSize: '11px',
-              fontWeight: 500,
+              fontWeight: 400,
               textDecoration: 'none',
-              letterSpacing: '0.5px',
+              letterSpacing: '0.4px',
               transition: 'color 160ms ease',
               padding: '6px 0',
               textAlign: 'left',
+              opacity: 0.7,
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--acc)')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--ink-2)')}
+            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--acc)', e.currentTarget.style.opacity = '1')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--ink-2)', e.currentTarget.style.opacity = '0.7')}
           >
-            ⚑ Report this pet
+            ⋯ Report
           </button>
         )}
 
@@ -461,31 +462,29 @@ export default function PetCardPage() {
               }}>
                 Why are you reporting this?
               </label>
-              {['spam', 'inappropriate', 'harassment', 'other'].map(reason => (
-                <label key={reason} style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  padding: '10px 0',
-                  cursor: 'pointer',
+              <select
+                value={reportReason}
+                onChange={(e) => setReportReason(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  border: '1px solid var(--line)',
+                  borderRadius: '0px',
                   fontSize: '13px',
-                }}>
-                  <input
-                    type="radio"
-                    name="reason"
-                    value={reason}
-                    checked={reportReason === reason}
-                    onChange={(e) => setReportReason(e.target.value)}
-                    style={{ cursor: 'pointer', width: '16px', height: '16px' }}
-                  />
-                  <span style={{ color: 'var(--ink)' }}>
-                    {reason === 'spam' && 'Spam or scam'}
-                    {reason === 'inappropriate' && 'Inappropriate content'}
-                    {reason === 'harassment' && 'Harassment or bullying'}
-                    {reason === 'other' && 'Something else'}
-                  </span>
-                </label>
-              ))}
+                  fontFamily: 'inherit',
+                  color: 'var(--ink)',
+                  background: 'var(--paper)',
+                  cursor: 'pointer',
+                }}
+              >
+                <option value="">Select a reason...</option>
+                <option value="spam">Spam or scam</option>
+                <option value="inappropriate">Inappropriate content</option>
+                <option value="harassment">Harassment or bullying</option>
+                <option value="politics">Political content</option>
+                <option value="no_pets">No pets in photo</option>
+                <option value="other">Something else</option>
+              </select>
             </div>
 
             <div style={{ marginBottom: '16px' }}>

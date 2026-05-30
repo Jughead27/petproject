@@ -350,27 +350,28 @@ export default function StackPage() {
             }}
             style={{
               position: 'absolute',
-              top: '16px',
-              right: '16px',
-              width: '36px',
-              height: '36px',
+              top: '14px',
+              right: '14px',
+              width: '32px',
+              height: '32px',
               borderRadius: '0px',
-              background: 'rgba(0, 0, 0, 0.3)',
+              background: 'rgba(0, 0, 0, 0.2)',
               color: '#fff',
               border: 'none',
-              backdropFilter: 'blur(10px)',
-              fontSize: '18px',
+              backdropFilter: 'blur(8px)',
+              fontSize: '14px',
               cursor: 'pointer',
               transition: 'all 160ms ease',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              opacity: 0.6,
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(0, 0, 0, 0.4)')}
-            onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(0, 0, 0, 0.3)')}
+            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(0, 0, 0, 0.3)', e.currentTarget.style.opacity = '0.8')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(0, 0, 0, 0.2)', e.currentTarget.style.opacity = '0.6')}
             title="Report this pet"
           >
-            ⚑
+            ⋯
           </button>
           {/* Dark overlay for text readability */}
           <div style={{
@@ -562,31 +563,29 @@ export default function StackPage() {
               }}>
                 Why are you reporting this?
               </label>
-              {['spam', 'inappropriate', 'harassment', 'other'].map(reason => (
-                <label key={reason} style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  padding: '10px 0',
-                  cursor: 'pointer',
+              <select
+                value={reportReason}
+                onChange={(e) => setReportReason(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  border: '1px solid var(--line)',
+                  borderRadius: '0px',
                   fontSize: '13px',
-                }}>
-                  <input
-                    type="radio"
-                    name="reason"
-                    value={reason}
-                    checked={reportReason === reason}
-                    onChange={(e) => setReportReason(e.target.value)}
-                    style={{ cursor: 'pointer', width: '16px', height: '16px' }}
-                  />
-                  <span style={{ color: 'var(--ink)' }}>
-                    {reason === 'spam' && 'Spam or scam'}
-                    {reason === 'inappropriate' && 'Inappropriate content'}
-                    {reason === 'harassment' && 'Harassment or bullying'}
-                    {reason === 'other' && 'Something else'}
-                  </span>
-                </label>
-              ))}
+                  fontFamily: 'inherit',
+                  color: 'var(--ink)',
+                  background: 'var(--paper)',
+                  cursor: 'pointer',
+                }}
+              >
+                <option value="">Select a reason...</option>
+                <option value="spam">Spam or scam</option>
+                <option value="inappropriate">Inappropriate content</option>
+                <option value="harassment">Harassment or bullying</option>
+                <option value="politics">Political content</option>
+                <option value="no_pets">No pets in photo</option>
+                <option value="other">Something else</option>
+              </select>
             </div>
 
             <div style={{ marginBottom: '16px' }}>
