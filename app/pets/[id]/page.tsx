@@ -383,26 +383,32 @@ export default function PetCardPage() {
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" style={{ color: tab.active ? 'var(--acc)' : 'var(--ink)' }}>
               {tab.icon === 'explore' && (
                 <>
-                  <circle cx="12" cy="12" r="1" fill="currentColor" />
-                  <circle cx="12" cy="12" r="5" />
-                  <circle cx="12" cy="12" r="9" />
-                  <line x1="12" y1="3" x2="12" y2="5" />
-                  <line x1="12" y1="19" x2="12" y2="21" />
-                  <line x1="21" y1="12" x2="19" y2="12" />
-                  <line x1="5" y1="12" x2="3" y2="12" />
+                  <circle cx="7" cy="8" r="1.5" fill="currentColor" />
+                  <circle cx="7" cy="14" r="1" fill="currentColor" />
+                  <circle cx="7" cy="20" r="1" fill="currentColor" />
+                  <circle cx="14" cy="10" r="1.5" fill="currentColor" />
+                  <circle cx="14" cy="16" r="1" fill="currentColor" />
+                  <circle cx="18" cy="6" r="1" fill="currentColor" />
+                  <circle cx="18" cy="12" r="1.5" fill="currentColor" />
                 </>
               )}
               {tab.icon === 'create' && (
                 <>
-                  <path d="M12 5v14M5 12h14" strokeLinecap="square" />
-                  <rect x="3" y="3" width="18" height="18" />
+                  <circle cx="10" cy="12" r="3" />
+                  <circle cx="6" cy="9" r="1.5" fill="currentColor" />
+                  <circle cx="6" cy="15" r="1.5" fill="currentColor" />
+                  <circle cx="14" cy="9" r="1.5" fill="currentColor" />
+                  <circle cx="14" cy="15" r="1.5" fill="currentColor" />
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="4" y1="12" x2="16" y2="12" />
                 </>
               )}
               {tab.icon === 'profile' && (
                 <>
-                  <circle cx="12" cy="8" r="3" />
-                  <path d="M4 20c0-3.314 3.582-6 8-6s8 2.686 8 6v0" />
-                  <rect x="3" y="3" width="18" height="18" />
+                  <circle cx="8" cy="7" r="1.5" fill="currentColor" />
+                  <circle cx="16" cy="7" r="1.5" fill="currentColor" />
+                  <path d="M7 10c0 0-2 2-2 4s1 4 5 4s5-2 5-4s-2-4-2-4" />
+                  <path d="M10 14l-0.5 2M14 14l0.5 2" />
                 </>
               )}
             </svg>
