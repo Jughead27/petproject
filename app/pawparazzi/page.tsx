@@ -238,10 +238,56 @@ export default function PawparazziPage() {
             onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.75')}
             onMouseLeave={(e) => (e.currentTarget.style.opacity = tab.active ? '1' : '0.5')}
           >
-            <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              {/* Placeholder for icon - will be replaced with actual SVG from Claude Design */}
-              {tab.icon === 'pawparazzi' && <span style={{ fontSize: '16px' }}>📸</span>}
-            </div>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style={{ color: tab.active ? 'var(--acc)' : (isDarkNav ? '#fff' : 'var(--ink)') }}>
+              {tab.icon === 'explore' && (
+                <>
+                  <ellipse cx="12" cy="16.2" rx="5" ry="4.3"/>
+                  <circle cx="5.4" cy="11.2" r="2.05"/>
+                  <circle cx="9.5" cy="7.6" r="2.25"/>
+                  <circle cx="14.5" cy="7.6" r="2.25"/>
+                  <circle cx="18.6" cy="11.2" r="2.05"/>
+                </>
+              )}
+              {tab.icon === 'pawparazzi' && (
+                <>
+                  <ellipse cx="4.0" cy="15.6" rx="2.5" ry="4.5"/>
+                  <ellipse cx="5.2" cy="14.0" rx="1.8" ry="3.6"/>
+                  <rect x="4.6" y="16" width="2.0" height="4.4"/>
+                  <circle cx="5.2" cy="9.6" r="2.1"/>
+                  <polygon points="3.8,5.9 5.0,7.8 3.5,7.9"/>
+                  <polygon points="6.3,5.9 6.9,7.9 5.4,7.8"/>
+                  <path d="M1.9,20 C0.6,18.4 0.9,14.6 2.6,14 C1.7,15.2 1.9,18 3.0,19.2 Z"/>
+                  <ellipse cx="9.8" cy="16.3" rx="2.6" ry="3.5"/>
+                  <ellipse cx="11.4" cy="14.4" rx="2.6" ry="3.0"/>
+                  <rect x="12.2" y="12" width="1.9" height="8.5"/>
+                  <ellipse cx="12.6" cy="11.6" rx="1.5" ry="2.1"/>
+                  <circle cx="13.4" cy="9.5" r="2.0"/>
+                  <ellipse cx="12.5" cy="9.7" rx="0.95" ry="1.7"/>
+                  <polygon points="14.9,9.1 16.6,10.0 14.9,10.8"/>
+                  <polygon points="7.9,15 6.8,12.6 8.4,13.9"/>
+                  <ellipse cx="19.2" cy="14.8" rx="2.4" ry="3.1"/>
+                  <circle cx="20.5" cy="11.0" r="1.6"/>
+                  <polygon points="21.9,10.9 23.1,11.5 21.8,11.8"/>
+                  <polygon points="17.0,16.6 16.7,18.7 18.6,17.2"/>
+                  <rect x="18.6" y="17.4" width="0.55" height="2.9"/>
+                  <rect x="19.8" y="17.4" width="0.55" height="2.9"/>
+                </>
+              )}
+              {tab.icon === 'create' && (
+                <>
+                  <circle cx="5.4" cy="11.2" r="2.05"/>
+                  <circle cx="9.5" cy="7.6" r="2.25"/>
+                  <circle cx="14.5" cy="7.6" r="2.25"/>
+                  <circle cx="18.6" cy="11.2" r="2.05"/>
+                  <path fillRule="evenodd" d="M7,16.2 a5,4.3 0 1,0 10,0 a5,4.3 0 1,0 -10,0 Z M10.85,13.2 L13.15,13.2 L13.15,15.05 L15,15.05 L15,17.35 L13.15,17.35 L13.15,19.2 L10.85,19.2 L10.85,17.35 L9,17.35 L9,15.05 L10.85,15.05 Z"/>
+                </>
+              )}
+              {tab.icon === 'profile' && (
+                <>
+                  <path fillRule="evenodd" d="M4.6,3.4 L8.8,6.6 L15.2,6.6 L19.4,3.4 Q18.8,7 18,9.2 Q17,13.5 12,18.8 Q7,13.5 6,9.2 Q5.2,7 4.6,3.4 Z M8.85,11.2 a1.15,1.15 0 1,0 2.3,0 a1.15,1.15 0 1,0 -2.3,0 Z M12.85,11.2 a1.15,1.15 0 1,0 2.3,0 a1.15,1.15 0 1,0 -2.3,0 Z"/>
+                </>
+              )}
+            </svg>
             <span style={{
               fontSize: '9px',
               fontWeight: 600,
