@@ -13,6 +13,7 @@ interface Pet {
   avatar_url: string | null
   cover_url: string | null
   bio: string | null
+  caption: string | null
   owner_id: string
 }
 
@@ -332,6 +333,20 @@ export default function StackPage() {
               }}>
                 {currentPet.species}{currentPet.breed ? ` · ${currentPet.breed}` : ''}
               </p>
+
+              {/* Caption if exists */}
+              {currentPet.caption && (
+                <p style={{
+                  fontSize: '11px',
+                  fontWeight: 400,
+                  lineHeight: 1.4,
+                  margin: '0 0 12px 0',
+                  opacity: 0.8,
+                  fontStyle: 'italic',
+                }}>
+                  {currentPet.caption}
+                </p>
+              )}
             </div>
 
             {/* Bio if exists */}

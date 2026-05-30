@@ -22,6 +22,7 @@ export default function CreatePage() {
   const [showNewPetForm, setShowNewPetForm] = useState(false)
   const [newPetName, setNewPetName] = useState('')
   const [newPetSpecies, setNewPetSpecies] = useState('')
+  const [caption, setCaption] = useState('')
   const [uploading, setUploading] = useState(false)
 
   useEffect(() => {
@@ -119,6 +120,7 @@ export default function CreatePage() {
             species: newPetSpecies,
             owner_id: user.id,
             avatar_url: imageUrl,
+            caption: caption.trim() || null,
           })
           .select()
           .single()
@@ -136,16 +138,20 @@ export default function CreatePage() {
         const uploadData = await uploadRes.json()
         imageUrl = uploadData.url
 
-        // Update existing pet
+        // Update existing pet with new photo and caption
         const { error: updateError } = await supabase
           .from('pets')
-          .update({ cover_photo_url: imageUrl })
+          .update({
+            cover_photo_url: imageUrl,
+            caption: caption.trim() || null,
+          })
           .eq('id', selectedPetId)
 
         if (updateError) throw updateError
         petId = selectedPetId!
       }
 
+      setCaption('')
       router.push(`/pets/${petId}`)
     } catch (err) {
       console.error('Upload error:', err)
@@ -386,6 +392,45 @@ export default function CreatePage() {
                   <option value="Horse">Horse</option>
                   <option value="Other">Other</option>
                 </select>
+              </div>
+            )}
+
+            {/* Caption Input */}
+            {selectedImage && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label style={{
+                  fontSize: '11px',
+                  fontWeight: 600,
+                  color: 'var(--ink-2)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                }}>
+                  Caption (optional)
+                </label>
+                <textarea
+                  placeholder="Add a single sentence to describe this moment..."
+                  value={caption}
+                  onChange={(e) => setCaption(e.target.value.slice(0, 150))}
+                  maxLength={150}
+                  style={{
+                    padding: '10px 12px',
+                    border: '1px solid var(--line)',
+                    borderRadius: '0px',
+                    fontSize: '13px',
+                    fontFamily: 'inherit',
+                    color: 'var(--ink)',
+                    resize: 'vertical',
+                    minHeight: '60px',
+                  }}
+                />
+                <p style={{
+                  fontSize: '10px',
+                  color: 'var(--ink-2)',
+                  margin: '0',
+                  textAlign: 'right',
+                }}>
+                  {caption.length}/150
+                </p>
               </div>
             )}
           </>
