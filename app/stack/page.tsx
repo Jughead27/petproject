@@ -27,6 +27,10 @@ export default function StackPage() {
   const [followerCount, setFollowerCount] = useState(0)
   const [loadingFollow, setLoadingFollow] = useState(false)
   const [isDarkNav, setIsDarkNav] = useState(false)
+  const [showReportModal, setShowReportModal] = useState(false)
+  const [reportReason, setReportReason] = useState('')
+  const [reportText, setReportText] = useState('')
+  const [reportingLoading, setReportingLoading] = useState(false)
 
   useEffect(() => {
     const saved = localStorage.getItem('nav-theme')
@@ -79,6 +83,7 @@ export default function StackPage() {
         const { data: allPets } = await supabase
           .from('pets')
           .select('*')
+          .eq('is_hidden', false)
           .order('created_at', { ascending: false })
 
         setPets(allPets || [])
@@ -177,6 +182,39 @@ export default function StackPage() {
       }
     } catch (err) {
       console.error('Share error:', err)
+    }
+  }
+
+  const handleReport = async () => {
+    if (!reportReason.trim() || !user || currentIndex >= pets.length) {
+      alert('Please select a reason')
+      return
+    }
+
+    setReportingLoading(true)
+    try {
+      const supabase = createClient()
+      const currentPet = pets[currentIndex]
+
+      const { error } = await supabase.from('reports').insert({
+        reporter_id: user.id,
+        reported_pet_id: currentPet.id,
+        reason: reportReason,
+        additional_info: reportText.trim() || null,
+        status: 'pending',
+      })
+
+      if (error) throw error
+
+      setShowReportModal(false)
+      setReportReason('')
+      setReportText('')
+      alert('Thank you for reporting. Our team will review this.')
+    } catch (err) {
+      console.error('Report error:', err)
+      alert('Failed to submit report')
+    } finally {
+      setReportingLoading(false)
     }
   }
 
@@ -304,6 +342,36 @@ export default function StackPage() {
           display: 'flex',
           alignItems: 'flex-end',
         }} onClick={advanceCard}>
+          {/* Flag Button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              setShowReportModal(true)
+            }}
+            style={{
+              position: 'absolute',
+              top: '16px',
+              right: '16px',
+              width: '36px',
+              height: '36px',
+              borderRadius: '0px',
+              background: 'rgba(0, 0, 0, 0.3)',
+              color: '#fff',
+              border: 'none',
+              backdropFilter: 'blur(10px)',
+              fontSize: '18px',
+              cursor: 'pointer',
+              transition: 'all 160ms ease',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(0, 0, 0, 0.4)')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(0, 0, 0, 0.3)')}
+            title="Report this pet"
+          >
+            ⚑
+          </button>
           {/* Dark overlay for text readability */}
           <div style={{
             position: 'absolute',
@@ -451,6 +519,162 @@ export default function StackPage() {
           ↗ Share
         </button>
       </div>
+
+      {/* Report Modal */}
+      {showReportModal && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'flex-end',
+          zIndex: 1000,
+        }} onClick={() => !reportingLoading && setShowReportModal(false)}>
+          <div style={{
+            width: '100%',
+            maxHeight: '80vh',
+            background: 'var(--paper)',
+            borderTopLeftRadius: '16px',
+            borderTopRightRadius: '16px',
+            padding: '24px',
+            boxShadow: '0 -4px 20px rgba(0, 0, 0, 0.15)',
+          }} onClick={(e) => e.stopPropagation()}>
+            <h2 style={{
+              fontFamily: '"Instrument Serif", Georgia, serif',
+              fontSize: '20px',
+              fontWeight: 400,
+              fontStyle: 'italic',
+              margin: '0 0 16px 0',
+              color: 'var(--ink)',
+            }}>
+              Report this pet
+            </h2>
+
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{
+                display: 'block',
+                fontSize: '12px',
+                fontWeight: 600,
+                color: 'var(--ink-2)',
+                textTransform: 'uppercase',
+                marginBottom: '8px',
+                letterSpacing: '0.5px',
+              }}>
+                Why are you reporting this?
+              </label>
+              {['spam', 'inappropriate', 'harassment', 'other'].map(reason => (
+                <label key={reason} style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  padding: '10px 0',
+                  cursor: 'pointer',
+                  fontSize: '13px',
+                }}>
+                  <input
+                    type="radio"
+                    name="reason"
+                    value={reason}
+                    checked={reportReason === reason}
+                    onChange={(e) => setReportReason(e.target.value)}
+                    style={{ cursor: 'pointer', width: '16px', height: '16px' }}
+                  />
+                  <span style={{ color: 'var(--ink)' }}>
+                    {reason === 'spam' && 'Spam or scam'}
+                    {reason === 'inappropriate' && 'Inappropriate content'}
+                    {reason === 'harassment' && 'Harassment or bullying'}
+                    {reason === 'other' && 'Something else'}
+                  </span>
+                </label>
+              ))}
+            </div>
+
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{
+                display: 'block',
+                fontSize: '12px',
+                fontWeight: 600,
+                color: 'var(--ink-2)',
+                textTransform: 'uppercase',
+                marginBottom: '8px',
+                letterSpacing: '0.5px',
+              }}>
+                Additional details (optional)
+              </label>
+              <textarea
+                placeholder="Please provide any additional context..."
+                value={reportText}
+                onChange={(e) => setReportText(e.target.value.slice(0, 500))}
+                maxLength={500}
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  border: '1px solid var(--line)',
+                  borderRadius: '0px',
+                  fontSize: '13px',
+                  fontFamily: 'inherit',
+                  color: 'var(--ink)',
+                  resize: 'vertical',
+                  minHeight: '60px',
+                  boxSizing: 'border-box',
+                }}
+              />
+              <p style={{
+                fontSize: '10px',
+                color: 'var(--ink-2)',
+                margin: '4px 0 0 0',
+                textAlign: 'right',
+              }}>
+                {reportText.length}/500
+              </p>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <button
+                onClick={() => !reportingLoading && setShowReportModal(false)}
+                disabled={reportingLoading}
+                style={{
+                  padding: '12px',
+                  background: 'var(--paper)',
+                  border: '1px solid var(--line)',
+                  borderRadius: '0px',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  cursor: reportingLoading ? 'not-allowed' : 'pointer',
+                  opacity: reportingLoading ? 0.5 : 1,
+                  color: 'var(--ink)',
+                  transition: 'all 160ms ease',
+                }}
+                onMouseEnter={(e) => !reportingLoading && (e.currentTarget.style.background = 'rgba(0, 0, 0, 0.05)')}
+                onMouseLeave={(e) => !reportingLoading && (e.currentTarget.style.background = 'var(--paper)')}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleReport}
+                disabled={reportingLoading || !reportReason.trim()}
+                style={{
+                  padding: '12px',
+                  background: reportReason.trim() ? 'var(--acc)' : 'var(--ink-2)',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '0px',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  cursor: reportingLoading || !reportReason.trim() ? 'not-allowed' : 'pointer',
+                  opacity: reportingLoading ? 0.7 : 1,
+                  transition: 'all 160ms ease',
+                  boxShadow: reportReason.trim() ? '0 4px 12px rgba(8, 145, 178, 0.2)' : 'none',
+                }}
+                onMouseEnter={(e) => !reportingLoading && reportReason.trim() && (e.currentTarget.style.transform = 'translateY(-2px)', e.currentTarget.style.boxShadow = '0 6px 16px rgba(8, 145, 178, 0.3)')}
+                onMouseLeave={(e) => !reportingLoading && reportReason.trim() && (e.currentTarget.style.transform = 'translateY(0)', e.currentTarget.style.boxShadow = '0 4px 12px rgba(8, 145, 178, 0.2)')}
+              >
+                {reportingLoading ? 'Reporting...' : 'Submit Report'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Navigation Info */}
       <div style={{

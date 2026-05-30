@@ -34,7 +34,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Routes that require authentication
-  const protectedRoutes = ['/stack', '/dex', '/pets', '/profile', '/setup-username', '/onboarding', '/create', '/packs', '/my-packs', '/notifications']
+  const protectedRoutes = ['/stack', '/dex', '/pets', '/profile', '/setup-username', '/onboarding', '/create', '/packs', '/my-packs', '/notifications', '/admin']
 
   // Routes that are auth-only (not accessible if logged in)
   const authRoutes = ['/login', '/signup']
@@ -50,6 +50,23 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/onboarding', request.url))
     } else {
       return NextResponse.redirect(new URL('/login', request.url))
+    }
+  }
+
+  // Check if user is banned
+  if (user && pathname !== '/banned') {
+    try {
+      const { data: userData } = await supabase
+        .from('users')
+        .select('is_banned')
+        .eq('id', user.id)
+        .single()
+
+      if (userData?.is_banned) {
+        return NextResponse.redirect(new URL('/banned', request.url))
+      }
+    } catch (err) {
+      console.error('Ban check error:', err)
     }
   }
 
