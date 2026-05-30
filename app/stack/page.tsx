@@ -460,6 +460,7 @@ export default function StackPage() {
       }}>
         {[
           { icon: 'explore', label: 'Explore', href: '/stack', active: true },
+          { icon: 'pawparazzi', label: 'Pawparazzi', href: '/pawparazzi', active: false },
           { icon: 'create', label: 'Create', href: '/create', active: false },
           { icon: 'profile', label: 'Profile', href: '/profile', active: false },
         ].map(tab => (
@@ -487,6 +488,15 @@ export default function StackPage() {
                   <circle cx="9" cy="16" r="1.2" />
                   <circle cx="15" cy="16" r="1.2" />
                   <circle cx="12" cy="13" r="1.8" />
+                </>
+              )}
+              {tab.icon === 'pawparazzi' && (
+                <>
+                  <rect x="4" y="6" width="10" height="10" stroke="currentColor" strokeWidth="1.2" fill="none" />
+                  <circle cx="9" cy="11" r="1.5" fill="currentColor" />
+                  <path d="M7 9 L11 13" stroke="currentColor" strokeWidth="1.2" />
+                  <circle cx="16" cy="9" r="1.2" fill="currentColor" />
+                  <circle cx="18" cy="11" r="0.8" fill="currentColor" />
                 </>
               )}
               {tab.icon === 'create' && (
