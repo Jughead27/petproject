@@ -145,6 +145,28 @@ export default function ProfilePage() {
           </p>
         </div>
         <div style={{ display: 'flex', gap: '8px' }}>
+          <Link href="/profile/edit" style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: '0px',
+            background: 'transparent',
+            border: '1px solid var(--line)',
+            color: 'var(--ink)',
+            cursor: 'pointer',
+            fontSize: '16px',
+            transition: 'all 180ms ease',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            textDecoration: 'none',
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.12)')}
+          onMouseLeave={(e) => (e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.08)')}
+          title="Edit profile"
+          >
+            ✎
+          </Link>
           <button
             onClick={toggleNavTheme}
             style={{
