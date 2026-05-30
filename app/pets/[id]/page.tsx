@@ -380,35 +380,34 @@ export default function PetCardPage() {
             onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.75')}
             onMouseLeave={(e) => (e.currentTarget.style.opacity = tab.active ? '1' : '0.5')}
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" style={{ color: tab.active ? 'var(--acc)' : 'var(--ink)' }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style={{ color: tab.active ? 'var(--acc)' : 'var(--ink)' }}>
               {tab.icon === 'explore' && (
                 <>
-                  <circle cx="7" cy="8" r="1.5" fill="currentColor" />
-                  <circle cx="7" cy="14" r="1" fill="currentColor" />
-                  <circle cx="7" cy="20" r="1" fill="currentColor" />
-                  <circle cx="14" cy="10" r="1.5" fill="currentColor" />
-                  <circle cx="14" cy="16" r="1" fill="currentColor" />
-                  <circle cx="18" cy="6" r="1" fill="currentColor" />
-                  <circle cx="18" cy="12" r="1.5" fill="currentColor" />
+                  <circle cx="12" cy="7" r="1.2" />
+                  <circle cx="8" cy="11" r="1.2" />
+                  <circle cx="16" cy="11" r="1.2" />
+                  <circle cx="9" cy="16" r="1.2" />
+                  <circle cx="15" cy="16" r="1.2" />
+                  <circle cx="12" cy="13" r="1.8" />
                 </>
               )}
               {tab.icon === 'create' && (
                 <>
-                  <circle cx="10" cy="12" r="3" />
-                  <circle cx="6" cy="9" r="1.5" fill="currentColor" />
-                  <circle cx="6" cy="15" r="1.5" fill="currentColor" />
-                  <circle cx="14" cy="9" r="1.5" fill="currentColor" />
-                  <circle cx="14" cy="15" r="1.5" fill="currentColor" />
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="4" y1="12" x2="16" y2="12" />
+                  <circle cx="12" cy="13" r="2" />
+                  <circle cx="9" cy="9" r="1" />
+                  <circle cx="15" cy="9" r="1" />
+                  <circle cx="8" cy="15" r="1" />
+                  <circle cx="16" cy="15" r="1" />
+                  <line x1="12" y1="5" x2="12" y2="21" stroke="currentColor" strokeWidth="1.2" />
+                  <line x1="4" y1="13" x2="20" y2="13" stroke="currentColor" strokeWidth="1.2" />
                 </>
               )}
               {tab.icon === 'profile' && (
                 <>
-                  <circle cx="8" cy="7" r="1.5" fill="currentColor" />
-                  <circle cx="16" cy="7" r="1.5" fill="currentColor" />
-                  <path d="M7 10c0 0-2 2-2 4s1 4 5 4s5-2 5-4s-2-4-2-4" />
-                  <path d="M10 14l-0.5 2M14 14l0.5 2" />
+                  <path d="M9 5 L9 5 L6 8 Q6 6 9 5" fill="currentColor" />
+                  <path d="M15 5 L15 5 L18 8 Q18 6 15 5" fill="currentColor" />
+                  <circle cx="12" cy="10" r="2" />
+                  <ellipse cx="12" cy="16" rx="4" ry="3" />
                 </>
               )}
             </svg>
