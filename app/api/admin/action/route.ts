@@ -1,5 +1,5 @@
 import { createServerSupabaseClient } from '@/lib/supabase-server'
-import { supabaseAdmin } from '@/lib/supabase-admin'
+import { getSupabaseAdmin } from '@/lib/supabase-admin'
 
 export async function POST(request: Request) {
   try {
@@ -29,13 +29,13 @@ export async function POST(request: Request) {
     }
 
     if (body.action === 'hide_pet' && body.petId) {
-      await supabaseAdmin
+      await getSupabaseAdmin()
         .from('pets')
         .update({ is_hidden: true })
         .eq('id', body.petId)
 
       if (body.reportId) {
-        await supabaseAdmin
+        await getSupabaseAdmin()
           .from('reports')
           .update({
             status: 'reviewed',
@@ -50,13 +50,13 @@ export async function POST(request: Request) {
     }
 
     if (body.action === 'restore_pet' && body.petId) {
-      await supabaseAdmin
+      await getSupabaseAdmin()
         .from('pets')
         .update({ is_hidden: false })
         .eq('id', body.petId)
 
       if (body.reportId) {
-        await supabaseAdmin
+        await getSupabaseAdmin()
           .from('reports')
           .update({ status: 'dismissed', reviewed_by: userData.user.id, reviewed_at: new Date().toISOString() })
           .eq('id', body.reportId)
@@ -66,13 +66,13 @@ export async function POST(request: Request) {
     }
 
     if (body.action === 'ban_user' && body.userId) {
-      await supabaseAdmin
+      await getSupabaseAdmin()
         .from('users')
         .update({ is_banned: true })
         .eq('id', body.userId)
 
       if (body.reportId) {
-        await supabaseAdmin
+        await getSupabaseAdmin()
           .from('reports')
           .update({
             status: 'reviewed',
@@ -87,7 +87,7 @@ export async function POST(request: Request) {
     }
 
     if (body.action === 'unban_user' && body.userId) {
-      await supabaseAdmin
+      await getSupabaseAdmin()
         .from('users')
         .update({ is_banned: false })
         .eq('id', body.userId)
@@ -96,7 +96,7 @@ export async function POST(request: Request) {
     }
 
     if (body.action === 'dismiss_report' && body.reportId) {
-      await supabaseAdmin
+      await getSupabaseAdmin()
         .from('reports')
         .update({
           status: 'dismissed',
@@ -110,7 +110,7 @@ export async function POST(request: Request) {
     }
 
     if (body.action === 'resolve_report' && body.reportId) {
-      await supabaseAdmin
+      await getSupabaseAdmin()
         .from('reports')
         .update({
           status: 'reviewed',
