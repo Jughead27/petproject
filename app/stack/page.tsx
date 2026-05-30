@@ -459,9 +459,9 @@ export default function StackPage() {
         alignItems: 'flex-start',
       }}>
         {[
-          { emoji: '📚', label: 'Stack', href: '/stack', active: true },
-          { emoji: '➕', label: 'Create', href: '/create', active: false },
-          { emoji: '🏆', label: 'Shelf', href: '/profile', active: false },
+          { icon: 'explore', label: 'Explore', href: '/stack', active: true },
+          { icon: 'create', label: 'Create', href: '/create', active: false },
+          { icon: 'profile', label: 'Profile', href: '/profile', active: false },
         ].map(tab => (
           <Link
             key={tab.label}
@@ -470,7 +470,7 @@ export default function StackPage() {
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              gap: '3px',
+              gap: '4px',
               textDecoration: 'none',
               opacity: tab.active ? 1 : 0.5,
               transition: 'opacity 160ms',
@@ -478,7 +478,32 @@ export default function StackPage() {
             onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.75')}
             onMouseLeave={(e) => (e.currentTarget.style.opacity = tab.active ? '1' : '0.5')}
           >
-            <span style={{ fontSize: '20px' }}>{tab.emoji}</span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" style={{ color: tab.active ? 'var(--acc)' : 'var(--ink)' }}>
+              {tab.icon === 'explore' && (
+                <>
+                  <circle cx="12" cy="12" r="1" fill="currentColor" />
+                  <circle cx="12" cy="12" r="5" />
+                  <circle cx="12" cy="12" r="9" />
+                  <line x1="12" y1="3" x2="12" y2="5" />
+                  <line x1="12" y1="19" x2="12" y2="21" />
+                  <line x1="21" y1="12" x2="19" y2="12" />
+                  <line x1="5" y1="12" x2="3" y2="12" />
+                </>
+              )}
+              {tab.icon === 'create' && (
+                <>
+                  <path d="M12 5v14M5 12h14" strokeLinecap="square" />
+                  <rect x="3" y="3" width="18" height="18" />
+                </>
+              )}
+              {tab.icon === 'profile' && (
+                <>
+                  <circle cx="12" cy="8" r="3" />
+                  <path d="M4 20c0-3.314 3.582-6 8-6s8 2.686 8 6v0" />
+                  <rect x="3" y="3" width="18" height="18" />
+                </>
+              )}
+            </svg>
             <span style={{
               fontSize: '9px',
               fontWeight: 600,
