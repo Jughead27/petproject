@@ -27,6 +27,14 @@ export default function PetCardPage() {
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState<{ id: string } | null>(null)
   const [isOwner, setIsOwner] = useState(false)
+  const [isDarkNav, setIsDarkNav] = useState(false)
+
+  useEffect(() => {
+    const saved = localStorage.getItem('nav-theme')
+    if (saved) {
+      setIsDarkNav(saved === 'dark')
+    }
+  }, [])
 
   useEffect(() => {
     const loadPet = async () => {
@@ -353,9 +361,9 @@ export default function PetCardPage() {
         height: '76px',
         paddingTop: '8px',
         paddingBottom: '12px',
-        background: 'rgba(250, 250, 247, 0.92)',
+        background: isDarkNav ? 'rgba(30, 30, 30, 0.92)' : 'rgba(250, 250, 247, 0.92)',
         backdropFilter: 'blur(16px)',
-        borderTop: '1px solid var(--line)',
+        borderTop: isDarkNav ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid var(--line)',
         display: 'flex',
         justifyContent: 'space-around',
         alignItems: 'flex-start',
@@ -381,7 +389,7 @@ export default function PetCardPage() {
             onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.75')}
             onMouseLeave={(e) => (e.currentTarget.style.opacity = tab.active ? '1' : '0.5')}
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style={{ color: tab.active ? 'var(--acc)' : 'var(--ink)' }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style={{ color: tab.active ? 'var(--acc)' : (isDarkNav ? '#fff' : 'var(--ink)') }}>
               {tab.icon === 'explore' && (
                 <>
                   <circle cx="12" cy="7" r="1.2" />
@@ -424,7 +432,7 @@ export default function PetCardPage() {
             <span style={{
               fontSize: '9px',
               fontWeight: 600,
-              color: tab.active ? 'var(--acc)' : 'var(--ink)',
+              color: tab.active ? 'var(--acc)' : (isDarkNav ? '#fff' : 'var(--ink)'),
               letterSpacing: '0.4px',
             }}>
               {tab.label}

@@ -22,6 +22,14 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [pets, setPets] = useState<Pet[]>([])
   const [loading, setLoading] = useState(true)
+  const [isDarkNav, setIsDarkNav] = useState(false)
+
+  useEffect(() => {
+    const saved = localStorage.getItem('nav-theme')
+    if (saved) {
+      setIsDarkNav(saved === 'dark')
+    }
+  }, [])
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -65,6 +73,12 @@ export default function ProfilePage() {
     } catch (err) {
       console.error('Logout error:', err)
     }
+  }
+
+  const toggleNavTheme = () => {
+    const newTheme = !isDarkNav
+    setIsDarkNav(newTheme)
+    localStorage.setItem('nav-theme', newTheme ? 'dark' : 'light')
   }
 
   if (loading) {
@@ -130,26 +144,48 @@ export default function ProfilePage() {
             @{profile?.username} · {pets.length} pet{pets.length !== 1 ? 's' : ''}
           </p>
         </div>
-        <button
-          onClick={handleLogout}
-          style={{
-            width: '40px',
-            height: '40px',
-            borderRadius: '0px',
-            background: 'transparent',
-            border: '1px solid var(--line)',
-            color: 'var(--ink)',
-            cursor: 'pointer',
-            fontSize: '18px',
-            transition: 'all 180ms ease',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.12)')}
-          onMouseLeave={(e) => (e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.08)')}
-          title="Logout"
-        >
-          ↪
-        </button>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button
+            onClick={toggleNavTheme}
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '0px',
+              background: 'transparent',
+              border: '1px solid var(--line)',
+              color: 'var(--ink)',
+              cursor: 'pointer',
+              fontSize: '16px',
+              transition: 'all 180ms ease',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.12)')}
+            onMouseLeave={(e) => (e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.08)')}
+            title={isDarkNav ? 'Light nav' : 'Dark nav'}
+          >
+            {isDarkNav ? '☀️' : '🌙'}
+          </button>
+          <button
+            onClick={handleLogout}
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '0px',
+              background: 'transparent',
+              border: '1px solid var(--line)',
+              color: 'var(--ink)',
+              cursor: 'pointer',
+              fontSize: '18px',
+              transition: 'all 180ms ease',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.12)')}
+            onMouseLeave={(e) => (e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.08)')}
+            title="Logout"
+          >
+            ↪
+          </button>
+        </div>
       </div>
 
       {/* Content */}
@@ -295,9 +331,9 @@ export default function ProfilePage() {
         height: '82px',
         paddingTop: '8px',
         paddingBottom: '14px',
-        background: 'rgba(239, 236, 229, 0.96)',
+        background: isDarkNav ? 'rgba(30, 30, 30, 0.96)' : 'rgba(239, 236, 229, 0.96)',
         backdropFilter: 'blur(20px)',
-        borderTop: '1px solid var(--line)',
+        borderTop: isDarkNav ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid var(--line)',
         display: 'flex',
         justifyContent: 'space-around',
         alignItems: 'flex-start',
@@ -320,7 +356,7 @@ export default function ProfilePage() {
           onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
           onMouseLeave={(e) => (e.currentTarget.style.opacity = tab.active ? '1' : '0.5')}
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style={{ color: tab.active ? 'var(--acc)' : 'var(--ink)' }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style={{ color: tab.active ? 'var(--acc)' : (isDarkNav ? '#fff' : 'var(--ink)') }}>
               {tab.icon === 'explore' && (
                 <>
                   <circle cx="12" cy="7" r="1.2" />
@@ -363,7 +399,7 @@ export default function ProfilePage() {
             <span style={{
               fontSize: '10px',
               fontWeight: 700,
-              color: tab.active ? 'var(--acc)' : 'var(--ink)',
+              color: tab.active ? 'var(--acc)' : (isDarkNav ? '#fff' : 'var(--ink)'),
               letterSpacing: '0.5px',
             }}>
               {tab.label}

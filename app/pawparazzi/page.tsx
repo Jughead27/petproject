@@ -17,6 +17,14 @@ export default function PawparazziPage() {
   const [user, setUser] = useState<{ id: string } | null>(null)
   const [followedPets, setFollowedPets] = useState<Pet[]>([])
   const [loading, setLoading] = useState(true)
+  const [isDarkNav, setIsDarkNav] = useState(false)
+
+  useEffect(() => {
+    const saved = localStorage.getItem('nav-theme')
+    if (saved) {
+      setIsDarkNav(saved === 'dark')
+    }
+  }, [])
 
   useEffect(() => {
     const loadFollowedPets = async () => {
@@ -202,9 +210,9 @@ export default function PawparazziPage() {
         height: '76px',
         paddingTop: '8px',
         paddingBottom: '12px',
-        background: 'rgba(250, 250, 247, 0.92)',
+        background: isDarkNav ? 'rgba(30, 30, 30, 0.92)' : 'rgba(250, 250, 247, 0.92)',
         backdropFilter: 'blur(16px)',
-        borderTop: '1px solid var(--line)',
+        borderTop: isDarkNav ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid var(--line)',
         display: 'flex',
         justifyContent: 'space-around',
         alignItems: 'flex-start',
@@ -237,7 +245,7 @@ export default function PawparazziPage() {
             <span style={{
               fontSize: '9px',
               fontWeight: 600,
-              color: tab.active ? 'var(--acc)' : 'var(--ink)',
+              color: tab.active ? 'var(--acc)' : (isDarkNav ? '#fff' : 'var(--ink)'),
               letterSpacing: '0.4px',
             }}>
               {tab.label}

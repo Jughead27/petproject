@@ -24,6 +24,14 @@ export default function CreatePage() {
   const [newPetSpecies, setNewPetSpecies] = useState('')
   const [caption, setCaption] = useState('')
   const [uploading, setUploading] = useState(false)
+  const [isDarkNav, setIsDarkNav] = useState(false)
+
+  useEffect(() => {
+    const saved = localStorage.getItem('nav-theme')
+    if (saved) {
+      setIsDarkNav(saved === 'dark')
+    }
+  }, [])
 
   useEffect(() => {
     const loadPets = async () => {
