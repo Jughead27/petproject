@@ -1,5 +1,4 @@
-import { createClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { createServerSupabaseClient } from '@/lib/supabase-server'
 
 export async function GET(request: Request) {
   const url = new URL(request.url)
@@ -9,17 +8,7 @@ export async function GET(request: Request) {
   const offset = page * limit
 
   try {
-    const cookieStore = await cookies()
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll: () => cookieStore.getAll(),
-          setAll: () => {},
-        },
-      }
-    )
+    const supabase = await createServerSupabaseClient()
 
     const { data: userData } = await supabase.auth.getUser()
     if (!userData.user) {

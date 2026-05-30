@@ -1,6 +1,6 @@
 'use client'
 
-import { createClient } from '@supabase/auth-js'
+import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 
 export default function BannedPage() {
@@ -8,10 +8,7 @@ export default function BannedPage() {
 
   const handleLogout = async () => {
     try {
-      const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      )
+      const supabase = createClient()
       await supabase.auth.signOut()
       router.push('/login')
     } catch (err) {

@@ -218,8 +218,8 @@ export default function AdminPage() {
               letterSpacing: '0.5px',
               textTransform: 'capitalize',
             }}
-            onMouseEnter={(e) => !status === s && (e.currentTarget.style.color = 'var(--ink)')}
-            onMouseLeave={(e) => !status === s && (e.currentTarget.style.color = 'var(--ink-2)')}
+            onMouseEnter={(e) => status !== s && (e.currentTarget.style.color = 'var(--ink)')}
+            onMouseLeave={(e) => status !== s && (e.currentTarget.style.color = 'var(--ink-2)')}
           >
             {s}
           </button>
